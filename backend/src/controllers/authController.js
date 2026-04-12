@@ -2,6 +2,9 @@ const db = require('../config/db');
 const User = require('../models/userModel');
 const Address = require('../models/addressModel');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'secret123', {
@@ -61,6 +64,39 @@ const login = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const { name, email, picture, sub } = ticket.getPayload();
+
+    let user = await User.findByEmail(email);
+    if (!user) {
+      // Create user with a random password if it doesn't exist
+      const randomPassword = Math.random().toString(36).slice(-8);
+      const userId = await User.create(name, email, randomPassword);
+      user = { id: userId, name, email, role: 'user' };
+    }
+
+    if (user.is_blocked) {
+      return res.status(403).json({ message: 'This account has been suspended' });
+    }
+
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user.id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Google authentication failed' });
   }
 };
 
@@ -147,6 +183,7 @@ const setDefaultAddress = async (req, res) => {
 module.exports = { 
   register, 
   login, 
+  googleLogin,
   getMe, 
   updateProfile, 
   changePassword,

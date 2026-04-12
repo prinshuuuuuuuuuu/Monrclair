@@ -3,6 +3,7 @@ import { Eye, EyeOff, ArrowRight, Lock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { GoogleLogin } from '@react-oauth/google';
 
 
 export default function AuthPage() {
@@ -14,7 +15,7 @@ export default function AuthPage() {
   const [isForgot, setIsForgot] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { login, register } = useAuth();
+  const { login, register, googleLogin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -146,13 +147,29 @@ export default function AuthPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button className="border border-border py-3 text-xs tracking-luxury uppercase hover:border-primary transition-colors flex items-center justify-center gap-2">
-            → Google
-          </button>
-          <button className="border border-border py-3 text-xs tracking-luxury uppercase hover:border-primary transition-colors flex items-center justify-center gap-2">
-             Apple
-          </button>
+        <div className="flex flex-col items-center gap-3">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              if (credentialResponse.credential) {
+                try {
+                  setLoading(true);
+                  await googleLogin(credentialResponse.credential);
+                  toast({ title: "Authenticated via Google", description: "Access granted via your secure identity provider." });
+                  navigate('/');
+                } catch (error) {
+                  toast({ title: "Social Authentication Failed", variant: "destructive" });
+                } finally {
+                  setLoading(false);
+                }
+              }
+            }}
+            onError={() => {
+              toast({ title: "Google Signaling Error", variant: "destructive" });
+            }}
+            theme="outline"
+            size="large"
+            width="100%"
+          />
         </div>
 
         <p className="text-center mt-8 text-sm text-muted-foreground">
