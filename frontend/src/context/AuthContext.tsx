@@ -10,6 +10,7 @@ interface User {
   token: string;
   phone?: string;
   is_blocked?: boolean;
+  addresses?: any[];
 }
 
 
