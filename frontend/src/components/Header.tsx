@@ -3,6 +3,8 @@ import { Search, ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
+import { useAuth } from '@/context/AuthContext';
+import { LogOut } from 'lucide-react';
 
 const navLinks = [
   { label: 'Classic', href: '/collection?category=classic' },
@@ -11,6 +13,7 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -67,9 +70,20 @@ export default function Header() {
               </span>
             )}
           </Link>
-          <Link to="/auth" className="text-foreground hover:text-primary transition-colors">
-            <User size={18} />
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <Link to="/profile" className="text-foreground hover:text-primary transition-colors">
+                <User size={18} />
+              </Link>
+              <button onClick={logout} className="text-foreground hover:text-red-500 transition-colors">
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            <Link to="/auth" className="text-foreground hover:text-primary transition-colors">
+              <User size={18} />
+            </Link>
+          )}
           <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>

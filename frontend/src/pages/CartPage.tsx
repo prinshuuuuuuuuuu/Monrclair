@@ -96,9 +96,12 @@ export default function CartPage() {
             />
           </div>
 
-          <button className="w-full bg-primary text-primary-foreground py-4 mt-4 text-xs tracking-luxury uppercase hover:opacity-90 transition-opacity">
+          <Link 
+            to="/checkout"
+            className="w-full bg-primary text-primary-foreground py-4 mt-4 text-xs tracking-luxury uppercase hover:opacity-90 transition-opacity block text-center"
+          >
             Proceed to Checkout
-          </button>
+          </Link>
           <p className="text-[9px] tracking-luxury uppercase text-muted-foreground text-center mt-3">
             Secured Payment & Insured Worldwide Courier Delivery
           </p>

@@ -1,0 +1,109 @@
+const db = require('../config/db');
+
+// Wishlist
+const getWishlist = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT product_id FROM wishlist WHERE user_id = ?',
+      [req.user.id]
+    );
+    res.json(rows.map(row => row.product_id.toString()));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const toggleWishlist = async (req, res) => {
+  const { productId } = req.body;
+  try {
+    const [existing] = await db.query(
+      'SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?',
+      [req.user.id, productId]
+    );
+
+    if (existing.length > 0) {
+      await db.query('DELETE FROM wishlist WHERE id = ?', [existing[0].id]);
+      res.json({ message: 'Removed from wishlist', action: 'removed' });
+    } else {
+      await db.query(
+        'INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)',
+        [req.user.id, productId]
+      );
+      res.json({ message: 'Added to wishlist', action: 'added' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Cart
+const getCart = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT product_id as productId, quantity FROM cart_items WHERE user_id = ?',
+      [req.user.id]
+    );
+    res.json(rows.map(row => ({ ...row, productId: row.productId.toString() })));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const addToCart = async (req, res) => {
+  const { productId, quantity = 1 } = req.body;
+  try {
+    await db.query(
+      'INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)',
+      [req.user.id, productId, quantity]
+    );
+    res.json({ message: 'Cart updated' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const updateCartQuantity = async (req, res) => {
+  const { productId, quantity } = req.body;
+  try {
+    if (quantity <= 0) {
+      await db.query('DELETE FROM cart_items WHERE user_id = ? AND product_id = ?', [req.user.id, productId]);
+    } else {
+      await db.query(
+        'UPDATE cart_items SET quantity = ? WHERE user_id = ? AND product_id = ?',
+        [quantity, req.user.id, productId]
+      );
+    }
+    res.json({ message: 'Quantity updated' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const removeFromCart = async (req, res) => {
+  const { productId } = req.params;
+  try {
+    await db.query('DELETE FROM cart_items WHERE user_id = ? AND product_id = ?', [req.user.id, productId]);
+    res.json({ message: 'Removed from cart' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const clearCart = async (req, res) => {
+  try {
+    await db.query('DELETE FROM cart_items WHERE user_id = ?', [req.user.id]);
+    res.json({ message: 'Cart cleared' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getWishlist,
+  toggleWishlist,
+  getCart,
+  addToCart,
+  updateCartQuantity,
+  removeFromCart,
+  clearCart
+};

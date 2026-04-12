@@ -4,14 +4,36 @@ import { Heart, ArrowRight, Star, ChevronLeft, ChevronRight } from 'lucide-react
 import { products } from '@/data/products';
 import { useStore } from '@/store/useStore';
 import ProductCard from '@/components/ProductCard';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const product = products.find((p) => p.id === id);
   const [imgIndex, setImgIndex] = useState(0);
   const addToCart = useStore((s) => s.addToCart);
   const toggleWishlist = useStore((s) => s.toggleWishlist);
   const wishlist = useStore((s) => s.wishlist);
+
+  const handleAddToCart = () => {
+    if (!user) {
+      toast({ title: 'Authentication Required', description: 'Please register or login to manage your logistics.' });
+      return navigate('/auth');
+    }
+    if (product) addToCart(product.id);
+  };
+
+  const handleWishlist = () => {
+    if (!user) {
+      toast({ title: 'Authentication Required', description: 'Please register or login to save items to your archive.' });
+      return navigate('/auth');
+    }
+    if (product) toggleWishlist(product.id);
+  };
 
   if (!product) {
     return (
@@ -102,14 +124,14 @@ export default function ProductDetailPage() {
           {/* Actions */}
           <div className="flex gap-3">
             <button
-              onClick={() => addToCart(product.id)}
+              onClick={handleAddToCart}
               disabled={!product.inStock}
               className="flex-1 bg-primary text-primary-foreground py-4 text-xs tracking-luxury uppercase disabled:opacity-50 hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
               {product.inStock ? 'Add to Cart' : 'Sold Out'} <ArrowRight size={14} />
             </button>
             <button
-              onClick={() => toggleWishlist(product.id)}
+              onClick={handleWishlist}
               className="border border-border p-4 hover:border-primary transition-colors"
             >
               <Heart size={18} fill={isWished ? 'hsl(var(--primary))' : 'none'} className={isWished ? 'text-primary' : ''} />
@@ -119,7 +141,7 @@ export default function ProductDetailPage() {
           {/* Sticky mobile button */}
           <div className="md:hidden fixed bottom-16 left-0 right-0 z-40 p-4 bg-background border-t border-border">
             <button
-              onClick={() => addToCart(product.id)}
+              onClick={handleAddToCart}
               disabled={!product.inStock}
               className="w-full bg-primary text-primary-foreground py-4 text-xs tracking-luxury uppercase disabled:opacity-50"
             >

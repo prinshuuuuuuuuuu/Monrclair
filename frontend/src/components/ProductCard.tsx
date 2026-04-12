@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useStore } from '@/store/useStore';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface Props {
   product: Product;
@@ -9,10 +12,30 @@ interface Props {
 }
 
 export default function ProductCard({ product, showAddToCart }: Props) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const toggleWishlist = useStore((s) => s.toggleWishlist);
   const wishlist = useStore((s) => s.wishlist);
   const addToCart = useStore((s) => s.addToCart);
   const isWished = wishlist.includes(product.id);
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      toast({ title: 'Authentication Required', description: 'Please register or login to save items to your archive.' });
+      return navigate('/auth');
+    }
+    toggleWishlist(product.id);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    if (!user) {
+      toast({ title: 'Authentication Required', description: 'Please register or login to manage your logistics.' });
+      return navigate('/auth');
+    }
+    addToCart(product.id);
+  };
 
   return (
     <div className="group animate-fade-in">
@@ -32,10 +55,7 @@ export default function ProductCard({ product, showAddToCart }: Props) {
             </span>
           )}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              toggleWishlist(product.id);
-            }}
+            onClick={handleWishlist}
             className="absolute top-3 right-3 p-2 bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
           >
             <Heart size={16} fill={isWished ? 'hsl(var(--primary))' : 'none'} className={isWished ? 'text-primary' : 'text-foreground'} />
@@ -60,7 +80,7 @@ export default function ProductCard({ product, showAddToCart }: Props) {
       </div>
       {showAddToCart && (
         <button
-          onClick={() => addToCart(product.id)}
+          onClick={handleAddToCart}
           className="w-full mt-3 bg-primary text-primary-foreground py-3 text-xs tracking-luxury uppercase hover:opacity-90 transition-opacity"
         >
           Add to Cart

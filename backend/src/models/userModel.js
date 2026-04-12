@@ -16,10 +16,18 @@ const User = {
   },
 
   findById: async (id) => {
-    const [rows] = await db.query('SELECT id, name, email, role FROM users WHERE id = ?', [id]);
+    const [rows] = await db.query('SELECT id, name, email, role, phone, is_blocked FROM users WHERE id = ?', [id]);
     return rows[0];
-  }
+  },
 
+  update: async (id, data) => {
+    const { name, phone } = data;
+    await db.query('UPDATE users SET name = ?, phone = ? WHERE id = ?', [name, phone, id]);
+  },
+
+  updatePassword: async (id, password) => {
+    await db.query('UPDATE users SET password = ? WHERE id = ?', [password, id]);
+  }
 };
 
 module.exports = User;

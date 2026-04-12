@@ -11,6 +11,7 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [isForgot, setIsForgot] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { login, register } = useAuth();
@@ -21,14 +22,20 @@ export default function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (isLogin) {
+      if (isForgot) {
+        // Placeholder for OTP/Email reset
+        toast({ title: "Reset Sequence Initialized", description: "Verification protocols sent to your email identifier." });
+        setIsForgot(false);
+        setIsLogin(true);
+      } else if (isLogin) {
         await login(email, password);
         toast({ title: "Authenticated", description: "Access granted to the Private Collection." });
+        navigate('/');
       } else {
         await register(name || email.split('@')[0], email, password);
         toast({ title: "Access Requested", description: "Your account has been created." });
+        navigate('/');
       }
-      navigate('/');
     } catch (error: any) {
       toast({ 
         title: "Authentication Failed", 
@@ -52,6 +59,21 @@ export default function AuthPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {!isForgot && !isLogin && (
+            <div className="animate-fade-in">
+              <label className="text-[10px] tracking-luxury uppercase text-muted-foreground block mb-2">
+                Client Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Name"
+                className="w-full border border-border px-4 py-3 text-sm bg-transparent outline-none focus:border-primary placeholder:text-muted-foreground"
+              />
+            </div>
+          )}
+
           <div>
             <label className="text-[10px] tracking-luxury uppercase text-muted-foreground block mb-2">
               Email Identifier
@@ -65,36 +87,42 @@ export default function AuthPage() {
             />
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-[10px] tracking-luxury uppercase text-muted-foreground">
-                Encryption Key
-              </label>
-              {isLogin && (
-                <button type="button" className="text-[10px] tracking-luxury uppercase text-primary underline">
-                  Recovery Options
+          {!isForgot && (
+            <div className="animate-fade-in">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[10px] tracking-luxury uppercase text-muted-foreground">
+                  Encryption Key
+                </label>
+                {isLogin && (
+                  <button 
+                    type="button" 
+                    onClick={() => setIsForgot(true)}
+                    className="text-[10px] tracking-luxury uppercase text-primary underline"
+                  >
+                    Recovery Options
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full border border-border px-4 py-3 text-sm bg-transparent outline-none focus:border-primary pr-10 placeholder:text-muted-foreground"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
-              )}
+              </div>
             </div>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full border border-border px-4 py-3 text-sm bg-transparent outline-none focus:border-primary pr-10 placeholder:text-muted-foreground"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
+          )}
 
-          {isLogin && (
+          {isLogin && !isForgot && (
             <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
               <input type="checkbox" className="accent-primary" />
               <span className="text-[10px] tracking-luxury uppercase">Remember Session</span>
@@ -105,7 +133,7 @@ export default function AuthPage() {
             type="submit"
             className="w-full bg-primary text-primary-foreground py-4 text-xs tracking-luxury uppercase flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
           >
-            {isLogin ? 'Authenticate Account' : 'Request Access'} <ArrowRight size={14} />
+            {isForgot ? 'Initialize Reset' : isLogin ? 'Authenticate Account' : 'Request Access'} <ArrowRight size={14} />
           </button>
         </form>
 
@@ -128,10 +156,18 @@ export default function AuthPage() {
         </div>
 
         <p className="text-center mt-8 text-sm text-muted-foreground">
-          {isLogin ? "Don't have an account?" : 'Already have access?'}{' '}
-          <button onClick={() => setIsLogin(!isLogin)} className="text-foreground underline underline-offset-2">
-            {isLogin ? 'Request Access' : 'Authenticate'}
-          </button>
+          {isForgot ? (
+            <button onClick={() => { setIsForgot(false); setIsLogin(true); }} className="text-foreground underline underline-offset-2 text-[10px] tracking-luxury uppercase">
+              Return to Authentication
+            </button>
+          ) : (
+            <>
+              {isLogin ? "Don't have an account?" : 'Already have access?'}{' '}
+              <button onClick={() => setIsLogin(!isLogin)} className="text-foreground underline underline-offset-2">
+                {isLogin ? 'Request Access' : 'Authenticate'}
+              </button>
+            </>
+          )}
         </p>
       </div>
     </div>

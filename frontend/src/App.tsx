@@ -12,6 +12,10 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import WishlistPage from "./pages/WishlistPage";
 import AuthPage from "./pages/AuthPage";
+import ProfilePage from "./pages/ProfilePage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./views/admin/AdminLayout";
 import AdminProducts from "./views/admin/AdminProducts";
@@ -46,6 +50,10 @@ const App = () => (
               <Route path="/cart" element={<CartPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+              <Route path="/order-history" element={<OrderHistoryPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
             

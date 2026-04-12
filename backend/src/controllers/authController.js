@@ -1,4 +1,6 @@
+const db = require('../config/db');
 const User = require('../models/userModel');
+const Address = require('../models/addressModel');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
@@ -70,11 +72,87 @@ const getMe = async (req, res) => {
       return res.json(req.user);
     }
     const user = await User.findById(req.user.id);
-    res.json(user);
+    const addresses = await Address.findByUserId(req.user.id);
+    res.json({ ...user, addresses });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { register, login, getMe };
+const updateProfile = async (req, res) => {
+  try {
+    await User.update(req.user.id, req.body);
+    const updatedUser = await User.findById(req.user.id);
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  try {
+    const user = await User.findById(req.user.id);
+    const fullUser = await db.query('SELECT password FROM users WHERE id = ?', [req.user.id]);
+    
+    // In a real app, use bcrypt. Here we follow the simple direct comparison used in login
+    if (fullUser[0][0].password !== currentPassword) {
+      return res.status(400).json({ message: 'Current password incorrect' });
+    }
+
+    await User.updatePassword(req.user.id, newPassword);
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Address Management
+const getAddresses = async (req, res) => {
+  try {
+    const addresses = await Address.findByUserId(req.user.id);
+    res.json(addresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const addAddress = async (req, res) => {
+  try {
+    const addressId = await Address.create(req.user.id, req.body);
+    res.status(201).json({ id: addressId, ...req.body });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteAddress = async (req, res) => {
+  try {
+    await Address.delete(req.params.id, req.user.id);
+    res.json({ message: 'Address removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const setDefaultAddress = async (req, res) => {
+  try {
+    await Address.setDefault(req.params.id, req.user.id);
+    res.json({ message: 'Default address updated' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { 
+  register, 
+  login, 
+  getMe, 
+  updateProfile, 
+  changePassword,
+  getAddresses,
+  addAddress,
+  deleteAddress,
+  setDefaultAddress
+};
 
