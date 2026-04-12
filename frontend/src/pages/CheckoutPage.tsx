@@ -19,6 +19,10 @@ export default function CheckoutPage() {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('upi');
   
+  // UPI / Polling State
+  const [upiData, setUpiData] = useState<{ link: string; paymentId: string } | null>(null);
+  const [pollingStatus, setPollingStatus] = useState<string>('idle');
+
   // New Address State
   const [newAddress, setNewAddress] = useState({
     fullName: '',
@@ -40,15 +44,10 @@ export default function CheckoutPage() {
   const vat = Math.round(subtotal * 0.2);
   const total = subtotal + vat;
 
-  const upiLink = useMemo(() => {
-    const vpa = "prince@upi";
-    const name = "Montclair Luxury";
-    const amount = total.toFixed(2);
-    const note = `Order_${Date.now()}`;
-    return `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-  }, [total]);
-
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+  const qrUrl = useMemo(() => {
+    if (!upiData) return '';
+    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiData.link)}`;
+  }, [upiData]);
 
   useEffect(() => {
     if (!user) navigate('/auth');
@@ -60,6 +59,28 @@ export default function CheckoutPage() {
       else if (user.addresses.length > 0) setSelectedAddressId(user.addresses[0].id);
     }
   }, [user, cart, navigate]);
+
+  // Polling Effect
+  useEffect(() => {
+    let interval: any;
+    if (upiData && pollingStatus === 'polling') {
+      interval = setInterval(async () => {
+        try {
+          const { data } = await api.get(`/orders/check-status/${upiData.paymentId}`);
+          if (data.status === 'processing') {
+            setPollingStatus('success');
+            clearInterval(interval);
+            toast({ title: 'Payment Success', description: 'Transaction verified and archived.' });
+            await clearCart();
+            setTimeout(() => navigate('/order-history'), 2000);
+          }
+        } catch (err) {
+          console.error('Polling error:', err);
+        }
+      }, 3000);
+    }
+    return () => clearInterval(interval);
+  }, [upiData, pollingStatus, navigate, clearCart]);
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,29 +100,34 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
-      return toast({ title: 'Logistics Missing', description: 'Please choose a delivery transmission point.', variant: 'warning' });
+      return toast({ title: 'Logistics Missing', description: 'Please choose a delivery transmission point.', variant: 'destructive' });
     }
 
     setLoading(true);
     try {
       const address = user?.addresses?.find((a: any) => a.id === selectedAddressId);
-      const res = await api.post('/orders', {
+      const { data } = await api.post('/orders', {
         cartItems: cartItems.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.product.price })),
         totalAmount: total,
-        shippingAddress: address,
-        paymentDetails: {
-          method: paymentMethod,
-          status: 'Paid'
-        }
+        shippingAddress: address
       });
       
-      await clearCart();
-      toast({ title: 'Transmission Initialized', description: 'Order archived. Shipping sequence starting.' });
-      navigate(`/order-confirmation/${res.data.id}`);
+      setUpiData({ link: data.upiLink, paymentId: data.paymentId });
+      setPollingStatus('polling');
+      toast({ title: 'Protocol Initialized', description: 'Legacy sequence created. Awaiting settlement.' });
     } catch (error: any) {
       toast({ title: 'Transmission Failed', description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const simulateSuccess = async () => {
+    if (!upiData) return;
+    try {
+      await api.post('/orders/verify-payment', { paymentId: upiData.paymentId });
+    } catch (err) {
+      toast({ title: 'Simulation Error', variant: 'destructive' });
     }
   };
 
@@ -258,31 +284,43 @@ export default function CheckoutPage() {
                   </div>
                </div>
 
-               {paymentMethod === 'upi' && (
+               {paymentMethod === 'upi' && upiData && (
                  <div className="border border-primary/20 bg-primary/[0.02] p-10 animate-fade-up flex flex-col items-center text-center space-y-8">
                     <div className="space-y-2">
-                       <h4 className="text-[11px] tracking-[0.4em] uppercase font-black text-primary">Biometric Handshake Required</h4>
-                       <p className="text-[10px] text-muted-foreground italic uppercase">Complete settlement via UPI Application</p>
+                       <h4 className="text-[11px] tracking-[0.4em] uppercase font-black text-primary">
+                        {pollingStatus === 'polling' ? 'Biometric Handshake Required' : 'Handshake Verified'}
+                       </h4>
+                       <p className="text-[10px] text-neutral-400 italic uppercase">
+                        {pollingStatus === 'polling' ? 'Complete settlement via UPI Application' : 'Success Protocol Registered'}
+                       </p>
                     </div>
 
-                    <div className="relative group">
-                       <div className="p-4 bg-white border border-neutral-100 shadow-2xl relative z-10">
-                          <img src={qrUrl} alt="UPI QR Code" className="w-48 h-48" />
-                       </div>
-                       <div className="absolute inset-0 bg-primary blur-3xl opacity-10 group-hover:opacity-20 transition-opacity" />
-                    </div>
+                    {pollingStatus === 'polling' ? (
+                      <>
+                        <div className="relative group">
+                          <div className="p-4 bg-white border border-neutral-100 shadow-2xl relative z-10">
+                              <img src={qrUrl} alt="UPI QR Code" className="w-48 h-48" />
+                          </div>
+                          <div className="absolute inset-0 bg-primary blur-3xl opacity-10 group-hover:opacity-20 transition-opacity" />
+                        </div>
 
-                    <div className="flex flex-wrap justify-center gap-4">
-                       <a href={upiLink} className="flex items-center gap-3 px-8 py-4 bg-neutral-900 text-white text-[10px] tracking-widest uppercase font-black hover:bg-neutral-800 transition-all rounded shadow-lg">
-                          <Smartphone size={14} /> Launch Pay App
-                       </a>
-                       <button onClick={() => window.print()} className="flex items-center gap-3 px-8 py-4 bg-white border border-neutral-200 text-neutral-500 text-[10px] tracking-widest uppercase font-black hover:bg-neutral-50 transition-all rounded shadow-md">
-                          <QrCode size={14} /> Print Pass
-                       </button>
-                    </div>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          <a href={upiData.link} className="flex items-center gap-3 px-8 py-4 bg-neutral-900 text-white text-[10px] tracking-widest uppercase font-black hover:bg-neutral-800 transition-all rounded shadow-lg">
+                              <Smartphone size={14} /> Launch Pay App
+                          </a>
+                          <button onClick={simulateSuccess} className="flex items-center gap-3 px-8 py-4 bg-white border border-neutral-200 text-primary text-[10px] tracking-widest uppercase font-black hover:bg-neutral-50 transition-all rounded shadow-md">
+                              <CheckCircle size={14} /> Demo: Verify Success
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="p-10 flex flex-col items-center gap-4 text-primary bg-white border border-primary/10 shadow-lg animate-bounce">
+                         <p className="text-[12px] tracking-[0.5em] uppercase font-black">Transmission Verified</p>
+                      </div>
+                    )}
 
-                    <p className="text-[9px] text-muted-foreground/60 max-w-sm uppercase tracking-widest leading-loose">
-                      Scanning this protocol identifies your transaction with the Montclair Distribution Ledger.
+                    <p className="text-[9px] text-neutral-400/60 max-w-sm uppercase tracking-widest leading-loose">
+                      Scanning this protocol identifies payment ID {upiData.paymentId} with the distribution ledger.
                     </p>
                  </div>
                )}
@@ -335,17 +373,17 @@ export default function CheckoutPage() {
 
                 <div className="mt-12 space-y-6">
                    <button 
-                     disabled={loading || !selectedAddressId}
+                     disabled={loading || !selectedAddressId || pollingStatus === 'polling'}
                      onClick={handlePlaceOrder}
                      className={cn(
                        "w-full py-6 text-[11px] tracking-[0.4em] uppercase font-black flex items-center justify-center gap-4 transition-all duration-700 shadow-xl",
-                       selectedAddressId 
+                       (selectedAddressId && pollingStatus !== 'polling') 
                          ? "bg-neutral-900 text-white hover:bg-primary shadow-primary/20" 
                          : "bg-neutral-100 text-neutral-300 cursor-not-allowed"
                      )}
                    >
                      {loading ? <Lock className="animate-spin" size={12} /> : <Shield size={14} />}
-                     {loading ? 'Transmitting Data...' : 'Verify & Initialize'}
+                     {loading ? 'Transmitting Data...' : (pollingStatus === 'polling' ? 'Polling Protocol...' : 'Verify & Initialize')}
                    </button>
                    
                    {!selectedAddressId && (
