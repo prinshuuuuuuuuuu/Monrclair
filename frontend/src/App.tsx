@@ -23,8 +23,8 @@ import AdminOrders from "./views/admin/AdminOrders";
 import AdminUsers from "./views/admin/AdminUsers";
 import AdminLogin from "./views/admin/AdminLogin";
 import AdminDashboard from "./views/admin/AdminDashboard";
-import AdminSettings from "./views/admin/AdminSettings";
-import AdminSupport from "./views/admin/AdminSupport";
+import AdminCategories from "./views/admin/AdminCategories";
+import AdminCoupons from "./views/admin/AdminCoupons";
 import StoreLayout from "./components/StoreLayout";
 
 
@@ -42,7 +42,6 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Store Routes */}
             <Route element={<StoreLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/collection" element={<CollectionPage />} />
@@ -64,8 +63,8 @@ const App = () => (
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<AdminUsers />} />
-              <Route path="settings" element={<AdminSettings />} />
-              <Route path="support" element={<AdminSupport />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="coupons" element={<AdminCoupons />} />
             </Route>
           </Routes>
         </BrowserRouter>

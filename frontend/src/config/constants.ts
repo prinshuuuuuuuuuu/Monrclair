@@ -1,0 +1,21 @@
+export const APP_CONFIG = {
+  APP_NAME: "Monrclair",
+  API_BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  PAGINATION: {
+    DEFAULT_PAGE: 1,
+    ADMIN_USERS_FIRST_PAGE: 5,
+    ADMIN_USERS_NEXT_PAGES: 6,
+    ADMIN_CATEGORIES_FIRST_PAGE: 5,
+    ADMIN_CATEGORIES_NEXT_PAGES: 6,
+    ADMIN_ORDERS_FIRST_PAGE: 5,
+    ADMIN_ORDERS_NEXT_PAGES: 6,
+    ADMIN_PRODUCTS_PER_PAGE: 12,
+  },
+  DATE_FORMATS: {
+    DISPLAY: "MMM dd, yyyy",
+    WITH_TIME: "MMM dd, yyyy HH:mm",
+  },
+  TOAST_DURATION: 3000,
+};
+
+export default APP_CONFIG;

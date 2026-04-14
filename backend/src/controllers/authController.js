@@ -49,6 +49,10 @@ const login = async (req, res) => {
       if (user.is_blocked) {
         return res.status(403).json({ message: 'This account has been suspended' });
       }
+      
+      // Update last login
+      await db.query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?', [user.id]);
+
       res.json({
         id: user.id,
         name: user.name,
