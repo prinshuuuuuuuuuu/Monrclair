@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,13 +26,10 @@ import AdminOrders from "./views/admin/AdminOrders";
 import AdminUsers from "./views/admin/AdminUsers";
 import AdminLogin from "./views/admin/AdminLogin";
 import AdminDashboard from "./views/admin/AdminDashboard";
-import AdminSettings from "./views/admin/AdminSettings";
-import AdminSupport from "./views/admin/AdminSupport";
+import AdminCategories from "./views/admin/AdminCategories";
+import AdminCoupons from "./views/admin/AdminCoupons";
 import StoreLayout from "./components/StoreLayout";
 import GuestRoute from "./components/GuestRoute";
-
-
-
 
 const queryClient = new QueryClient();
 
@@ -58,17 +55,22 @@ const App = () => (
                   <Route path="/auth" element={<AuthPage />} />
                 </Route>
                 <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+                <Route
+                  path="/order-confirmation/:id"
+                  element={<OrderConfirmationPage />}
+                />
                 <Route path="/order-history" element={<OrderHistoryPage />} />
                 <Route path="/security" element={<SecurityPage />} />
                 <Route path="/addresses" element={<AddressesPage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
-              
+
               <Route path="/profile" element={<ProfilePage />} />
-              
+
               {/* Admin Routes */}
-              <Route element={<GuestRoute redirectPath="/admin" adminOnly={true} />}>
+              <Route
+                element={<GuestRoute redirectPath="/admin" adminOnly={true} />}
+              >
                 <Route path="/admin/login" element={<AdminLogin />} />
               </Route>
               <Route path="/admin" element={<AdminLayout />}>
@@ -78,6 +80,8 @@ const App = () => (
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="support" element={<AdminSupport />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="coupons" element={<AdminCoupons />} />
               </Route>
             </Routes>
           </BrowserRouter>
@@ -86,6 +90,5 @@ const App = () => (
     </GoogleOAuthProvider>
   </QueryClientProvider>
 );
-
 
 export default App;

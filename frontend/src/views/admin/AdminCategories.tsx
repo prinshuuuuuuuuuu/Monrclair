@@ -1,0 +1,643 @@
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/api";
+import {
+  Trash2,
+  Search,
+  MoreVertical,
+  Plus,
+  Edit2,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Tag,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  LayoutGrid,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { APP_CONFIG } from "@/config/constants";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { format } from "date-fns";
+
+interface Category {
+  id: number;
+  name: string;
+  status: "active" | "inactive";
+  created_at: string;
+}
+
+export default function AdminCategories() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isAddPopUpOpen, setIsAddPopUpOpen] = useState(false);
+  const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryStatus, setNewCategoryStatus] = useState<
+    "active" | "inactive"
+  >("active");
+
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { PAGINATION } = APP_CONFIG;
+
+  const firstPageLimit = PAGINATION.ADMIN_CATEGORIES_FIRST_PAGE;
+  const nextPagesLimit = PAGINATION.ADMIN_CATEGORIES_NEXT_PAGES;
+
+  const { data: categories = [], isLoading } = useQuery<Category[]>({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const { data } = await api.get("/categories");
+      return data;
+    },
+  });
+
+  const { data: stats } = useQuery({
+    queryKey: ["admin-categories-stats"],
+    queryFn: async () => {
+      const { data } = await api.get("/categories/stats");
+      return data;
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (categoryData: { name: string; status: string }) => {
+      await api.post("/categories", categoryData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-categories-stats"] });
+      setIsAddPopUpOpen(false);
+      setNewCategoryName("");
+      toast({
+        title: "Category Created",
+        description: "New category has been added successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description:
+          error.response?.data?.message || "Failed to create category",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: { name: string; status: string };
+    }) => {
+      await api.put(`/categories/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-categories-stats"] });
+      setIsEditPopUpOpen(false);
+      setEditingCategory(null);
+      toast({
+        title: "Category Updated",
+        description: "Category details have been updated.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description:
+          error.response?.data?.message || "Failed to update category",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await api.delete(`/categories/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-categories-stats"] });
+      toast({
+        title: "Category Deleted",
+        description: "Category has been removed from the database.",
+      });
+    },
+  });
+
+  const filteredCategories = categories.filter((cat) => {
+    const matchesSearch = cat.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || cat.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleAddCategory = () => {
+    if (!newCategoryName.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Category name is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+    createMutation.mutate({ name: newCategoryName, status: newCategoryStatus });
+  };
+
+  const handleUpdateCategory = () => {
+    if (!editingCategory) return;
+    if (!editingCategory.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Category name is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+    updateMutation.mutate({
+      id: editingCategory.id,
+      data: { name: editingCategory.name, status: editingCategory.status },
+    });
+  };
+  const startIndex =
+    currentPage === 1 ? 0 : firstPageLimit + (currentPage - 2) * nextPagesLimit;
+  const currentLimit = currentPage === 1 ? firstPageLimit : nextPagesLimit;
+  const paginatedCategories = filteredCategories.slice(
+    startIndex,
+    startIndex + currentLimit,
+  );
+
+  const totalPages =
+    filteredCategories.length <= firstPageLimit
+      ? 1
+      : 1 +
+        Math.ceil(
+          (filteredCategories.length - firstPageLimit) / nextPagesLimit,
+        );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  const statCards = [
+    {
+      label: "Total Categories",
+      value: stats?.total || 0,
+      icon: Tag,
+    },
+    {
+      label: "Active Categories",
+      value: stats?.active || 0,
+      icon: CheckCircle2,
+    },
+    {
+      label: "Inactive Categories",
+      value: stats?.inactive || 0,
+      icon: XCircle,
+    },
+  ];
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
+            Category <span className="text-primary italic">Managment</span>
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Organize and manage watch categories for your store.
+          </p>
+        </div>
+        <Button
+          onClick={() => setIsAddPopUpOpen(true)}
+          className="h-12 px-6 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95 gap-2"
+        >
+          <Plus size={20} />
+          Add Category
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {statCards.map((stat) => (
+          <div
+            key={stat.label}
+            className="group rounded-2xl border border-[#e2e8f0] 
+            bg-white p-5 shadow-sm hover:shadow-md 
+            transition-all duration-300"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-[#64748b] font-medium">
+                  {stat.label}
+                </p>
+                <h3 className="text-2xl font-bold text-[#0f172a] mt-1">
+                  {stat.value}
+                </h3>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#f3e8e2] group-hover:bg-[#b87333]/10 transition">
+                <stat.icon className="text-[#b87333]" size={22} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="relative w-full max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search categories..."
+            className="pl-10 h-11 bg-background/50 border-[#e2e8f0] focus:ring-primary/20 rounded-xl"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <Select
+            value={statusFilter}
+            onValueChange={(val) => {
+              setStatusFilter(val);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[160px] h-11 bg-background/50 border-[#e2e8f0] rounded-xl">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-primary" />
+                <SelectValue placeholder="Status" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active Only</SelectItem>
+              <SelectItem value="inactive">Inactive Only</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {(searchTerm || statusFilter !== "all") && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setSearchTerm("");
+                setStatusFilter("all");
+                setCurrentPage(1);
+              }}
+              className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group"
+            >
+              <RotateCcw className="h-4 w-4 group-hover:rotate-[-45deg] transition-transform duration-300" />
+              Reset Filters
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <Card className="border-none shadow-premium overflow-hidden bg-background/50 backdrop-blur-sm rounded-2xl">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead className="w-[80px]">ID</TableHead>
+              <TableHead className="text-black font-bold">
+                Category Name
+              </TableHead>
+              <TableHead className="text-black font-bold">Status</TableHead>
+              <TableHead className="text-black font-bold hidden md:table-cell">
+                Created Date
+              </TableHead>
+              <TableHead className="text-right text-black font-bold">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedCategories.length > 0 ? (
+              paginatedCategories.map((cat) => (
+                <TableRow
+                  key={cat.id}
+                  className="group hover:bg-muted/30 transition-colors"
+                >
+                  <TableCell className="font-mono text-xs text-muted-foreground">
+                    #{cat.id}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Tag size={14} className="text-primary" />
+                      </div>
+                      <span className="font-semibold text-slate-700 dark:text-slate-200">
+                        {cat.name}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "font-medium rounded-full px-3",
+                        cat.status === "active"
+                          ? "border-emerald-500 text-emerald-500 bg-emerald-50/10"
+                          : "border-rose-500 text-rose-500 bg-rose-50/10",
+                      )}
+                    >
+                      {cat.status.toUpperCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell text-muted-foreground text-sm">
+                    {format(new Date(cat.created_at), "MMM dd, yyyy")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full hover:bg-muted transition-colors"
+                        >
+                          <MoreVertical
+                            size={16}
+                            className="text-muted-foreground hover:text-foreground"
+                          />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-40 p-2 rounded-xl"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditingCategory({ ...cat });
+                            setIsEditPopUpOpen(true);
+                          }}
+                          className="gap-2 cursor-pointer rounded-lg"
+                        >
+                          <Edit2 size={14} /> Edit
+                        </DropdownMenuItem>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <DropdownMenuItem
+                              onSelect={(e) => e.preventDefault()}
+                              className="gap-2 text-rose-500 cursor-pointer rounded-lg hover:bg-rose-50"
+                            >
+                              <Trash2 size={14} /> Delete
+                            </DropdownMenuItem>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="rounded-2xl">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete the category{" "}
+                                <strong>{cat.name}</strong>. This action cannot
+                                be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="rounded-xl">
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteMutation.mutate(cat.id)}
+                                className="bg-rose-500 hover:bg-rose-600 rounded-xl"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="h-64 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2 opacity-50">
+                    <Tag size={48} className="text-muted-foreground" />
+                    <p className="text-lg font-medium">No categories found</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 bg-muted/20">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+              Showing {paginatedCategories.length} of{" "}
+              {filteredCategories.length} Categories
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="rounded-xl"
+              >
+                <ChevronLeft size={18} />
+              </Button>
+              <div className="flex gap-1">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <Button
+                    key={i + 1}
+                    variant={currentPage === i + 1 ? "default" : "ghost"}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={cn(
+                      "w-10 h-10 rounded-xl font-bold",
+                      currentPage === i + 1 && "shadow-md",
+                    )}
+                  >
+                    {i + 1}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="rounded-xl"
+              >
+                <ChevronRight size={18} />
+              </Button>
+            </div>
+          </div>
+        )}
+      </Card>
+      <Dialog open={isAddPopUpOpen} onOpenChange={setIsAddPopUpOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Add New Category
+            </DialogTitle>
+            <DialogDescription>
+              Create a new category for the watch collection.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold">Category Name</label>
+              <Input
+                placeholder="e.g. Luxury, Sports, Minimalist"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold">Status</label>
+              <Select
+                value={newCategoryStatus}
+                onValueChange={(val: any) => setNewCategoryStatus(val)}
+              >
+                <SelectTrigger className="h-11 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setIsAddPopUpOpen(false)}
+              className="rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddCategory}
+              className="rounded-xl px-8"
+              disabled={createMutation.isPending}
+            >
+              {createMutation.isPending ? "Creating..." : "Save Category"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isEditPopUpOpen} onOpenChange={setIsEditPopUpOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Edit Category
+            </DialogTitle>
+            <DialogDescription>Update category information.</DialogDescription>
+          </DialogHeader>
+          {editingCategory && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Category Name</label>
+                <Input
+                  value={editingCategory.name}
+                  onChange={(e) =>
+                    setEditingCategory({
+                      ...editingCategory,
+                      name: e.target.value,
+                    })
+                  }
+                  className="h-11 rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Status</label>
+                <Select
+                  value={editingCategory.status}
+                  onValueChange={(val: any) =>
+                    setEditingCategory({ ...editingCategory, status: val })
+                  }
+                >
+                  <SelectTrigger className="h-11 rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setIsEditPopUpOpen(false)}
+              className="rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateCategory}
+              className="rounded-xl px-8"
+              disabled={updateMutation.isPending}
+            >
+              {updateMutation.isPending ? "Updating..." : "Update Category"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

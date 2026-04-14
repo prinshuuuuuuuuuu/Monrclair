@@ -5,14 +5,25 @@ const path = require('path');
 const { 
   getDashboardStats, 
   getAllOrders, 
+  getOrderDetails,
   updateOrderStatus, 
   getAllUsers, 
   blockUser, 
   deleteUser,
+  getUserProfile,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getAllProductsAdmin
 } = require('../controllers/adminController');
+const {
+  getAllCoupons,
+  getCouponStats,
+  createCoupon,
+  updateCoupon,
+  deleteCoupon,
+  getCouponUsage
+} = require('../controllers/couponController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // Multer Storage Configuration
@@ -29,22 +40,23 @@ const upload = multer({ storage });
 
 router.use(protect);
 router.use(admin);
-
-// Dashboard
 router.get('/stats', getDashboardStats);
-
-// Orders
 router.get('/orders', getAllOrders);
+router.get('/orders/:id', getOrderDetails);
 router.put('/orders/:id/status', updateOrderStatus);
-
-// Users
 router.get('/users', getAllUsers);
+router.get('/users/:id', getUserProfile);
 router.put('/users/:id/block', blockUser);
 router.delete('/users/:id', deleteUser);
-
-// Products
+router.get('/products', getAllProductsAdmin);
 router.post('/products', upload.array('images', 5), createProduct);
 router.put('/products/:id', upload.array('images', 5), updateProduct);
 router.delete('/products/:id', deleteProduct);
+router.get('/coupons', getAllCoupons);
+router.get('/coupons/stats', getCouponStats);
+router.post('/coupons', createCoupon);
+router.put('/coupons/:id', updateCoupon);
+router.delete('/coupons/:id', deleteCoupon);
+router.get('/coupons/:id/usage', getCouponUsage);
 
 module.exports = router;
