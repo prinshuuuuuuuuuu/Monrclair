@@ -17,6 +17,8 @@ import ProfilePage from "./pages/ProfilePage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
+import SecurityPage from "./pages/SecurityPage";
+import AddressesPage from "./pages/AddressesPage";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./views/admin/AdminLayout";
 import AdminProducts from "./views/admin/AdminProducts";
@@ -27,6 +29,7 @@ import AdminDashboard from "./views/admin/AdminDashboard";
 import AdminSettings from "./views/admin/AdminSettings";
 import AdminSupport from "./views/admin/AdminSupport";
 import StoreLayout from "./components/StoreLayout";
+import GuestRoute from "./components/GuestRoute";
 
 
 
@@ -51,16 +54,23 @@ const App = () => (
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/wishlist" element={<WishlistPage />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route element={<GuestRoute />}>
+                  <Route path="/auth" element={<AuthPage />} />
+                </Route>
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
                 <Route path="/order-history" element={<OrderHistoryPage />} />
+                <Route path="/security" element={<SecurityPage />} />
+                <Route path="/addresses" element={<AddressesPage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
               
+              <Route path="/profile" element={<ProfilePage />} />
+              
               {/* Admin Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route element={<GuestRoute redirectPath="/admin" adminOnly={true} />}>
+                <Route path="/admin/login" element={<AdminLogin />} />
+              </Route>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />

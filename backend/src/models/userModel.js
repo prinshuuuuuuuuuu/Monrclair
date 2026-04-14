@@ -16,13 +16,31 @@ const User = {
   },
 
   findById: async (id) => {
-    const [rows] = await db.query('SELECT id, name, email, role, phone, is_blocked FROM users WHERE id = ?', [id]);
+    const [rows] = await db.query('SELECT id, name, email, role, phone, is_blocked, avatar FROM users WHERE id = ?', [id]);
     return rows[0];
   },
 
   update: async (id, data) => {
-    const { name, phone } = data;
-    await db.query('UPDATE users SET name = ?, phone = ? WHERE id = ?', [name, phone, id]);
+    const fields = [];
+    const values = [];
+
+    if (data.name !== undefined) {
+      fields.push('name = ?');
+      values.push(data.name);
+    }
+    if (data.phone !== undefined) {
+      fields.push('phone = ?');
+      values.push(data.phone);
+    }
+    if (data.avatar !== undefined) {
+      fields.push('avatar = ?');
+      values.push(data.avatar);
+    }
+
+    if (fields.length === 0) return;
+
+    values.push(id);
+    await db.query(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`, values);
   },
 
   updatePassword: async (id, password) => {

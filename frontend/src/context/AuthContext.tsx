@@ -9,6 +9,7 @@ interface User {
   role: string;
   token: string;
   phone?: string;
+  avatar?: string;
   is_blocked?: boolean;
   addresses?: any[];
 }

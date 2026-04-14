@@ -15,7 +15,9 @@ export default {
     extend: {
       fontFamily: {
         heading: ['Playfair Display', 'Georgia', 'serif'],
+        headline: ['Noto Serif', 'serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
+        label: ['Space Grotesk', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

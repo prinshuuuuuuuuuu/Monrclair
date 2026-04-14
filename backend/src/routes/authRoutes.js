@@ -10,6 +10,7 @@ const {
   getAddresses,
   addAddress,
   deleteAddress,
+  updateAddress,
   setDefaultAddress
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
@@ -27,6 +28,7 @@ router.put('/change-password', protect, changePassword);
 router.get('/addresses', protect, getAddresses);
 router.post('/addresses', protect, addAddress);
 router.delete('/addresses/:id', protect, deleteAddress);
+router.put('/addresses/:id', protect, updateAddress);
 router.put('/addresses/:id/default', protect, setDefaultAddress);
 
 module.exports = router;

@@ -1,52 +1,126 @@
-import { Link } from 'react-router-dom';
-import { products } from '@/data/products';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '@/lib/api';
+import { Heart, ArrowLeft, Trash2, ShoppingBag, ExternalLink, Grid, Image as ImageIcon, Download, X, Share2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { useStore } from '@/store/useStore';
-import ProductCard from '@/components/ProductCard';
-import { ArrowRight } from 'lucide-react';
 
 export default function WishlistPage() {
-  const wishlist = useStore((s) => s.wishlist);
+  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const addToCart = useStore((s) => s.addToCart);
   const toggleWishlist = useStore((s) => s.toggleWishlist);
-  const items = products.filter((p) => wishlist.includes(p.id));
+
+  useEffect(() => {
+    fetchWishlist();
+  }, []);
+
+  const fetchWishlist = async () => {
+    try {
+      const { data } = await api.get('/store/wishlist');
+      setWishlist(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch gallery items');
+      setWishlist([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemove = async (productId: string) => {
+    try {
+      await toggleWishlist(productId);
+      fetchWishlist();
+      toast({ title: 'Exhibit Removed', description: 'Item has been purged from your Private Gallery.' });
+    } catch (error: any) {
+      toast({ title: 'Protocol Failure', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const handleAddToCart = (productId: string) => {
+    addToCart(productId);
+    toast({ title: 'Item Projected', description: 'Moving exhibit to procurement cart.' });
+  };
+
+  if (loading) return (
+    <div className="min-h-screen bg-surface flex items-center justify-center">
+      <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
   return (
-    <div className="container py-10 md:py-16">
-      <p className="text-[10px] tracking-luxury uppercase text-muted-foreground mb-1">Curated Collection</p>
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="font-heading text-3xl md:text-4xl">
-          Your Private<br /><em>Gallery</em>
-        </h1>
-      </div>
+    <main className="pt-32 pb-24 min-h-screen max-w-7xl mx-auto px-8 animate-fade-in">
+      {/* Dynamic Header from User Snippet */}
+      <header className="mb-20 flex flex-col md:flex-row justify-between items-end gap-8">
+        <div className="max-w-2xl">
+          <div className="font-label text-[10px] uppercase tracking-[0.2em] text-outline mb-4">Curated Collection</div>
+          <h1 className="text-6xl md:text-7xl font-light tracking-tight leading-none text-on-surface font-headline">
+            Your Private <br /><span className="italic">Gallery</span>
+          </h1>
+        </div>
+        <button className="bg-white/70 backdrop-blur-xl px-8 py-3 flex items-center gap-3 border border-outline-variant/30 hover:bg-white/90 transition-all duration-300 active:scale-95 group">
+          <Share2 size={16} className="text-secondary" />
+          <span className="font-label text-[10px] uppercase tracking-widest font-medium">Share Collection</span>
+        </button>
+      </header>
 
-      {items.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-muted-foreground mb-4">Your gallery is empty.</p>
-          <Link to="/collection" className="inline-flex items-center gap-2 text-xs tracking-luxury uppercase text-primary">
-            Explore Collection <ArrowRight size={12} />
-          </Link>
+      <div className="w-full h-[1px] bg-outline-variant/20 mb-20"></div>
+
+      {wishlist.length === 0 ? (
+        <div className="text-center py-40 border border-dashed border-outline-variant/30 rounded-3xl">
+          <p className="font-headline text-3xl mb-8 opacity-40 italic text-on-surface">Your gallery is currently void.</p>
+          <Link to="/collection" className="bg-primary text-white px-10 py-4 font-label text-[10px] uppercase tracking-widest hover:opacity-90 transition-all">Explore Archives</Link>
         </div>
       ) : (
-        <>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-            {items.map((p) => (
-              <ProductCard key={p.id} product={p} showAddToCart />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-24 gap-x-12">
+          {wishlist.map((item) => (
+            <article key={item.id} className="flex flex-col group animate-fade-up">
+              <div className="aspect-[4/5] bg-surface-container-lowest overflow-hidden mb-8 flex items-center justify-center relative border border-transparent group-hover:border-outline-variant/30 transition-all duration-500">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-4/5 h-4/5 object-contain transition-transform duration-1000 group-hover:scale-105"
+                  onError={(e: any) => { e.target.src = "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800&q=80"; }}
+                />
+                <button
+                  onClick={() => handleRemove(item.product_id)}
+                  className="absolute top-4 right-4 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500"
+                >
+                  <X size={20} className="text-outline" />
+                </button>
+              </div>
 
-          <div className="mt-16 bg-secondary p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
-              <h3 className="font-heading text-xl italic">Bespoke Concierge</h3>
-              <p className="text-sm text-muted-foreground mt-2 max-w-md">
-                Your wishlist represents the beginning of a legacy. Our master horologists are available for private consultations.
-              </p>
-            </div>
-            <button className="border border-foreground px-6 py-3 text-xs tracking-luxury uppercase hover:bg-foreground hover:text-background transition-colors">
-              Request Consultation
-            </button>
-          </div>
-        </>
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-2xl font-light font-headline">{item.name}</h3>
+                <span className="font-label text-primary text-sm font-medium">CHF {Number(item.price).toLocaleString()}</span>
+              </div>
+
+              <p className="font-label text-[10px] text-outline uppercase tracking-tighter mb-6">Archive ID: #{item.product_id}</p>
+
+              <button
+                onClick={() => handleAddToCart(item.product_id)}
+                className="w-full bg-primary py-4 text-white font-label text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-[#894d0d]/90 transition-colors duration-300 flex items-center justify-center gap-2"
+              >
+                Add to Cart
+              </button>
+            </article>
+          ))}
+        </div>
       )}
-    </div>
+
+      {/* Bespoke Concierge Section from User Snippet */}
+      <section className="mt-40 bg-zinc-50 p-16 flex flex-col md:flex-row items-center justify-between gap-12 border border-outline-variant/20">
+        <div className="flex-1">
+          <h2 className="text-4xl mb-4 italic font-headline">Bespoke Concierge</h2>
+          <p className="text-on-surface-variant max-w-md font-light leading-relaxed font-body">Your wishlist represents the beginning of a legacy. Our master horologists are available for private consultations regarding your selected pieces.</p>
+        </div>
+        <button className="border border-outline px-12 py-4 font-label text-[11px] uppercase tracking-[0.2em] hover:bg-on-surface hover:text-white transition-all duration-500">
+          Request Consultation
+        </button>
+      </section>
+    </main>
   );
 }

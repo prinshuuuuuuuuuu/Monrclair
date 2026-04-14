@@ -46,7 +46,9 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     --font-heading: 'Playfair Display', Georgia, serif;
+    --font-headline: 'Noto Serif', serif;
     --font-body: 'Inter', system-ui, sans-serif;
+    --font-label: 'Space Grotesk', sans-serif;
   }
 }
 
@@ -68,13 +70,25 @@
   .font-heading {
     font-family: var(--font-heading);
   }
+  .font-headline {
+    font-family: var(--font-headline);
+  }
   .font-body {
     font-family: var(--font-body);
+  }
+  .font-label {
+    font-family: var(--font-label);
   }
   .tracking-luxury {
     letter-spacing: 0.15em;
   }
   .tracking-wide-luxury {
     letter-spacing: 0.25em;
+  }
+  .glass-nav {
+    @apply bg-white/70 backdrop-blur-xl border-t-[0.5px] border-[#EAEAEA];
+  }
+  .ease-out-expo {
+    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
   }
 }

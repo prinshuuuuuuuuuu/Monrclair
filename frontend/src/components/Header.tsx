@@ -72,10 +72,16 @@ export default function Header() {
           </Link>
           {user ? (
             <div className="flex items-center gap-4">
-              <Link to="/profile" className="text-foreground hover:text-primary transition-colors">
-                <User size={18} />
+              <Link to="/profile" className="w-8 h-8 rounded-full overflow-hidden border border-border hover:border-primary transition-all active:scale-95">
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-secondary flex items-center justify-center">
+                    <User size={16} />
+                  </div>
+                )}
               </Link>
-              <button onClick={logout} className="text-foreground hover:text-red-500 transition-colors">
+              <button onClick={logout} className="text-muted-foreground hover:text-red-500 transition-colors">
                 <LogOut size={16} />
               </button>
             </div>

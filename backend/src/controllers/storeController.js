@@ -4,10 +4,13 @@ const db = require('../config/db');
 const getWishlist = async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT product_id FROM wishlist WHERE user_id = ?',
+      `SELECT w.id, w.product_id, p.name, p.price, p.image 
+       FROM wishlist w 
+       JOIN products p ON w.product_id = p.id 
+       WHERE w.user_id = ?`,
       [req.user.id]
     );
-    res.json(rows.map(row => row.product_id.toString()));
+    res.json(rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -25,6 +25,9 @@ const register = async (req, res) => {
       id: userId,
       name,
       email,
+      role: 'user',
+      avatar: null,
+      phone: null,
       token: generateToken(userId),
     });
   } catch (error) {
@@ -57,6 +60,8 @@ const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatar: user.avatar,
+        phone: user.phone,
         token: generateToken(user.id),
       });
     } else {
@@ -93,6 +98,8 @@ const googleLogin = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      avatar: user.avatar,
+      phone: user.phone,
       token: generateToken(user.id),
     });
   } catch (error) {
@@ -171,6 +178,15 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+const updateAddress = async (req, res) => {
+  try {
+    await Address.update(req.params.id, req.user.id, req.body);
+    res.json({ message: 'Address updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const setDefaultAddress = async (req, res) => {
   try {
     await Address.setDefault(req.params.id, req.user.id);
@@ -190,6 +206,7 @@ module.exports = {
   getAddresses,
   addAddress,
   deleteAddress,
+  updateAddress,
   setDefaultAddress
 };
 
