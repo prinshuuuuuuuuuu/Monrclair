@@ -1,15 +1,14 @@
-import { useState } from 'react';
-import { Eye, EyeOff, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Eye, EyeOff, ArrowRight, Lock, CheckCircle2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('prince123@gmail.com');
-  const [password, setPassword] = useState('prince@123');
+  const [email, setEmail] = useState("prince123@gmail.com");
+  const [password, setPassword] = useState("prince@123");
   const [loading, setLoading] = useState(false);
-
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,15 +19,16 @@ export default function AdminLogin() {
     setLoading(true);
     try {
       await login(email, password);
-      // After login, AuthContext will have the user. We check if they are admin.
-      // But for now we just navigate to /admin
-      toast({ title: "Authorized", description: "System Controller access granted." });
-      navigate('/admin');
+      toast({
+        title: "Authorized",
+        description: "System Controller access granted.",
+      });
+      navigate("/admin");
     } catch (error: any) {
-      toast({ 
-        title: "Access Denied", 
+      toast({
+        title: "Access Denied",
         description: "Invalid encryption key or ID.",
-        variant: "destructive" 
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -38,14 +38,17 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-white flex flex-col font-body">
       <header className="p-10">
-        <h1 className="text-2xl font-heading tracking-[0.2em] uppercase">Montclair</h1>
+        <h1 className="text-2xl font-heading tracking-[0.2em] uppercase">
+          Montclair
+        </h1>
       </header>
 
       <main className="flex-1 flex max-w-7xl mx-auto w-full">
-        {/* Left Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-10">
           <div className="w-full max-w-md">
-            <h2 className="font-heading text-6xl mb-4">Client Authentication</h2>
+            <h2 className="font-heading text-6xl mb-4">
+              Client Authentication
+            </h2>
             <p className="flex items-center gap-2 text-[10px] tracking-luxury uppercase text-muted-foreground mb-12">
               <Lock size={12} /> Access the Private Collection
             </p>
@@ -61,7 +64,6 @@ export default function AdminLogin() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full border border-border px-6 py-4 text-sm bg-secondary/10 outline-none focus:border-primary disabled:opacity-50 font-heading italic"
                 />
-
               </div>
 
               <div>
@@ -72,7 +74,7 @@ export default function AdminLogin() {
                 </div>
                 <div className="relative">
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full border border-border px-6 py-4 text-sm bg-transparent outline-none focus:border-primary pr-14 placeholder:text-muted-foreground"
@@ -89,10 +91,17 @@ export default function AdminLogin() {
 
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-[10px] tracking-luxury uppercase text-muted-foreground cursor-pointer">
-                  <input type="checkbox" className="accent-primary" defaultChecked />
+                  <input
+                    type="checkbox"
+                    className="accent-primary"
+                    defaultChecked
+                  />
                   <span>Remember Session</span>
                 </label>
-                <button type="button" className="text-[10px] tracking-luxury uppercase text-foreground border-b border-foreground">
+                <button
+                  type="button"
+                  className="text-[10px] tracking-luxury uppercase text-foreground border-b border-foreground"
+                >
                   Recovery Options
                 </button>
               </div>
@@ -102,12 +111,15 @@ export default function AdminLogin() {
                 disabled={loading}
                 className="w-full bg-[#B87333] text-white py-6 text-xs tracking-luxury uppercase flex items-center justify-center gap-3 hover:opacity-95 transition-opacity disabled:opacity-70"
               >
-                {loading ? 'Authenticating...' : 'Authenticate Account'} <ArrowRight size={16} />
+                {loading ? "Authenticating..." : "Authenticate Account"}{" "}
+                <ArrowRight size={16} />
               </button>
             </form>
 
             <div className="relative my-12">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
               <div className="relative flex justify-center">
                 <span className="bg-white px-6 text-[10px] tracking-luxury uppercase text-muted-foreground">
                   External Authorization
@@ -127,27 +139,35 @@ export default function AdminLogin() {
             <div className="mt-12 flex justify-center">
               <div className="flex items-center gap-3 bg-secondary/30 px-6 py-2 rounded-full">
                 <CheckCircle2 size={14} className="text-[#B87333]" />
-                <span className="text-[10px] tracking-luxury uppercase text-muted-foreground">Secure Login Protocol Active</span>
+                <span className="text-[10px] tracking-luxury uppercase text-muted-foreground">
+                  Secure Login Protocol Active
+                </span>
               </div>
             </div>
 
             <p className="text-center mt-10 text-[10px] tracking-luxury uppercase text-muted-foreground">
-              Don't have an account? <button className="text-foreground border-b border-foreground">Request Access</button>
+              Don't have an account?{" "}
+              <button className="text-foreground border-b border-foreground">
+                Request Access
+              </button>
             </p>
           </div>
         </div>
-
-        {/* Right Preview */}
         <div className="hidden lg:block w-1/2 bg-secondary/10 relative overflow-hidden p-20 flex flex-col justify-end">
           <div className="absolute inset-0 opacity-10">
-            {/* Compass/Watch outline would go here */}
-            <Lock size={800} className="absolute -top-40 -right-40 text-black" />
+            <Lock
+              size={800}
+              className="absolute -top-40 -right-40 text-black"
+            />
           </div>
           <div className="relative z-10">
             <p className="font-heading italic text-xl text-muted-foreground leading-relaxed max-w-sm">
-              "Time is the longest distance between two places, yet precision brings them together."
+              "Time is the longest distance between two places, yet precision
+              brings them together."
             </p>
-            <p className="text-[10px] tracking-luxury uppercase text-muted-foreground mt-4">— The Atelier Journal</p>
+            <p className="text-[10px] tracking-luxury uppercase text-muted-foreground mt-4">
+              — The Atelier Journal
+            </p>
           </div>
         </div>
       </main>

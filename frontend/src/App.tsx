@@ -28,6 +28,8 @@ import AdminLogin from "./views/admin/AdminLogin";
 import AdminDashboard from "./views/admin/AdminDashboard";
 import AdminCategories from "./views/admin/AdminCategories";
 import AdminCoupons from "./views/admin/AdminCoupons";
+import AdminSettings from "./views/admin/AdminSettings";
+import AdminSupport from "./views/admin/AdminSupport";
 import StoreLayout from "./components/StoreLayout";
 import GuestRoute from "./components/GuestRoute";
 
@@ -44,7 +46,6 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Store Routes */}
               <Route element={<StoreLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/collection" element={<CollectionPage />} />

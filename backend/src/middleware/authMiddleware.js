@@ -10,20 +10,23 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
       
       if (decoded.id === 'admin-env-id') {
-        req.user = { id: 'admin-env-id', name: 'System Administrator', email: process.env.ADMIN_EMAIL, role: 'admin' };
+        req.user = { id: 0, name: 'System Administrator', email: process.env.ADMIN_EMAIL, role: 'admin' };
       } else {
-        req.user = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id);
+        if (!user) {
+          return res.status(401).json({ message: 'User no longer exists' });
+        }
+        req.user = user;
       }
       
       next();
     } catch (error) {
-      res.status(401).json({ message: 'Not authorized, token failed' });
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
 
-
   if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 

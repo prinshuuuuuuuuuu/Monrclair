@@ -108,7 +108,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Orders */}
         <Card className="lg:col-span-2 border-none shadow-premium overflow-hidden bg-background/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-4 bg-muted/20 border-b border-muted/30">
             <div className="space-y-1">
@@ -168,8 +167,6 @@ export default function AdminDashboard() {
             </Table>
           </CardContent>
         </Card>
-
-        {/* Top Products */}
         <Card className="border-none shadow-premium overflow-hidden bg-background/50 backdrop-blur-sm">
            <CardHeader className="pb-4 bg-muted/20 border-b border-muted/30">
              <CardTitle className="text-xl font-bold flex items-center gap-2">

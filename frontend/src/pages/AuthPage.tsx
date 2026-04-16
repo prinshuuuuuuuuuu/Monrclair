@@ -147,29 +147,32 @@ export default function AuthPage() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-3">
-          <GoogleLogin
-            onSuccess={async (credentialResponse) => {
-              if (credentialResponse.credential) {
-                try {
-                  setLoading(true);
-                  await googleLogin(credentialResponse.credential);
-                  toast({ title: "Authenticated via Google", description: "Access granted via your secure identity provider." });
-                  navigate('/');
-                } catch (error) {
-                  toast({ title: "Social Authentication Failed", variant: "destructive" });
-                } finally {
-                  setLoading(false);
+        <div className="flex flex-col items-center gap-3 w-full">
+          <div className="w-full max-w-[400px]">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                if (credentialResponse.credential) {
+                  try {
+                    setLoading(true);
+                    await googleLogin(credentialResponse.credential);
+                    toast({ title: "Authenticated via Google", description: "Access granted via your secure identity provider." });
+                    navigate('/');
+                  } catch (error) {
+                    toast({ title: "Social Authentication Failed", variant: "destructive" });
+                  } finally {
+                    setLoading(false);
+                  }
                 }
-              }
-            }}
-            onError={() => {
-              toast({ title: "Google Signaling Error", variant: "destructive" });
-            }}
-            theme="outline"
-            size="large"
-            width="100%"
-          />
+              }}
+              onError={() => {
+                toast({ title: "Google Signaling Error", variant: "destructive" });
+              }}
+              theme="outline"
+              size="large"
+              shape="rectangular"
+              width="400"
+            />
+          </div>
         </div>
 
         <p className="text-center mt-8 text-sm text-muted-foreground">

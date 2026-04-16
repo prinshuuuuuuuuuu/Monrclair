@@ -412,7 +412,12 @@ export default function AdminOrders() {
                   {stat.value}
                 </h3>
               </div>
-              <div className={cn("p-4 rounded-2xl transition-all duration-500 group-hover:scale-110", stat.bg)}>
+              <div
+                className={cn(
+                  "p-4 rounded-2xl transition-all duration-500 group-hover:scale-110",
+                  stat.bg,
+                )}
+              >
                 <stat.icon className={stat.color} size={24} />
               </div>
             </div>
@@ -421,7 +426,6 @@ export default function AdminOrders() {
       </div>
 
       <div className="bg-white/90 backdrop-blur-2xl border border-slate-200/60 rounded-[2.5rem] p-5 sm:p-7 lg:p-9 space-y-6 lg:space-y-10 shadow-2xl shadow-slate-200/50 animate-in fade-in slide-in-from-top-4 duration-1000">
-        {/* Search & Reset Header */}
         <div className="flex flex-col xl:flex-row items-center justify-between gap-6">
           <div className="relative w-full xl:max-w-2xl group flex-1">
             <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
@@ -470,7 +474,6 @@ export default function AdminOrders() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-8">
-         
           <div className="space-y-3 group md:col-span-2 lg:col-span-1 xl:col-span-1">
             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2 block group-focus-within:text-primary transition-colors">
               Date Range
@@ -562,15 +565,57 @@ export default function AdminOrders() {
                 </div>
               </SelectTrigger>
               <SelectContent className="rounded-2xl p-2 border-slate-100 shadow-2xl backdrop-blur-xl bg-white/95">
-                <SelectItem value="all" className="rounded-xl font-medium ">All Orders</SelectItem>
-                <SelectItem value="pending" className="rounded-xl text-black focus:bg-primary">Pending</SelectItem>
-                <SelectItem value="confirmed" className="rounded-xl text-black focus:bg-primary">Confirmed</SelectItem>
-                <SelectItem value="packed" className="rounded-xl text-black focus:bg-primary">Packed</SelectItem>
-                <SelectItem value="shipped" className="rounded-xl text-black focus:bg-primary">Shipped</SelectItem>
-                <SelectItem value="out for delivery" className="rounded-xl text-black focus:bg-primary">Out for Delivery</SelectItem>
-                <SelectItem value="delivered" className="rounded-xl text-black focus:bg-primary">Delivered</SelectItem>
-                <SelectItem value="cancelled" className="rounded-xl text-black focus:bg-primary">Cancelled</SelectItem>
-                <SelectItem value="returned" className="rounded-xl text-black focus:bg-primary">Returned</SelectItem>
+                <SelectItem value="all" className="rounded-xl font-medium ">
+                  All Orders
+                </SelectItem>
+                <SelectItem
+                  value="pending"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Pending
+                </SelectItem>
+                <SelectItem
+                  value="confirmed"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Confirmed
+                </SelectItem>
+                <SelectItem
+                  value="packed"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Packed
+                </SelectItem>
+                <SelectItem
+                  value="shipped"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Shipped
+                </SelectItem>
+                <SelectItem
+                  value="out for delivery"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Out for Delivery
+                </SelectItem>
+                <SelectItem
+                  value="delivered"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Delivered
+                </SelectItem>
+                <SelectItem
+                  value="cancelled"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Cancelled
+                </SelectItem>
+                <SelectItem
+                  value="returned"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Returned
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -592,11 +637,33 @@ export default function AdminOrders() {
                 </div>
               </SelectTrigger>
               <SelectContent className="rounded-2xl p-2 border-slate-100 shadow-2xl backdrop-blur-xl bg-white/95">
-                <SelectItem value="all" className="rounded-xl font-medium">All Status</SelectItem>
-                <SelectItem value="paid" className="rounded-xl text-black focus:bg-primary">Paid</SelectItem>
-                <SelectItem value="pending" className="rounded-xl text-black focus:bg-primary">Pending</SelectItem>
-                <SelectItem value="failed" className="rounded-xl text-black focus:bg-primary">Failed</SelectItem>
-                <SelectItem value="refunded" className="rounded-xl text-black focus:bg-primary">Refunded</SelectItem>
+                <SelectItem value="all" className="rounded-xl font-medium">
+                  All Status
+                </SelectItem>
+                <SelectItem
+                  value="paid"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Paid
+                </SelectItem>
+                <SelectItem
+                  value="pending"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Pending
+                </SelectItem>
+                <SelectItem
+                  value="failed"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Failed
+                </SelectItem>
+                <SelectItem
+                  value="refunded"
+                  className="rounded-xl text-black focus:bg-primary"
+                >
+                  Refunded
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -619,10 +686,18 @@ export default function AdminOrders() {
                 </div>
               </SelectTrigger>
               <SelectContent className="rounded-2xl p-2 border-slate-100 shadow-2xl backdrop-blur-xl bg-white/95">
-                <SelectItem value="all" className="rounded-xl font-medium">All Methods</SelectItem>
-                <SelectItem value="COD" className="rounded-xl">COD</SelectItem>
-                <SelectItem value="Card" className="rounded-xl">Debit/Credit Card</SelectItem>
-                <SelectItem value="UPI" className="rounded-xl">UPI / QR</SelectItem>
+                <SelectItem value="all" className="rounded-xl font-medium">
+                  All Methods
+                </SelectItem>
+                <SelectItem value="COD" className="rounded-xl">
+                  COD
+                </SelectItem>
+                <SelectItem value="Card" className="rounded-xl">
+                  Debit/Credit Card
+                </SelectItem>
+                <SelectItem value="UPI" className="rounded-xl">
+                  UPI / QR
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -630,7 +705,6 @@ export default function AdminOrders() {
       </div>
 
       <div className="relative">
-        {/* Desktop View: Table */}
         <div className="hidden lg:block">
           <Card className="border-none shadow-premium overflow-hidden bg-white/60 backdrop-blur-md rounded-[2.5rem] border border-slate-200/60">
             <Table>
@@ -686,14 +760,19 @@ export default function AdminOrders() {
                       <TableCell className="text-center py-5">
                         {getPaymentBadge(order.payment_status)}
                       </TableCell>
-                      <TableCell className="py-5">{getStatusBadge(order.status)}</TableCell>
+                      <TableCell className="py-5">
+                        {getStatusBadge(order.status)}
+                      </TableCell>
                       <TableCell className="py-5">
                         <div className="flex flex-col">
                           <span className="text-sm font-black text-slate-900 tabular-nums">
                             ₹
-                            {Number(order.total_amount).toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                            })}
+                            {Number(order.total_amount).toLocaleString(
+                              "en-IN",
+                              {
+                                minimumFractionDigits: 2,
+                              },
+                            )}
                           </span>
                           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-1">
                             TOTAL PAYABLE
@@ -719,10 +798,16 @@ export default function AdminOrders() {
                                 size="icon"
                                 className="h-9 w-9 rounded-xl hover:bg-slate-100 transition-colors"
                               >
-                                <MoreVertical size={16} className="text-slate-400" />
+                                <MoreVertical
+                                  size={16}
+                                  className="text-slate-400"
+                                />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-52 p-2 rounded-2xl border-slate-200 shadow-2xl backdrop-blur-xl bg-white/90">
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-52 p-2 rounded-2xl border-slate-200 shadow-2xl backdrop-blur-xl bg-white/90"
+                            >
                               <DropdownMenuItem
                                 onClick={() => setSelectedOrder(order.id)}
                                 className="gap-3 cursor-pointer py-2.5 rounded-xl font-medium focus:bg-primary/5 focus:text-primary transition-colors"
@@ -755,8 +840,12 @@ export default function AdminOrders() {
                           <Package size={48} className="text-slate-300" />
                         </div>
                         <div>
-                          <p className="text-xl font-black text-slate-800">No orders found</p>
-                          <p className="text-sm text-slate-500 mt-1">Try adjusting your filters to see more results</p>
+                          <p className="text-xl font-black text-slate-800">
+                            No orders found
+                          </p>
+                          <p className="text-sm text-slate-500 mt-1">
+                            Try adjusting your filters to see more results
+                          </p>
                         </div>
                       </div>
                     </TableCell>
@@ -766,8 +855,6 @@ export default function AdminOrders() {
             </Table>
           </Card>
         </div>
-
-        {/* Mobile View: Cards */}
         <div className="grid grid-cols-1 gap-4 lg:hidden">
           {paginatedOrders.length > 0 ? (
             paginatedOrders.map((order) => (
@@ -781,25 +868,41 @@ export default function AdminOrders() {
                       #{order.id}
                     </span>
                     <div className="space-y-1">
-                      <h4 className="font-black text-slate-900 leading-tight">{order.customer}</h4>
-                      <p className="text-xs text-slate-500 font-medium">{order.email}</p>
+                      <h4 className="font-black text-slate-900 leading-tight">
+                        {order.customer}
+                      </h4>
+                      <p className="text-xs text-slate-500 font-medium">
+                        {order.email}
+                      </p>
                     </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-10 w-10 rounded-2xl bg-slate-50">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 rounded-2xl bg-slate-50"
+                      >
                         <MoreVertical size={18} />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-slate-200 shadow-2xl">
-                      <DropdownMenuItem onClick={() => setSelectedOrder(order.id)} className="gap-3 py-3 rounded-xl">
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 p-2 rounded-2xl border-slate-200 shadow-2xl"
+                    >
+                      <DropdownMenuItem
+                        onClick={() => setSelectedOrder(order.id)}
+                        className="gap-3 py-3 rounded-xl"
+                      >
                         <Eye size={18} /> View Details
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
                           setUpdatingOrder(order);
                           setNewStatus(order.status);
-                          setNewPaymentStatus(order.payment_status || "pending");
+                          setNewPaymentStatus(
+                            order.payment_status || "pending",
+                          );
                         }}
                         className="gap-3 py-3 rounded-xl text-primary"
                       >
@@ -811,24 +914,34 @@ export default function AdminOrders() {
 
                 <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-100">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Status</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                      Status
+                    </span>
                     {getStatusBadge(order.status)}
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hoverblock text-right">Payment</span>
-                    <div className="flex justify-end">{getPaymentBadge(order.payment_status)}</div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hoverblock text-right">
+                      Payment
+                    </span>
+                    <div className="flex justify-end">
+                      {getPaymentBadge(order.payment_status)}
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Amount</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                      Amount
+                    </span>
                     <span className="text-lg font-black text-slate-900 tabular-nums">
                       ₹{Number(order.total_amount).toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="text-right space-y-1">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Ordered At</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                      Ordered At
+                    </span>
                     <span className="text-xs font-bold text-slate-700 block">
                       {format(new Date(order.created_at), "MMM dd, yyyy")}
                     </span>
@@ -856,7 +969,12 @@ export default function AdminOrders() {
         {totalPages > 1 && (
           <div className="mt-8 bg-white/70 backdrop-blur-md rounded-[1.5rem] border border-slate-200/60 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] ml-2">
-              Showing <span className="text-primary">{startIndex + 1}-{Math.min(filteredOrders.length, startIndex + currentLimit)}</span> of {filteredOrders.length} Orders
+              Showing{" "}
+              <span className="text-primary">
+                {startIndex + 1}-
+                {Math.min(filteredOrders.length, startIndex + currentLimit)}
+              </span>{" "}
+              of {filteredOrders.length} Orders
             </p>
             <div className="flex items-center gap-2">
               <Button
@@ -876,7 +994,9 @@ export default function AdminOrders() {
                     onClick={() => setCurrentPage(i + 1)}
                     className={cn(
                       "w-10 h-10 rounded-xl text-xs font-bold transition-all",
-                      currentPage === i + 1 ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-white"
+                      currentPage === i + 1
+                        ? "bg-primary text-white shadow-lg shadow-primary/20"
+                        : "hover:bg-white",
                     )}
                   >
                     {i + 1}

@@ -12,16 +12,23 @@ const getWishlist = async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
+    console.error('getWishlist Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
 const toggleWishlist = async (req, res) => {
   const { productId } = req.body;
+  const userId = req.user.id;
+
+  if (!productId) {
+    return res.status(400).json({ message: 'Product ID is required' });
+  }
+
   try {
     const [existing] = await db.query(
       'SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?',
-      [req.user.id, productId]
+      [userId, productId]
     );
 
     if (existing.length > 0) {
@@ -30,11 +37,12 @@ const toggleWishlist = async (req, res) => {
     } else {
       await db.query(
         'INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)',
-        [req.user.id, productId]
+        [userId, productId]
       );
       res.json({ message: 'Added to wishlist', action: 'added' });
     }
   } catch (error) {
+    console.error('toggleWishlist Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
