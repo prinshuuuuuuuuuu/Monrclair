@@ -1,13 +1,22 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Lock, ShieldCheck, Eye, EyeOff, Key, X,
-  ArrowLeft, CheckCircle2, Shield, AlertTriangle, Fingerprint
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import api from '@/lib/api';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+  Lock,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Key,
+  X,
+  ArrowLeft,
+  CheckCircle2,
+  Shield,
+  AlertTriangle,
+  Fingerprint,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import api from "@/lib/api";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SecurityPage() {
   const { user } = useAuth();
@@ -17,30 +26,42 @@ export default function SecurityPage() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.newPassword !== formData.confirmPassword) {
-      return toast({ title: 'Parity Failure', description: 'New authentication keys do not match.', variant: 'destructive' });
+      return toast({
+        title: "Parity Failure",
+        description: "New authentication keys do not match.",
+        variant: "destructive",
+      });
     }
 
     setLoading(true);
     try {
-      await api.put('/auth/change-password', {
+      await api.put("/auth/change-password", {
         currentPassword: formData.currentPassword,
-        newPassword: formData.newPassword
+        newPassword: formData.newPassword,
       });
-      toast({ title: 'Registry Calibrated', description: 'Authentication matrix successfully updated.' });
-      setFormData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      toast({
+        title: "Registry Calibrated",
+        description: "Authentication matrix successfully updated.",
+      });
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (error: any) {
       toast({
-        title: 'Modulation Failed',
-        description: error.response?.data?.message || 'Current access key invalid.',
-        variant: 'destructive'
+        title: "Modulation Failed",
+        description:
+          error.response?.data?.message || "Current access key invalid.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -48,79 +69,104 @@ export default function SecurityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCFCFC] pt-32 pb-24 px-6 lg:px-20 animate-fade-in relative overflow-hidden">
-      {/* Decorative Grid background */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex items-center justify-center">
-        <div className="w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+    <div className="min-h-screen bg-[#FDFDFD] pt-24 pb-20 px-4 md:px-8 lg:px-16 xl:px-24">
+      {/* Background Ornaments */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden select-none opacity-[0.03]">
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#B87333] rounded-full blur-[120px]"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        {/* Header Section */}
-        <div className="mb-20 space-y-8">
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Navigation & Header */}
+        <div className="mb-12 md:mb-16">
           <button
-            onClick={() => navigate('/profile')}
-            className="group flex items-center gap-3 text-[10px] font-label uppercase tracking-widest text-[#B87333] hover:opacity-70 transition-all font-bold"
+            onClick={() => navigate("/profile")}
+            className="group inline-flex items-center gap-2 text-[10px] font-label uppercase tracking-[0.2em] text-[#B87333] hover:text-black transition-all duration-300 mb-8"
           >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Profile
           </button>
 
-          <div className="space-y-4">
-            <p className="font-label text-xs uppercase tracking-[0.4em] text-secondary opacity-40 font-bold">Authentication Vault</p>
-            <h1 className="font-headline text-6xl lg:text-7xl text-black leading-tight">Security <em className="text-[#B87333] not-italic">Matrix</em></h1>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3">
+              <h1 className="font-headline text-5xl md:text-6xl lg:text-7xl text-black tracking-tight leading-none">
+                Forgot <span className="text-[#B87333] italic">Password</span>
+              </h1>
+              <p className="font-body text-black/70 text-base md:text-lg max-w-2xl leading-relaxed">
+                No worries update your credentials quickly and keep your account protected.
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          {/* Main Form Area */}
-          <div className="lg:col-span-7 space-y-12">
-            <div className="bg-white border border-[#F0F0F0] rounded-[64px] p-10 md:p-14 shadow-2xl shadow-black/[0.02]">
-              <form onSubmit={handleUpdate} className="space-y-10">
-                {/* Current Password Field */}
-                <div className="space-y-4">
-                  <label className="text-[10px] font-label uppercase tracking-widest text-secondary opacity-50 font-bold px-1">Active Access Key</label>
-                  <div className="relative group">
-                    <input
-                      type={showCurrent ? "text" : "password"}
-                      value={formData.currentPassword}
-                      onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                      className="w-full bg-[#FBFBFB] border border-[#F0F0F0] px-8 py-5 rounded-[24px] text-sm focus:border-[#B87333] outline-none transition-all font-body tracking-wider"
-                      placeholder="••••••••••••"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrent(!showCurrent)}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 text-secondary hover:text-black transition-colors"
-                    >
-                      {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16">
+          <div className="lg:col-span-12 xl:col-span-8">
+            <div className="bg-white border border-[#F0F0F0] rounded-[40px] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-8 opacity-5">
+                <ShieldCheck size={120} className="text-black" />
+              </div>
+
+              <form onSubmit={handleUpdate} className="space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="md:col-span-2 space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#B87333]/10 flex items-center justify-center text-[#B87333]">
+                        <Lock size={14} />
+                      </div>
+                      <h3 className="font-label text-xs uppercase tracking-widest font-bold">Password Settings</h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="block text-[11px] font-label uppercase tracking-widest text-[#B87333] font-bold ml-1">
+                        Current Password
+                      </label>
+                      <div className="relative group">
+                        <input
+                          type={showCurrent ? "text" : "password"}
+                          value={formData.currentPassword}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              currentPassword: e.target.value,
+                            })
+                          }
+                          className="w-full bg-[#FBFBFB] border border-[#EEEEEE] px-7 py-5 rounded-2xl text-sm focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 outline-none transition-all font-body tracking-wider"
+                          placeholder="Enter your current password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrent(!showCurrent)}
+                          className="absolute right-6 top-1/2 -translate-y-1/2 text-secondary/40 hover:text-[#B87333] transition-colors"
+                        >
+                          {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Divider */}
-                <div className="flex items-center gap-6 opacity-10">
-                  <div className="h-[1px] flex-1 bg-black"></div>
-                  <Lock size={14} />
-                  <div className="h-[1px] flex-1 bg-black"></div>
-                </div>
-
-                {/* New Passwords */}
-                <div className="grid grid-cols-1 gap-8">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-label uppercase tracking-widest text-[#B87333] font-bold px-1">New Protocol Key</label>
-                    <div className="relative">
+                    <label className="block text-[11px] font-label uppercase tracking-widest text-[#B87333] font-bold ml-1">
+                      New Password
+                    </label>
+                    <div className="relative group">
                       <input
                         type={showNew ? "text" : "password"}
                         value={formData.newPassword}
-                        onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                        className="w-full bg-[#FBFBFB] border border-[#F0F0F0] px-8 py-5 rounded-[24px] text-sm focus:border-[#B87333] outline-none transition-all font-body tracking-wider"
-                        placeholder="••••••••••••"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            newPassword: e.target.value,
+                          })
+                        }
+                        className="w-full bg-[#FBFBFB] border border-[#EEEEEE] px-7 py-5 rounded-2xl text-sm focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 outline-none transition-all font-body tracking-wider"
+                        placeholder="Create new password"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowNew(!showNew)}
-                        className="absolute right-6 top-1/2 -translate-y-1/2 text-secondary hover:text-black transition-colors"
+                        className="absolute right-6 top-1/2 -translate-y-1/2 text-secondary/40 hover:text-[#B87333] transition-colors"
                       >
                         {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -128,74 +174,79 @@ export default function SecurityPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-[10px] font-label uppercase tracking-widest text-secondary opacity-50 font-bold px-1">Confirm New Encryption</label>
+                    <label className="block text-[11px] font-label uppercase tracking-widest text-[#B87333] font-bold ml-1">
+                      Confirm New Password
+                    </label>
                     <input
                       type="password"
                       value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full bg-[#FBFBFB] border border-[#F0F0F0] px-8 py-5 rounded-[24px] text-sm focus:border-[#B87333] outline-none transition-all font-body tracking-wider"
-                      placeholder="••••••••••••"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      className="w-full bg-[#FBFBFB] border border-[#EEEEEE] px-7 py-5 rounded-2xl text-sm focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 outline-none transition-all font-body tracking-wider"
+                      placeholder="Repeat new password"
                       required
                     />
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-black text-white py-6 rounded-[32px] font-label text-[11px] uppercase tracking-[0.3em] font-bold hover:bg-[#B87333] transition-all shadow-xl shadow-black/5 disabled:opacity-50 flex items-center justify-center gap-3"
-                >
-                  {loading ? "Modulating..." : "Calibrate Matrix"}
-                  {!loading && <Key size={16} />}
-                </button>
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full md:w-auto min-w-[240px] bg-black text-white px-10 py-5 rounded-full font-label text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-[#B87333] active:scale-95 transition-all shadow-xl shadow-black/5 disabled:opacity-50 flex items-center justify-center gap-3"
+                  >
+                    {loading ? "Modulating..." : "Update Password"}
+                    {!loading && <Key size={14} />}
+                  </button>
+                </div>
               </form>
             </div>
           </div>
 
-          {/* Side Info Cards */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="bg-[#F9F9F9] border border-[#F0F0F0] rounded-[48px] p-10 space-y-6">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                <ShieldCheck size={28} className="text-[#B87333]" />
+          {/* Sidebar / Tips Section */}
+          <div className="lg:col-span-12 xl:col-span-4 space-y-8">
+            <div className="bg-[#B87333]/[0.03] border border-[#B87333]/10 rounded-[40px] p-8 md:p-10 space-y-8">
+              <div className="space-y-2">
+                <Shield className="text-[#B87333] mb-4" size={32} />
+                <h4 className="font-headline text-2xl text-black">Security Tips</h4>
+                <p className="font-body text-sm text-gray-700 leading-relaxed font-medium">
+                  A strong security protocol protects your personal refinery.
+                </p>
               </div>
-              <div className="space-y-3">
-                <h4 className="font-headline text-2xl text-black italic">Encryption Integrity</h4>
-                <p className="text-secondary text-sm leading-relaxed opacity-60 font-body">Your access keys are managed through AES-256 modulation protocols. Regular calibration is recommended to maintain registry safety.</p>
-              </div>
-              <div className="pt-4 flex items-center gap-3 text-[9px] font-label tracking-widest uppercase text-green-600 font-bold">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                Matrix Status: STABLE
-              </div>
-            </div>
 
-            <div className="border border-[#F0F0F0] rounded-[48px] p-10 space-y-8">
-              <div className="flex items-center gap-4">
-                <AlertTriangle size={18} className="text-[#B87333] opacity-40" />
-                <p className="text-[10px] font-label uppercase tracking-widest text-secondary font-bold">Security Guidelines</p>
-              </div>
-              <ul className="space-y-6">
+              <div className="space-y-6">
                 {[
-                  { label: 'Minimum 8 Alpha-Numerical keys', icon: Fingerprint },
-                  { label: 'Avoid repetitive patterns', icon: Key },
-                  { label: 'Session expires upon recalibration', icon: Shield }
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-4 text-xs text-secondary opacity-60 font-body">
-                    <item.icon size={12} className="text-[#B87333]" />
-                    {item.label}
-                  </li>
+                  { icon: CheckCircle2, text: "Minimum 12 characters" },
+                  { icon: CheckCircle2, text: "Combine uppercase & lowercase" },
+                  { icon: Fingerprint, text: "Include special characters" },
+                  { icon: AlertTriangle, text: "Avoid common patterns" },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-4 group">
+                    <item.icon size={16} className="text-[#B87333] mt-1 shrink-0" />
+                    <span className="font-label text-[11px] uppercase tracking-wider text-black/70 group-hover:text-[#B87333] transition-colors">
+                      {item.text}
+                    </span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
+              <div className="pt-6 border-t border-[#B87333]/10">
+                <div className="flex items-center gap-4 p-4 bg-white/50 rounded-2xl border border-white">
+                  <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-600">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-label font-bold uppercase tracking-tight text-black">SSL Protected</div>
+                    <div className="text-[11px] text-gray-600 font-body font-medium">Encrypted connection active</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Technical Footer Metadata */}
-        <div className="mt-40 border-t border-[#F0F0F0] pt-20 flex flex-col md:flex-row justify-between items-center gap-8 text-secondary opacity-30 text-[9px] font-label tracking-widest uppercase font-bold">
-          <div className="flex gap-12">
-            <p>ID_SEC_HASH: SHA-512</p>
-            <p>LAST_SYNC: {new Date().toLocaleTimeString()}</p>
-          </div>
-          <p>© Registry Atlas // Authentication Wing</p>
         </div>
       </div>
     </div>

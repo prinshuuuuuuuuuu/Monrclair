@@ -107,7 +107,8 @@ const googleLogin = async (req, res) => {
       token: generateToken(user.id),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Google authentication failed' });
+    console.error('Google Login Error:', error);
+    res.status(500).json({ message: 'Google authentication failed', error: error.message });
   }
 };
 

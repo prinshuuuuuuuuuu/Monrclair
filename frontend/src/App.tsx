@@ -30,6 +30,8 @@ import AdminCategories from "./views/admin/AdminCategories";
 import AdminCoupons from "./views/admin/AdminCoupons";
 import StoreLayout from "./components/StoreLayout";
 import GuestRoute from "./components/GuestRoute";
+import AdminSettings from "./pages/AdminSettings";
+import AdminSupport from "./pages/AdminSupport";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +44,9 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter
+            future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+          >
             <Routes>
               {/* Store Routes */}
               <Route element={<StoreLayout />}>
@@ -78,8 +82,8 @@ const App = () => (
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="users" element={<AdminUsers />} />
-                <Route path="settings" element={<AdminSettings />} />
-                <Route path="support" element={<AdminSupport />} />
+                {/* <Route path="settings" element={<AdminSettings />} />
+                <Route path="support" element={<AdminSupport />} /> */}
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="coupons" element={<AdminCoupons />} />
               </Route>

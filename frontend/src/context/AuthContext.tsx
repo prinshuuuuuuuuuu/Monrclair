@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         api.get('/store/wishlist')
       ]);
       setCart(cart);
-      setWishlist(wishlist);
+      setWishlist(wishlist.map((item: any) => item.product_id.toString()));
     } catch (err) {
       console.error('Failed to hydrate store:', err);
     }

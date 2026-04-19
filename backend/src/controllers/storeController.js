@@ -10,8 +10,12 @@ const getWishlist = async (req, res) => {
        WHERE w.user_id = ?`,
       [req.user.id]
     );
-    res.json(rows);
+    res.json(rows.map(row => ({ 
+      ...row, 
+      product_id: row.product_id.toString() 
+    })));
   } catch (error) {
+    console.error('getWishlist error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -35,6 +39,7 @@ const toggleWishlist = async (req, res) => {
       res.json({ message: 'Added to wishlist', action: 'added' });
     }
   } catch (error) {
+    console.error('toggleWishlist error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -48,6 +53,7 @@ const getCart = async (req, res) => {
     );
     res.json(rows.map(row => ({ ...row, productId: row.productId.toString() })));
   } catch (error) {
+    console.error('getCart error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -61,6 +67,7 @@ const addToCart = async (req, res) => {
     );
     res.json({ message: 'Cart updated' });
   } catch (error) {
+    console.error('addToCart error:', error);
     res.status(500).json({ message: error.message });
   }
 };
