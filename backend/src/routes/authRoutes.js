@@ -19,12 +19,8 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/google', googleLogin);
 router.get('/me', protect, getMe);
-
-// Profile & Security
 router.put('/profile', protect, updateProfile);
 router.put('/change-password', protect, changePassword);
-
-// Addresses
 router.get('/addresses', protect, getAddresses);
 router.post('/addresses', protect, addAddress);
 router.delete('/addresses/:id', protect, deleteAddress);

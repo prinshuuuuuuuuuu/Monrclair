@@ -53,7 +53,6 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
 
   return (
     <article className="group relative flex flex-col bg-surface-container rounded-2xl border border-outline-variant/20 hover:border-outline-variant/50 hover:shadow-xl hover:shadow-black/5 overflow-hidden transition-all duration-300 animate-fade-up">
-      {/* Image Section */}
       <Link
         to={`/product/${product.id}`}
         className="relative aspect-[4/5] bg-surface-container-lowest overflow-hidden flex items-center justify-center cursor-pointer group/img"
@@ -68,7 +67,6 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
         />
       </Link>
 
-      {/* Wishlist Button - Absolute Top Right */}
       <button
         onClick={handleWishlist}
         className={cn(
@@ -83,8 +81,6 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
           fill={isWished ? "currentColor" : "none"}
         />
       </button>
-
-      {/* Content Section */}
       <div className="flex flex-col flex-1 p-4 gap-3">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-headline text-base sm:text-lg font-light text-on-surface leading-snug line-clamp-2 flex-1 group-hover:text-primary transition-colors">
@@ -104,8 +100,6 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
             </span>
           </div>
         </div>
-
-        {/* Specs / Brand - subtle distinction */}
         <div className="flex items-center gap-2">
           <span className="font-label text-[9px] uppercase tracking-widest text-[#B87333]">
             {product.brand || 'Montclair'}

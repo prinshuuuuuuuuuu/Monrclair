@@ -70,14 +70,12 @@ export default function SecurityPage() {
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] pt-24 pb-20 px-4 md:px-8 lg:px-16 xl:px-24">
-      {/* Background Ornaments */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden select-none opacity-[0.03]">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#B87333] rounded-full blur-[120px]"></div>
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black rounded-full blur-[120px]"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Navigation & Header */}
         <div className="mb-12 md:mb-16">
           <button
             onClick={() => navigate("/profile")}
@@ -207,7 +205,6 @@ export default function SecurityPage() {
             </div>
           </div>
 
-          {/* Sidebar / Tips Section */}
           <div className="lg:col-span-12 xl:col-span-4 space-y-8">
             <div className="bg-[#B87333]/[0.03] border border-[#B87333]/10 rounded-[40px] p-8 md:p-10 space-y-8">
               <div className="space-y-2">

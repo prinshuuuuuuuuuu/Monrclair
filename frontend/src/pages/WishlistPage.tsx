@@ -83,7 +83,7 @@ export default function WishlistPage() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl font-light text-on-surface leading-none">
-              My <span className="text-[#B87333]">Gallery</span>
+              My <span className="text-[#B87333]">Wishlist</span>
             </h1>
           </div>
 

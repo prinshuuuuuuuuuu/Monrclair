@@ -26,7 +26,6 @@ const {
 } = require('../controllers/couponController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// Multer Storage Configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/uploads/');

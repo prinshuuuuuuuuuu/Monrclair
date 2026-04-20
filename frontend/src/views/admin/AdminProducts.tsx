@@ -74,7 +74,7 @@ export default function AdminProducts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"grid" | "table">("table");
 
-  const firstPageLimit = PAGINATION.ADMIN_USERS_FIRST_PAGE; // Reusing admin pattern
+  const firstPageLimit = PAGINATION.ADMIN_USERS_FIRST_PAGE; 
   const nextPagesLimit = PAGINATION.ADMIN_USERS_NEXT_PAGES;
 
   const { data: products = [], isLoading } = useQuery({

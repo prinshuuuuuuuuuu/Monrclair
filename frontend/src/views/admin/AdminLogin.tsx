@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import { Eye, EyeOff, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Eye, EyeOff, ArrowRight, Lock, CheckCircle2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import loginBg from "@/assets/luxury-watch-login.png";
+import { FcGoogle } from "react-icons/fc";
+import { FaApple } from "react-icons/fa";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('prince123@gmail.com');
-  const [password, setPassword] = useState('prince@123');
+  const [email, setEmail] = useState("prince123@gmail.com");
+  const [password, setPassword] = useState("prince@123");
   const [loading, setLoading] = useState(false);
-
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,15 +22,16 @@ export default function AdminLogin() {
     setLoading(true);
     try {
       await login(email, password);
-      // After login, AuthContext will have the user. We check if they are admin.
-      // But for now we just navigate to /admin
-      toast({ title: "Authorized", description: "System Controller access granted." });
-      navigate('/admin');
+      toast({
+        title: "Authorized",
+        description: "System Controller access granted.",
+      });
+      navigate("/admin");
     } catch (error: any) {
-      toast({ 
-        title: "Access Denied", 
+      toast({
+        title: "Access Denied",
         description: "Invalid encryption key or ID.",
-        variant: "destructive" 
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -36,121 +39,173 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-body">
-      <header className="p-10">
-        <h1 className="text-2xl font-heading tracking-[0.2em] uppercase">Montclair</h1>
-      </header>
+    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 lg:p-8 font-body">
+      <div className="w-full max-w-6xl bg-white rounded-[2rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] border border-neutral-100 flex flex-col lg:flex-row min-h-[600px] lg:h-[800px]">
+        <div className="w-full lg:w-1/2 p-4 lg:p-6">
+          <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden group">
+            <div className="absolute inset-0 bg-black/10 z-10" />
+            <img
+              src={loginBg}
+              alt="Luxury Watch"
+              className="w-full h-full object-cover transition-transform duration-[10s] ease-out group-hover:scale-110"
+            />
 
-      <main className="flex-1 flex max-w-7xl mx-auto w-full">
-        {/* Left Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-10">
-          <div className="w-full max-w-md">
-            <h2 className="font-heading text-6xl mb-4">Client Authentication</h2>
-            <p className="flex items-center gap-2 text-[10px] tracking-luxury uppercase text-muted-foreground mb-12">
-              <Lock size={12} /> Access the Private Collection
-            </p>
-
-            <form onSubmit={handleLogin} className="space-y-8">
-              <div>
-                <label className="text-[10px] tracking-luxury uppercase text-muted-foreground block mb-3 font-bold">
-                  Email Identifier
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-border px-6 py-4 text-sm bg-secondary/10 outline-none focus:border-primary disabled:opacity-50 font-heading italic"
-                />
-
+            <div className="absolute inset-0 z-20 flex flex-col justify-between p-6 lg:p-10">
+              <div className="animate-fade-in">
+                <h1 className="text-xl font-heading tracking-[0.5em] uppercase text-white drop-shadow-lg">
+                  Monrclair
+                </h1>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-[10px] tracking-luxury uppercase text-muted-foreground font-bold">
-                    Encryption Key
-                  </label>
+              <div
+                className="animate-fade-in"
+                style={{ animationDelay: "200ms" }}
+              >
+                <div className="h-px w-8 bg-[#B87333] mb-6" />
+                <p className="font-heading italic text-3xl lg:text-4xl text-white leading-tight mb-4 drop-shadow-md">
+                  Crafting <span className="text-[#B87333]">Legacy</span>.
+                </p>
+                <p className="text-[10px] tracking-[0.4em] uppercase text-white/60 font-medium">
+                  Administrative Portal
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col justify-center px-8 lg:px-20 py-12 bg-white">
+          <div
+            className="w-full max-w-[360px] mx-auto animate-fade-in"
+            style={{ animationDelay: "400ms" }}
+          >
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-white to-neutral-50 flex items-center justify-center shadow-[0_8px_20px_-6px_rgba(184,115,51,0.15)] border border-[#B87333]/10 relative group overflow-hidden">
+                  <div className="absolute inset-0 bg-[#B87333]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <Lock
+                    size={16}
+                    className="text-[#B87333] relative z-10 drop-shadow-[0_2px_4px_rgba(184,115,51,0.1)]"
+                  />
                 </div>
-                <div className="relative">
+                <div className="h-px w-8 bg-neutral-100" />
+                <span className="text-[10px] tracking-[0.3em] uppercase text-[#B87333] font-bold">
+                  Admin Portal
+                </span>
+              </div>
+              <h2 className="font-heading text-4xl text-neutral-900 mb-3 tracking-tight">
+                Secure Login
+              </h2>
+              <p className="text-sm text-neutral-400 font-light leading-relaxed">
+                Enter your administrative credentials to access the secure
+                dashboard.
+              </p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
+                  Email Address
+                </label>
+                <div className="relative group">
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                    placeholder="name@monrclair.com"
+                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between ml-1">
+                  <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold">
+                    Access Key
+                  </label>
+                  <button
+                    type="button"
+                    className="text-[9px] tracking-[0.1em] uppercase text-[#B87333] hover:underline font-bold"
+                  >
+                    Forgot?
+                  </button>
+                </div>
+                <div className="relative group">
+                  <input
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-border px-6 py-4 text-sm bg-transparent outline-none focus:border-primary pr-14 placeholder:text-muted-foreground"
+                    autoComplete="current-password"
+                    required
+                    placeholder="Enter security key"
+                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200 pr-12"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-600 transition-colors"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 text-[10px] tracking-luxury uppercase text-muted-foreground cursor-pointer">
-                  <input type="checkbox" className="accent-primary" defaultChecked />
-                  <span>Remember Session</span>
+              <div className="flex items-center gap-3 py-1">
+                <label className="relative flex items-center cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="peer sr-only"
+                    defaultChecked
+                  />
+                  <div className="w-4 h-4 border border-neutral-200 rounded transition-all group-hover:border-[#B87333] peer-checked:bg-[#B87333] peer-checked:border-[#B87333]" />
+                  <CheckCircle2
+                    size={10}
+                    className="absolute left-[3px] top-[3px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                  />
+                  <span className="ml-3 text-[10px] tracking-[0.1em] uppercase text-neutral-400 font-medium group-hover:text-neutral-600 transition-colors">
+                    Maintain Authentication
+                  </span>
                 </label>
-                <button type="button" className="text-[10px] tracking-luxury uppercase text-foreground border-b border-foreground">
-                  Recovery Options
-                </button>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#B87333] text-white py-6 text-xs tracking-luxury uppercase flex items-center justify-center gap-3 hover:opacity-95 transition-opacity disabled:opacity-70"
+                className="group relative w-full h-[58px] bg-neutral-900 text-white rounded-xl text-[11px] tracking-[0.4em] uppercase overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-neutral-200 disabled:opacity-70"
               >
-                {loading ? 'Authenticating...' : 'Authenticate Account'} <ArrowRight size={16} />
+                <div className="relative z-10 flex items-center justify-center gap-3">
+                  {loading ? (
+                    <span className="animate-pulse">Authenticating...</span>
+                  ) : (
+                    <>
+                      Sign In
+                      <ArrowRight
+                        size={16}
+                        className="group-hover:translate-x-1.5 transition-transform duration-300"
+                      />
+                    </>
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-[#B87333] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]" />
               </button>
             </form>
 
-            <div className="relative my-12">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-6 text-[10px] tracking-luxury uppercase text-muted-foreground">
-                  External Authorization
-                </span>
+            <div className="mt-12">
+              <div className="grid grid-cols-2 gap-4">
+                <button className="flex items-center justify-center gap-2 border border-neutral-100 py-3.5 rounded-xl text-[10px] tracking-[0.1em] uppercase text-neutral-500 hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold">
+                  <FcGoogle size={18} />
+                  Google
+                </button>
+                <button className="flex items-center justify-center gap-2 border border-neutral-100 py-3.5 rounded-xl text-[10px] tracking-[0.1em] uppercase text-neutral-500 hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold">
+                  <FaApple size={18} className="text-black" />
+                  Apple
+                </button>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <button className="border border-border py-4 text-[10px] tracking-luxury uppercase hover:border-primary transition-colors flex items-center justify-center gap-2 text-muted-foreground">
-                Google
-              </button>
-              <button className="border border-border py-4 text-[10px] tracking-luxury uppercase hover:border-primary transition-colors flex items-center justify-center gap-2 text-muted-foreground">
-                Apple
-              </button>
-            </div>
-
-            <div className="mt-12 flex justify-center">
-              <div className="flex items-center gap-3 bg-secondary/30 px-6 py-2 rounded-full">
-                <CheckCircle2 size={14} className="text-[#B87333]" />
-                <span className="text-[10px] tracking-luxury uppercase text-muted-foreground">Secure Login Protocol Active</span>
-              </div>
-            </div>
-
-            <p className="text-center mt-10 text-[10px] tracking-luxury uppercase text-muted-foreground">
-              Don't have an account? <button className="text-foreground border-b border-foreground">Request Access</button>
-            </p>
           </div>
         </div>
-
-        {/* Right Preview */}
-        <div className="hidden lg:block w-1/2 bg-secondary/10 relative overflow-hidden p-20 flex flex-col justify-end">
-          <div className="absolute inset-0 opacity-10">
-            {/* Compass/Watch outline would go here */}
-            <Lock size={800} className="absolute -top-40 -right-40 text-black" />
-          </div>
-          <div className="relative z-10">
-            <p className="font-heading italic text-xl text-muted-foreground leading-relaxed max-w-sm">
-              "Time is the longest distance between two places, yet precision brings them together."
-            </p>
-            <p className="text-[10px] tracking-luxury uppercase text-muted-foreground mt-4">— The Atelier Journal</p>
-          </div>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }

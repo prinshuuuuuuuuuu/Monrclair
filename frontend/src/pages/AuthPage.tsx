@@ -1,16 +1,25 @@
-import { useState } from 'react';
-import { Eye, EyeOff, ArrowRight, Lock, Sparkles } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { GoogleLogin } from '@react-oauth/google';
+import { useState } from "react";
+import {
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Lock,
+  CheckCircle2,
+  Sparkles,
+  UserPlus,
+} from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { GoogleLogin } from "@react-oauth/google";
+import loginBg from "@/assets/luxury-watch-login.png";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [isForgot, setIsForgot] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -23,23 +32,32 @@ export default function AuthPage() {
     setLoading(true);
     try {
       if (isForgot) {
-        toast({ title: "Reset Sequence Initialized", description: "Verification protocols sent to your email identifier." });
+        toast({
+          title: "Reset Sequence Initialized",
+          description: "Verification protocols sent to your email identifier.",
+        });
         setIsForgot(false);
         setIsLogin(true);
       } else if (isLogin) {
         await login(email, password);
-        toast({ title: "Authenticated", description: "Access granted to the Private Collection." });
-        navigate('/');
+        toast({
+          title: "Authenticated",
+          description: "Access granted to the Private Collection.",
+        });
+        navigate("/");
       } else {
-        await register(name || email.split('@')[0], email, password);
-        toast({ title: "Access Requested", description: "Your account has been created." });
-        navigate('/');
+        await register(name || email.split("@")[0], email, password);
+        toast({
+          title: "Access Requested",
+          description: "Your account has been created.",
+        });
+        navigate("/");
       }
     } catch (error: any) {
       toast({
         title: "Authentication Failed",
         description: error.response?.data?.message || "Check your credentials.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -47,318 +65,290 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-background">
+    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-2 sm:p-4 lg:p-8 font-body">
+      <div className="w-full max-w-6xl bg-white rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] border border-neutral-100 flex flex-col lg:flex-row h-auto lg:min-h-[750px]">
+        <div className="w-full lg:w-1/2 p-3 sm:p-4 lg:p-6 h-48 sm:h-64 lg:h-auto">
+          <div className="relative w-full h-full rounded-[1rem] sm:rounded-[1.5rem] overflow-hidden group">
+            <div className="absolute inset-0 bg-black/10 z-10" />
+            <img
+              src={loginBg}
+              alt="Luxury Watch"
+              className="w-full h-full object-cover transition-transform duration-[10s] ease-out group-hover:scale-110"
+            />
 
-      {/* ── LEFT — Watch Hero Panel ── */}
-      <div className="relative lg:w-[52%] h-64 sm:h-80 lg:h-auto overflow-hidden flex-shrink-0">
-
-        {/* Full-bleed watch photo */}
-        <img
-          src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=90&auto=format&fit=crop"
-          alt="Luxury timepiece"
-          className="absolute inset-0 w-full h-full object-cover object-center scale-105"
-          style={{ filter: 'brightness(0.82) contrast(1.08) saturate(1.1)' }}
-        />
-
-        {/* Deep gradient overlay — bottom-up dark for text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
-
-        {/* Left-side dark vignette */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
-
-        {/* Gold shimmer line top */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[2px]"
-          style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, #F0D080, #C9A84C, transparent)' }}
-        />
-
-        {/* Brand badge — top left */}
-        <div className="absolute top-7 left-8 z-10">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-6 h-[1px]" style={{ background: '#C9A84C' }} />
-            <span className="text-[9px] tracking-[0.38em] uppercase font-medium" style={{ color: '#C9A84C' }}>
-              Montclair
-            </span>
-          </div>
-          <p className="text-white/30 text-[8px] tracking-[0.25em] uppercase">Private Collection</p>
-        </div>
-
-        {/* Corner decorative bracket — top right */}
-        <div className="absolute top-6 right-6 z-10 hidden lg:block">
-          <div className="w-6 h-6 border-t border-r" style={{ borderColor: 'rgba(201,168,76,0.4)' }} />
-        </div>
-        <div className="absolute bottom-6 left-6 z-10 hidden lg:block">
-          <div className="w-6 h-6 border-b border-l" style={{ borderColor: 'rgba(201,168,76,0.4)' }} />
-        </div>
-
-        {/* Bottom content — tagline + collection label */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 p-8 lg:p-10">
-
-          {/* Gold accent line */}
-          <div className="w-10 h-[1px] mb-5" style={{ background: '#C9A84C' }} />
-
-          {/* Tagline */}
-          <blockquote
-            className="text-white text-xl sm:text-2xl lg:text-3xl font-light leading-snug mb-4 tracking-wide max-w-xs"
-            style={{ fontFamily: 'Georgia, "Times New Roman", serif', textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
-          >
-            "Time, mastered to perfection."
-          </blockquote>
-
-          {/* Watch details row */}
-          <div className="flex items-center gap-5 flex-wrap">
-            {[
-              { label: 'Movement', value: 'Swiss Automatic' },
-              { label: 'Reserve', value: '72 Hours' },
-              { label: 'Edition', value: 'Limited' },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <p className="text-[8px] tracking-[0.3em] uppercase mb-0.5" style={{ color: '#C9A84C' }}>{label}</p>
-                <p className="text-white/70 text-[10px] tracking-[0.15em] uppercase">{value}</p>
+            <div className="absolute inset-0 z-20 flex flex-col justify-between p-6 lg:p-10">
+              <div className="animate-fade-in">
+                <h1 className="text-sm sm:text-base lg:text-xl font-heading tracking-[0.5em] uppercase text-white drop-shadow-lg">
+                  Monrclair
+                </h1>
               </div>
-            ))}
-          </div>
 
-          {/* Gold shimmer bottom line */}
-          <div
-            className="mt-6 h-[1px] w-full"
-            style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.6), rgba(201,168,76,0.1), transparent)' }}
-          />
-          <p className="mt-3 text-[8px] tracking-[0.35em] uppercase text-white/25">Est. MMXXIII · Geneva, Switzerland</p>
-        </div>
-      </div>
-
-      {/* ── RIGHT — Auth Form Panel ── */}
-      <div className="flex-1 flex items-center justify-center px-5 sm:px-10 md:px-14 py-14 lg:py-20 bg-background">
-        <div className="w-full max-w-[400px]">
-
-          {/* Mobile-only brand header */}
-          <div className="flex items-center gap-2 mb-10 lg:hidden">
-            <div className="w-5 h-[1px]" style={{ background: '#C9A84C' }} />
-            <span className="text-[9px] tracking-[0.35em] uppercase font-medium" style={{ color: '#C9A84C' }}>
-              Montclair · Private Collection
-            </span>
-          </div>
-
-          {/* Heading block */}
-          <div className="mb-9">
-            <p className="text-[9px] tracking-[0.32em] uppercase text-muted-foreground mb-3">
-              {isForgot
-                ? '— Recovery Protocol'
-                : isLogin
-                  ? '— Secure Portal'
-                  : '— New Client'}
-            </p>
-            <h1 className="text-3xl sm:text-4xl tracking-tight leading-tight font-heading mb-3">
-              {isForgot
-                ? 'Recovery\nOptions'
-                : isLogin
-                  ? 'Client\nAuthentication'
-                  : 'Request\nAccess'}
-            </h1>
-            <div className="flex items-center gap-2 text-muted-foreground mt-2">
-              <Lock size={11} strokeWidth={1.5} />
-              <span className="text-[9px] tracking-[0.26em] uppercase">
-                {isForgot
-                  ? 'Reset your encryption key'
-                  : isLogin
-                    ? 'Access the Private Collection'
-                    : 'Create your client profile'}
-              </span>
-            </div>
-          </div>
-
-          {/* Gold hairline rule */}
-          <div
-            className="w-10 h-[1px] mb-8"
-            style={{ background: 'linear-gradient(90deg, #C9A84C, transparent)' }}
-          />
-
-          {/* ── Form ── */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-
-            {/* Name (register only) */}
-            {!isForgot && !isLogin && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-[9px] tracking-[0.28em] uppercase text-muted-foreground mb-2">
-                  Client Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
-                  className="w-full border border-border bg-transparent px-4 py-3.5 text-sm outline-none transition-all duration-200 focus:border-foreground placeholder:text-muted-foreground/40 rounded-none"
-                />
-              </div>
-            )}
-
-            {/* Email */}
-            <div>
-              <label className="block text-[9px] tracking-[0.28em] uppercase text-muted-foreground mb-2">
-                Email Identifier
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="client@montclair.ch"
-                className="w-full border border-border bg-transparent px-4 py-3.5 text-sm outline-none transition-all duration-200 focus:border-foreground placeholder:text-muted-foreground/40 rounded-none"
-              />
-            </div>
-
-            {/* Password */}
-            {!isForgot && (
-              <div className="animate-in fade-in duration-300">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-[9px] tracking-[0.28em] uppercase text-muted-foreground">
-                    Encryption Key
-                  </label>
-                  {isLogin && (
-                    <button
-                      type="button"
-                      onClick={() => setIsForgot(true)}
-                      className="text-[9px] tracking-[0.22em] uppercase underline underline-offset-4 hover:opacity-70 transition-opacity"
-                      style={{ color: '#C9A84C' }}
-                    >
-                      Recovery Options
-                    </button>
-                  )}
-                </div>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full border border-border bg-transparent px-4 py-3.5 text-sm outline-none transition-all duration-200 focus:border-foreground pr-12 placeholder:text-muted-foreground/40 rounded-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={15} strokeWidth={1.5} /> : <Eye size={15} strokeWidth={1.5} />}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Remember session */}
-            {isLogin && !isForgot && (
-              <label className="flex items-center gap-3 cursor-pointer group mt-1">
-                <div className="relative flex-shrink-0">
-                  <input type="checkbox" className="peer sr-only" />
-                  <div className="w-4 h-4 border border-border peer-checked:bg-foreground peer-checked:border-foreground transition-colors" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">
-                    <div className="w-1.5 h-1.5 bg-background" />
-                  </div>
-                </div>
-                <span className="text-[9px] tracking-[0.28em] uppercase text-muted-foreground group-hover:text-foreground transition-colors">
-                  Remember Session
-                </span>
-              </label>
-            )}
-
-            {/* Submit */}
-            <div className="pt-3">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 text-[10px] tracking-[0.32em] uppercase flex items-center justify-center gap-3 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden group"
-                style={{
-                  background: 'linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%)',
-                  color: '#fff',
-                  border: '1px solid rgba(201,168,76,0.35)',
-                }}
+              <div
+                className="animate-fade-in"
+                style={{ animationDelay: "200ms" }}
               >
-                {/* Gold shimmer on hover */}
-                <span
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(201,168,76,0.02) 100%)' }}
-                />
-                <span className="relative z-10 flex items-center gap-3">
-                  {loading ? (
+                <div className="h-px w-6 sm:w-8 bg-[#B87333] mb-4 sm:mb-6" />
+                <p className="font-heading italic text-2xl sm:text-3xl lg:text-4xl text-white leading-tight mb-2 sm:mb-4 drop-shadow-md">
+                  {isLogin ? (
                     <>
-                      <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                      </svg>
-                      Processing
+                      Mastering <span className="text-[#B87333]">Time</span>.
                     </>
                   ) : (
                     <>
-                      {isForgot ? 'Initialize Reset' : isLogin ? 'Authenticate Account' : 'Request Access'}
-                      <ArrowRight size={13} strokeWidth={1.5} />
+                      Join the <span className="text-[#B87333]">Legacy</span>.
                     </>
                   )}
-                </span>
-              </button>
+                </p>
+                <p className="text-[8px] sm:text-[10px] tracking-[0.4em] uppercase text-white/60 font-medium">
+                  Private Collection Access
+                </p>
+              </div>
             </div>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-7 flex items-center gap-4">
-            <div className="flex-1 h-[1px] bg-border" />
-            <span className="text-[8px] tracking-[0.3em] uppercase text-muted-foreground/50 shrink-0 px-1">
-              or continue with
-            </span>
-            <div className="flex-1 h-[1px] bg-border" />
           </div>
+        </div>
 
-          {/* Google Login */}
-          <div className="flex justify-center overflow-hidden">
-            <GoogleLogin
-              onSuccess={async (credentialResponse) => {
-                if (credentialResponse.credential) {
-                  try {
-                    setLoading(true);
-                    await googleLogin(credentialResponse.credential);
-                    toast({ title: "Authenticated via Google", description: "Access granted via your secure identity provider." });
-                    navigate('/');
-                  } catch {
-                    toast({ title: "Social Authentication Failed", variant: "destructive" });
-                  } finally {
-                    setLoading(false);
-                  }
-                }
-              }}
-              onError={() => {
-                toast({ title: "Google Signaling Error", variant: "destructive" });
-              }}
-              theme="outline"
-              size="large"
-              width={400}
-            />
-          </div>
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 py-10 sm:py-12 lg:py-16 bg-white">
+          <div
+            className="w-full max-w-[420px] mx-auto animate-fade-in"
+            style={{ animationDelay: "400ms" }}
+          >
+            <div className="mb-8 sm:mb-10">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-white to-neutral-50 flex items-center justify-center shadow-[0_8px_20px_-6px_rgba(184,115,51,0.15)] border border-[#B87333]/10 relative group overflow-hidden">
+                  <div className="absolute inset-0 bg-[#B87333]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {isLogin ? (
+                    <Lock
+                      size={14}
+                      className="text-[#B87333] sm:w-[16px] sm:h-[16px] relative z-10 drop-shadow-[0_2px_4px_rgba(184,115,51,0.1)]"
+                    />
+                  ) : (
+                    <UserPlus
+                      size={14}
+                      className="text-[#B87333] sm:w-[16px] sm:h-[16px] relative z-10 drop-shadow-[0_2px_4px_rgba(184,115,51,0.1)]"
+                    />
+                  )}
+                </div>
+                <div className="h-px w-6 sm:w-8 bg-neutral-100" />
+                <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#B87333] font-bold">
+                  {isForgot
+                    ? "Recovery"
+                    : isLogin
+                      ? "User Login"
+                      : "User Register"}
+                </span>
+              </div>
+              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-neutral-900 mb-2 sm:mb-3 tracking-tight">
+                {isForgot
+                  ? "Security Key Recovery"
+                  : isLogin
+                    ? "Secure Login"
+                    : "Secure Register"}
+              </h2>
+              <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed">
+                {isForgot
+                  ? "Enter your email to receive a secure recovery link."
+                  : isLogin
+                    ? "Enter your Email and Password to access the exclusive collection."
+                    : "Create an User account to start your luxury journey."}
+              </p>
+            </div>
 
-          {/* Toggle / back link */}
-          <p className="text-center mt-8 text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
-            {isForgot ? (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {!isForgot && !isLogin && (
+                <div className="space-y-2 animate-in fade-in duration-500">
+                  <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
+                    User Name
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      placeholder="Enter your full name"
+                      className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
+                  Email ID
+                </label>
+                <div className="relative group">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                    placeholder="name@example.com"
+                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200"
+                  />
+                </div>
+              </div>
+
+              {!isForgot && (
+                <div className="space-y-2 animate-in fade-in duration-500">
+                  <div className="flex items-center justify-between ml-1">
+                    <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold">
+                      {isLogin ? "Password" : "Password"}
+                    </label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        onClick={() => setIsForgot(true)}
+                        className="text-[9px] tracking-[0.1em] uppercase text-[#B87333] hover:underline font-bold"
+                      >
+                        Forgot Password?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete={
+                        isLogin ? "current-password" : "new-password"
+                      }
+                      required
+                      placeholder="••••••••••••"
+                      className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200 pr-12"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {isLogin && !isForgot && (
+                <div className="flex items-center gap-3 py-1">
+                  <label className="relative flex items-center cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      defaultChecked
+                    />
+                    <div className="w-4 h-4 border border-neutral-200 rounded transition-all group-hover:border-[#B87333] peer-checked:bg-[#B87333] peer-checked:border-[#B87333]" />
+                    <CheckCircle2
+                      size={10}
+                      className="absolute left-[3px] top-[3px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                    />
+                    <span className="ml-3 text-[10px] tracking-[0.1em] uppercase text-neutral-400 font-medium group-hover:text-neutral-600 transition-colors">
+                      Maintain Authentication
+                    </span>
+                  </label>
+                </div>
+              )}
+
               <button
-                onClick={() => { setIsForgot(false); setIsLogin(true); }}
-                className="text-foreground underline underline-offset-4 hover:opacity-70 transition-opacity"
+                type="submit"
+                disabled={loading}
+                className="group relative w-full h-[54px] sm:h-[58px] bg-neutral-900 text-white rounded-xl text-[10px] sm:text-[11px] tracking-[0.3em] uppercase overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-neutral-200 disabled:opacity-70 mt-2"
               >
-                Return to Authentication
+                <div className="relative z-10 flex items-center justify-center gap-3">
+                  {loading ? (
+                    <span className="animate-pulse">Processing...</span>
+                  ) : (
+                    <>
+                      {isForgot
+                        ? "Initialize Reset"
+                        : isLogin
+                          ? "Login"
+                          : "Create Profile"}
+                      <ArrowRight
+                        size={16}
+                        className="group-hover:translate-x-1.5 transition-transform duration-300"
+                      />
+                    </>
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-[#B87333] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]" />
               </button>
-            ) : (
-              <span>
-                {isLogin ? 'No account? ' : 'Already have access? '}
-                <button
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-foreground underline underline-offset-4 hover:opacity-70 transition-opacity"
-                >
-                  {isLogin ? 'Request Access' : 'Authenticate'}
-                </button>
-              </span>
-            )}
-          </p>
+            </form>
 
-          {/* Trust badge */}
-          <div className="flex items-center justify-center gap-2 mt-10 opacity-30">
-            <Sparkles size={10} strokeWidth={1.5} />
-            <span className="text-[8px] tracking-[0.3em] uppercase">256-bit encrypted · SSL secured</span>
-            <Sparkles size={10} strokeWidth={1.5} />
+            <div className="relative my-10 flex items-center gap-4">
+              <div className="flex-1 h-[1px] bg-neutral-200" />
+              <span className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-medium shrink-0 px-2">
+                or continue with
+              </span>
+              <div className="flex-1 h-[1px] bg-neutral-200" />
+            </div>
+
+            <div className="flex justify-center w-full max-w-full overflow-hidden">
+              <div className="w-full max-w-[320px] sm:max-w-[380px]">
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    if (credentialResponse.credential) {
+                      try {
+                        setLoading(true);
+                        await googleLogin(credentialResponse.credential);
+                        toast({
+                          title: "Authenticated",
+                          description: "Access granted via social provider.",
+                        });
+                        navigate("/");
+                      } catch {
+                        toast({
+                          title: "Authentication Failed",
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setLoading(false);
+                      }
+                    }
+                  }}
+                  onError={() => {
+                    toast({
+                      title: "Provider Error",
+                      variant: "destructive",
+                    });
+                  }}
+                  theme="outline"
+                  size="large"
+                  shape="pill"
+                  width="100%"
+                />
+              </div>
+            </div>
+
+            <div
+              className="mt-12 pt-8 border-t border-neutral-50 text-center animate-fade-in"
+              style={{ animationDelay: "600ms" }}
+            >
+              <p className="text-[11px] tracking-[0.1em] text-neutral-400">
+                {isForgot ? (
+                  <button
+                    onClick={() => {
+                      setIsForgot(false);
+                      setIsLogin(true);
+                    }}
+                    className="text-[#B87333] hover:text-[#A0632D] transition-colors font-bold uppercase tracking-[0.2em]"
+                  >
+                    Return to Portal
+                  </button>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    {isLogin
+                      ? "Create a New Account"
+                      : "Already have an account?"}
+                    <button
+                      onClick={() => setIsLogin(!isLogin)}
+                      className="text-[#B87333] hover:text-[#A0632D] transition-colors font-bold uppercase tracking-[0.2em] ml-1"
+                    >
+                      {isLogin ? "Create New Profile" : "Sign In"}
+                    </button>
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
         </div>
       </div>

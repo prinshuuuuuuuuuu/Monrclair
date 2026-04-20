@@ -11,6 +11,9 @@ import {
   X,
   Edit3,
   Save,
+  Phone,
+  User,
+  Globe,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
@@ -31,7 +34,7 @@ export default function AddressesPage() {
     city: "",
     state: "",
     zip_code: "",
-    country: "Switzerland",
+    country: "",
     phone: "",
     is_default: false,
   });
@@ -56,14 +59,14 @@ export default function AddressesPage() {
       if (editingId) {
         await api.put(`/auth/addresses/${editingId}`, formData);
         toast({
-          title: "Node Calibrated",
-          description: "Logistics transmission point successfully updated.",
+          title: "Address Updated",
+          description: "Your delivery address has been successfully modified.",
         });
       } else {
         await api.post("/auth/addresses", formData);
         toast({
-          title: "Node Initialized",
-          description: "Logistics transmission point successfully archived.",
+          title: "Address Saved",
+          description: "New delivery address has been added to your profile.",
         });
       }
       handleCloseForm();
@@ -71,7 +74,7 @@ export default function AddressesPage() {
       refreshUser();
     } catch (error: any) {
       toast({
-        title: "Protocol Failure",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
@@ -93,6 +96,7 @@ export default function AddressesPage() {
       is_default: addr.is_default,
     });
     setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCloseForm = () => {
@@ -104,7 +108,7 @@ export default function AddressesPage() {
       city: "",
       state: "",
       zip_code: "",
-      country: "Switzerland",
+      country: "",
       phone: "",
       is_default: false,
     });
@@ -114,14 +118,14 @@ export default function AddressesPage() {
     try {
       await api.delete(`/auth/addresses/${id}`);
       toast({
-        title: "Node Deactivated",
-        description: "Transmission point removed from registry.",
+        title: "Address Removed",
+        description: "Delivery address has been deleted.",
       });
       fetchAddresses();
       refreshUser();
     } catch (error: any) {
       toast({
-        title: "Deactivation Failed",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
@@ -132,8 +136,8 @@ export default function AddressesPage() {
     try {
       await api.put(`/auth/addresses/${id}/default`);
       toast({
-        title: "Primary Node Set",
-        description: "Standard logistics target modulated.",
+        title: "Default Set",
+        description: "This is now your primary delivery address.",
       });
       fetchAddresses();
       refreshUser();
@@ -144,104 +148,127 @@ export default function AddressesPage() {
 
   if (loading && addresses.length === 0)
     return (
-      <div className="min-h-screen bg-[#F9F6F1] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="relative w-12 h-12">
-            <div className="absolute inset-0 border border-[#B87333]/20 rounded-full" />
-            <div className="absolute inset-0 border border-t-[#B87333] rounded-full animate-spin" />
-          </div>
-          <p className="text-[9px] font-label uppercase tracking-[0.45em] text-[#B87333]/50 font-bold">
-            Loading Registry
+          <div className="w-12 h-12 border-4 border-[#B87333]/20 border-t-[#B87333] rounded-full animate-spin" />
+          <p className="text-sm font-medium text-[#B87333]">
+            Loading your addresses...
           </p>
         </div>
       </div>
     );
 
   const inputClass =
-    "w-full bg-white border border-[#E8E2D9] px-4 py-3.5 rounded-xl text-sm text-[#1A1714] placeholder-[#C5BFB7] focus:border-[#B87333] focus:ring-2 focus:ring-[#B87333]/10 outline-none transition-all duration-200 font-body";
+    "w-full bg-[#F9F9F9] border border-[#EEEEEE] px-4 py-3 rounded-xl text-sm text-[#1A1714] placeholder-[#A0A0A0] focus:border-[#B87333] focus:ring-2 focus:ring-[#B87333]/5 outline-none transition-all duration-200";
 
-  const labelClass =
-    "block text-[9px] font-label uppercase tracking-[0.4em] text-[#A09890] font-bold mb-1.5 px-0.5";
+  const labelClass = "block text-sm font-semibold text-[#666666] mb-2 ml-1";
 
   return (
-    <div className="min-h-screen bg-[#F9F6F1]">
-      <div
-        className="fixed inset-0 pointer-events-none opacity-[0.018]"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #8B6240 1px, transparent 0)`,
-          backgroundSize: "28px 28px",
-        }}
-      />
-
-      <header className="relative border-b border-[#EAE4DA] bg-white/80 backdrop-blur-md">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-[#B87333]/6 rounded-full blur-3xl translate-x-24 -translate-y-20 pointer-events-none" />
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-10">
+    <div className="min-h-screen bg-[#FDFDFD] text-[#1A1714]">
+      <div className="bg-white/80 backdrop-blur-md border-b border-[#F0F0F0] sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <button
             onClick={() => navigate("/profile")}
-            className="group inline-flex items-center gap-2 mb-8 text-[9px] font-label uppercase tracking-[0.4em] text-[#B87333] hover:text-[#9A6228] transition-colors font-bold"
+            className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#666666] hover:text-[#B87333] transition-colors"
           >
             <ArrowLeft
-              size={12}
-              className="group-hover:-translate-x-0.5 transition-transform duration-200"
+              size={16}
+              className="group-hover:-translate-x-1 transition-transform"
             />
-            Back to Dashboard
+            <span>Back</span>
           </button>
 
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="font-headline text-[2.6rem] sm:text-5xl lg:text-6xl text-[#1A1714] leading-[0.92] tracking-tight">
-                Saved <em className="text-[#B87333] not-italic">Addresses</em>
-              </h1>
+          <button
+            onClick={() => (showForm ? handleCloseForm() : setShowForm(true))}
+            className={cn(
+              "relative group overflow-hidden px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500",
+              showForm
+                ? "bg-[#F5F5F5] text-[#666666] hover:bg-[#1A1714] hover:text-white"
+                : "bg-[#1A1714] text-white hover:pr-8 active:scale-95",
+            )}
+          >
+            <div className="relative z-10 flex items-center gap-3">
+              <div
+                className={cn(
+                  "w-5 h-5 rounded-full flex items-center justify-center transition-all duration-500",
+                  showForm
+                    ? "bg-[#666666]/10 text-inherit"
+                    : "bg-[#B87333] text-white group-hover:scale-110",
+                )}
+              >
+                {showForm ? (
+                  <X size={12} />
+                ) : (
+                  <Plus size={12} strokeWidth={3} />
+                )}
+              </div>
+              <span>{showForm ? "Dismiss" : "Add New Location"}</span>
             </div>
 
-            <button
-              onClick={() => (showForm ? handleCloseForm() : setShowForm(true))}
-              className={cn(
-                "self-start sm:self-auto inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl text-[10px] font-label uppercase tracking-[0.3em] font-bold transition-all duration-300",
-                showForm
-                  ? "bg-[#F0EBE3] text-[#9A6228] hover:bg-[#E8E0D4] border border-[#DDD5C8]"
-                  : "bg-[#1A1714] text-white hover:bg-[#B87333] shadow-lg shadow-[#1A1714]/15 hover:shadow-[#B87333]/20",
-              )}
-            >
-              {showForm ? <X size={14} /> : <Plus size={14} />}
-              {showForm ? "Cancel" : "Add Address"}
-            </button>
-          </div>
+            {!showForm && (
+              <div className="absolute top-1/2 right-3 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-500 text-white">
+                <Navigation
+                  size={12}
+                  fill="currentColor"
+                  className="rotate-45"
+                />
+              </div>
+            )}
+
+            <div className="absolute inset-0 bg-gradient-to-r from-[#B87333] to-[#8B6240] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          </button>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 py-8 sm:py-12 lg:py-14">
+      <main className="max-w-6xl mx-auto px-6 py-12 lg:py-16">
+        <div className="mb-12">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1A1714] leading-[1.1]">
+            Manage <span className="text-[#B87333]">Addresses</span>
+          </h1>
+          <p className="mt-4 text-sm text-[#888888] font-medium max-w-lg leading-relaxed">
+            Organize your delivery endpoints for a seamless luxury shopping
+            experience across the globe.
+          </p>
+        </div>
         {showForm && (
-          <div className="mb-8 sm:mb-12">
-            <div className="relative bg-white border border-[#E5DDD2] rounded-3xl overflow-hidden shadow-xl shadow-black/[0.04]">
-              <div className="h-px bg-gradient-to-r from-transparent via-[#B87333]/50 to-transparent" />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <div
+              className="absolute inset-0 bg-[#1A1714]/40 backdrop-blur-sm animate-in fade-in duration-300"
+              onClick={handleCloseForm}
+            />
 
-              <div className="p-6 sm:p-10 lg:p-12">
-                <div className="flex items-center gap-3 mb-8 pb-7 border-b border-[#F0EAE1]">
-                  <div className="w-9 h-9 bg-[#B87333]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    {editingId ? (
-                      <Edit3 size={15} className="text-[#B87333]" />
-                    ) : (
-                      <Plus size={15} className="text-[#B87333]" />
-                    )}
+            <div className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+              <div className="p-8 sm:p-10">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#B87333]/10 rounded-xl flex items-center justify-center">
+                      {editingId ? (
+                        <Edit3 size={20} className="text-[#B87333]" />
+                      ) : (
+                        <MapPin size={20} className="text-[#B87333]" />
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">
+                        {editingId ? "Edit Address" : "Add Address"}
+                      </h2>
+                      <p className="text-xs text-[#888888] font-medium uppercase tracking-wider">
+                        Secure Delivery Node
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="font-headline text-xl sm:text-2xl text-[#1A1714] italic">
-                      {editingId ? "Edit Address" : "New Address"}
-                    </h2>
-                    <p className="text-[9px] font-label uppercase tracking-[0.4em] text-[#B0A89E] mt-0.5">
-                      {editingId
-                        ? "Update delivery details"
-                        : "Add delivery location"}
-                    </p>
-                  </div>
+                  <button
+                    onClick={handleCloseForm}
+                    className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center text-[#666666] hover:bg-[#1A1714] hover:text-white transition-all duration-300"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-7">
-                    <div>
-                      <label className={labelClass}>Full Name</label>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className={labelClass}>Receiver's Name</label>
                       <input
                         required
                         value={formData.full_name}
@@ -252,11 +279,11 @@ export default function AddressesPage() {
                           })
                         }
                         className={inputClass}
-                        placeholder="Jonathan Reed"
+                        placeholder="Full Name"
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-1">
                       <label className={labelClass}>Contact Number</label>
                       <input
                         required
@@ -265,11 +292,11 @@ export default function AddressesPage() {
                           setFormData({ ...formData, phone: e.target.value })
                         }
                         className={inputClass}
-                        placeholder="+41 00 000 0000"
+                        placeholder="+41 -- --- ----"
                       />
                     </div>
 
-                    <div className="sm:col-span-2">
+                    <div className="sm:col-span-2 space-y-1">
                       <label className={labelClass}>Street Address</label>
                       <input
                         required
@@ -278,12 +305,12 @@ export default function AddressesPage() {
                           setFormData({ ...formData, street: e.target.value })
                         }
                         className={inputClass}
-                        placeholder="123 Watchmakers Alley"
+                        placeholder="Street, Building, Apartment"
                       />
                     </div>
 
-                    <div>
-                      <label className={labelClass}>City / State</label>
+                    <div className="space-y-1">
+                      <label className={labelClass}>Locality / City</label>
                       <input
                         required
                         value={formData.city}
@@ -291,149 +318,256 @@ export default function AddressesPage() {
                           setFormData({ ...formData, city: e.target.value })
                         }
                         className={inputClass}
-                        placeholder="Geneva"
+                        placeholder="City"
                       />
                     </div>
 
-                    <div>
-                      <label className={labelClass}>Pincode</label>
-                      <input
-                        required
-                        value={formData.zip_code}
-                        onChange={(e) =>
-                          setFormData({ ...formData, zip_code: e.target.value })
-                        }
-                        className={inputClass}
-                        placeholder="1201"
-                      />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className={labelClass}>Postal</label>
+                        <input
+                          required
+                          value={formData.zip_code}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              zip_code: e.target.value,
+                            })
+                          }
+                          className={inputClass}
+                          placeholder="Zip"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={labelClass}>Region</label>
+                        <div className="relative group">
+                          <select
+                            required
+                            value={formData.country}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                country: e.target.value,
+                              })
+                            }
+                            className={cn(
+                              inputClass,
+                              "appearance-none pr-10 cursor-pointer transition-all duration-300",
+                              "hover:border-[#B87333] hover:bg-[#B87333]/5",
+                              "focus:bg-white focus:ring-[#B87333]/10",
+                            )}
+                          >
+                            <option value="" disabled>
+                              Select Region
+                            </option>
+                            <option value="Switzerland">
+                              Switzerland (CH)
+                            </option>
+                            <option value="India">India (IN)</option>
+                            <option value="France">France (FR)</option>
+                            <option value="Germany">Germany (DE)</option>
+                            <option value="Italy">Italy (IT)</option>
+                            <option value="United Kingdom">UK (GB)</option>
+                            <option value="USA">USA (US)</option>
+                            <option value="UAE">UAE (AE)</option>
+                          </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#B5ADA5]">
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-[#1A1714] text-white py-4 rounded-2xl font-label text-[10px] uppercase tracking-[0.35em] font-bold hover:bg-[#B87333] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2.5 disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/10 hover:shadow-[#B87333]/20"
-                  >
-                    {loading
-                      ? "Processing..."
-                      : editingId
-                        ? "Update Address"
-                        : "Save Address"}
-                    {!loading &&
-                      (editingId ? (
-                        <Save size={13} />
-                      ) : (
-                        <Navigation size={13} />
-                      ))}
-                  </button>
+                  <div className="flex flex-col gap-5 pt-2">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={formData.is_default}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            is_default: e.target.checked,
+                          })
+                        }
+                        className="w-5 h-5 rounded border-[#EEEEEE] text-[#B87333] focus:ring-[#B87333]/20 transition-all"
+                      />
+                      <span className="text-sm font-semibold text-[#666666] group-hover:text-[#1A1714] transition-colors">
+                        Set as Default Delivery Point
+                      </span>
+                    </label>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="group relative w-full h-[60px] bg-[#1A1714] text-white rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_-10px_rgba(184,115,51,0.3)] active:scale-[0.98] disabled:opacity-50"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#B87333] to-[#8B6240] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      <div className="relative z-10 flex items-center justify-center gap-3">
+                        {loading ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            <span className="text-xs font-bold uppercase tracking-[0.2em]">
+                              Synchronizing...
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-xs font-bold uppercase tracking-[0.2em]">
+                              {editingId
+                                ? "Finalize Changes"
+                                : "Establish Address"}
+                            </span>
+                            <div className="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 group-hover:translate-x-1 transition-all duration-500">
+                              <Navigation
+                                size={12}
+                                fill="currentColor"
+                                className="rotate-45"
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
         )}
 
-        {addresses.length === 0 && !showForm ? (
-          <div className="relative bg-white border border-[#E5DDD2] rounded-3xl overflow-hidden shadow-sm">
-            <div className="absolute top-0 right-0 w-56 h-56 bg-[#B87333]/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="relative flex flex-col items-center text-center px-6 py-24 sm:py-32 gap-5">
-              <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#F5EFE8] to-[#FAF6F1] rounded-2xl flex items-center justify-center border border-[#E8E0D4] shadow-sm">
-                  <MapPin size={30} className="text-[#C9A882]" />
-                </div>
-                <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#B87333]/20 rounded-full" />
-              </div>
-
-              <div className="space-y-1.5 max-w-[220px]">
-                <h3 className="font-headline text-2xl sm:text-3xl text-[#1A1714]">
-                  No Addresses
-                </h3>
-                <p className="text-[11px] text-[#9A9390] font-body leading-relaxed">
-                  Add a delivery address to get started.
-                </p>
-              </div>
-
-              <button
-                onClick={() => setShowForm(true)}
-                className="mt-1 inline-flex items-center gap-2 bg-[#1A1714] text-white px-8 py-4 text-[10px] font-label tracking-[0.3em] uppercase hover:bg-[#B87333] transition-all duration-300 rounded-2xl shadow-md shadow-black/10 hover:shadow-[#B87333]/20"
-              >
-                <Plus size={13} />
-                Add Address
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4 sm:space-y-5">
-            {addresses.map((addr) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {addresses && addresses.length > 0 ? (
+            addresses.map((addr) => (
               <div
                 key={addr.id}
                 className={cn(
-                  "group relative bg-white border rounded-3xl overflow-hidden transition-all duration-300",
+                  "group relative bg-white border rounded-[32px] p-8 transition-all duration-500",
+                  "hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)] hover:-translate-y-1",
                   addr.is_default
-                    ? "border-[#B87333]/30 shadow-md shadow-[#B87333]/8"
-                    : "border-[#E5DDD2] shadow-sm hover:border-[#C9A882]/40 hover:shadow-md hover:shadow-black/[0.05]",
+                    ? "border-[#B87333] shadow-[0_12px_24px_-8px_rgba(184,115,51,0.1)] ring-1 ring-[#B87333]/5"
+                    : "border-[#F0F0F0] hover:border-[#B87333]/20",
                 )}
               >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 p-5 sm:p-7 lg:p-8">
-                  <div className="flex items-start sm:items-center gap-4 sm:gap-5 flex-1 min-w-0">
-                    <div
-                      className={cn(
-                        "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center flex-shrink-0 border transition-all duration-300",
-                        addr.is_default
-                          ? "bg-[#B87333]/10 border-[#B87333]/20"
-                          : "bg-[#F7F3EE] border-[#EAE3D9] group-hover:border-[#C9A882]/30",
-                      )}
-                    >
-                      <Home
-                        size={20}
-                        className={cn(
-                          "transition-colors",
-                          addr.is_default ? "text-[#B87333]" : "text-[#B5ADA5]",
-                        )}
-                      />
-                    </div>
-
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <h3 className="font-headline text-lg sm:text-xl lg:text-2xl text-[#1A1714] leading-snug truncate">
-                        {addr.street}
-                      </h3>
-
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                        <span className="text-[11px] font-body text-[#9A9390]">
-                          {addr.city}, {addr.zip_code || addr.zip}
-                        </span>
-                        <span className="hidden sm:block w-px h-3 bg-[#DDD8D0]" />
-                        <span className="text-[11px] font-body text-[#6E6660] font-semibold">
-                          {addr.phone}
-                        </span>
-                        <span className="hidden sm:block w-px h-3 bg-[#DDD8D0]" />
-                        <span className="text-[11px] font-body text-[#9A9390]">
-                          {addr.full_name}
-                        </span>
-                      </div>
-                    </div>
+                <div className="flex items-center justify-between mb-6">
+                  <div
+                    className={cn(
+                      "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-500",
+                      addr.is_default
+                        ? "bg-[#B87333] text-white"
+                        : "bg-[#F9F9F9] text-[#CCCCCC] group-hover:bg-[#B87333]/10 group-hover:text-[#B87333]",
+                    )}
+                  >
+                    <Home size={22} strokeWidth={addr.is_default ? 2.5 : 2} />
                   </div>
-                  <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
-                    <button
-                      onClick={() => handleEdit(addr)}
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 border border-[#E5DDD2] text-[#6E6660] px-4 sm:px-5 py-3 text-[9px] font-label tracking-[0.3em] uppercase hover:bg-[#F7F3EE] hover:border-[#C9A882]/40 hover:text-[#9A6228] active:scale-[0.98] transition-all duration-200 rounded-xl font-bold"
-                    >
-                      <Edit3 size={12} />
-                      Edit
-                    </button>
+                  {addr.is_default ? (
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#B87333] bg-[#B87333]/10 px-3 py-1 rounded-full">
+                      Primary
+                    </span>
+                  ) : null}
+                </div>
 
-                    <button
-                      onClick={() => handleDelete(addr.id)}
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 border border-red-100/80 text-red-300 px-4 sm:px-5 py-3 text-[9px] font-label tracking-[0.3em] uppercase hover:bg-red-50 hover:text-red-500 hover:border-red-200 active:scale-[0.98] transition-all duration-200 rounded-xl font-bold"
+                <div className="space-y-4 mb-8 text-left">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B87333]">
+                      Receiver
+                    </p>
+                    <h4
+                      className="font-bold text-lg text-[#1A1714] leading-tight truncate"
+                      title={addr.full_name}
                     >
-                      <Trash2 size={12} />
-                      Delete
-                    </button>
+                      {addr.full_name}
+                    </h4>
+                  </div>
+
+                  <div className="space-y-1.5 pt-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B87333]">
+                      Address
+                    </p>
+                    <p className="text-sm text-[#1A1714] font-medium leading-relaxed">
+                      {addr.street}
+                    </p>
+                    <p className="text-xs text-[#888888] font-semibold">
+                      {addr.city}, {addr.zip_code} — {addr.country}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5 pt-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B87333]">
+                      Contact
+                    </p>
+                    <div className="flex items-center gap-2 text-sm font-bold text-[#1A1714]">
+                      <Phone
+                        size={14}
+                        className="text-[#B87333]"
+                        strokeWidth={2.5}
+                      />
+                      <span>{addr.phone}</span>
+                    </div>
                   </div>
                 </div>
+
+                <div className="flex items-center justify-start gap-3 pt-6 border-t border-[#F9F9F9]">
+                  {!addr.is_default && (
+                    <button
+                      onClick={() => handleSetDefault(addr.id)}
+                      className="text-[11px] font-bold uppercase tracking-wider text-[#B87333] hover:underline decoration-2 underline-offset-4 transition-all"
+                    >
+                      Set Default
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleEdit(addr)}
+                    className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#666666] hover:text-[#1A1714] transition-all"
+                  >
+                    <Edit3 size={14} />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(addr.id)}
+                    className="ml-auto p-2.5 text-[#CCCCCC] hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all duration-300 group/del"
+                    title="Delete Address"
+                  >
+                    <Trash2
+                      size={18}
+                      className="transition-transform group-hover/del:scale-110"
+                    />
+                  </button>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : !showForm ? (
+            <div className="col-span-full border-2 border-dashed border-[#EEEEEE] rounded-[40px] p-20 flex flex-col items-center text-center bg-white/50">
+              <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-[#F5F5F5]">
+                <MapPin size={32} className="text-[#B87333]/30" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1A1714]">
+                No saved addresses
+              </h3>
+              <p className="text-sm text-[#888888] mb-8 max-w-[280px]">
+                Add your delivery locations for a faster checkout experience.
+              </p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="bg-[#1A1714] text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-[#B87333] transition-all duration-300 shadow-xl shadow-black/10"
+              >
+                Add My First Address
+              </button>
+            </div>
+          ) : null}
+        </div>
       </main>
     </div>
   );

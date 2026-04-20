@@ -8,7 +8,7 @@ import {
   SlidersHorizontal,
   X,
   ArrowUpDown,
-  Check 
+  Check,
 } from "lucide-react";
 
 const collections = ["All", "Chronograph", "Heritage", "Diver", "Aviator"];

@@ -1,14 +1,10 @@
-const Product = require('../models/productModel');
+const Product = require("../models/productModel");
 
-// @desc    Get all products
-// @route   GET /api/products
-// @access  Public
 const getProducts = async (req, res) => {
   try {
     const products = await Product.findAll();
-    
-    // Map to the structure expected by the frontend
-    const structuredProducts = products.map(p => ({
+
+    const structuredProducts = products.map((p) => ({
       ...p,
       price: parseFloat(p.price),
       rating: parseFloat(p.rating),
@@ -20,20 +16,17 @@ const getProducts = async (req, res) => {
         movement: p.movement,
         waterResistance: p.waterResistance,
         powerReserve: p.powerReserve,
-        caseMaterial: p.caseMaterial
-      }
+        caseMaterial: p.caseMaterial,
+      },
     }));
 
     res.json(structuredProducts);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Database Error', details: error.message });
+    res.status(500).json({ message: "Database Error", details: error.message });
   }
 };
 
-// @desc    Get single product
-// @route   GET /api/products/:id
-// @access  Public
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -50,20 +43,20 @@ const getProductById = async (req, res) => {
           movement: product.movement,
           waterResistance: product.waterResistance,
           powerReserve: product.powerReserve,
-          caseMaterial: product.caseMaterial
-        }
+          caseMaterial: product.caseMaterial,
+        },
       };
       res.json(structuredProduct);
     } else {
-      res.status(404).json({ message: 'Product not found' });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Database Error', details: error.message });
+    res.status(500).json({ message: "Database Error", details: error.message });
   }
 };
 
 module.exports = {
   getProducts,
-  getProductById
+  getProductById,
 };

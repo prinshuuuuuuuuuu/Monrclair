@@ -630,7 +630,6 @@ export default function AdminOrders() {
       </div>
 
       <div className="relative">
-        {/* Desktop View: Table */}
         <div className="hidden lg:block">
           <Card className="border-none shadow-premium overflow-hidden bg-white/60 backdrop-blur-md rounded-[2.5rem] border border-slate-200/60">
             <Table>

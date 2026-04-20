@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUser = async () => {
     if (!user) return;
     const { data } = await api.get('/auth/me');
-    const updatedUser = { ...user, ...data }; // Preserve token
+    const updatedUser = { ...user, ...data };
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };

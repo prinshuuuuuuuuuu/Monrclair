@@ -69,7 +69,6 @@ export default function ProductDetailPage() {
   return (
     <div className="container py-8 md:py-16">
       <div className="grid md:grid-cols-2 gap-10 md:gap-16">
-        {/* Images */}
         <div>
           <div className="relative bg-secondary aspect-square overflow-hidden">
             <img
@@ -121,7 +120,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Info */}
         <div>
           <p className="text-[10px] tracking-luxury uppercase text-muted-foreground mb-1">
             Precision Atelier · SKU: {product.reference}
@@ -148,7 +146,6 @@ export default function ProductDetailPage() {
             {product.description}
           </p>
 
-          {/* Specs */}
           <div className="border-t border-border py-6 space-y-3">
             <h3 className="text-[10px] tracking-luxury uppercase font-medium mb-4">
               Technical Specifications
@@ -166,7 +163,6 @@ export default function ProductDetailPage() {
             ))}
           </div>
 
-          {/* Rating */}
           <div className="flex items-center gap-2 my-6">
             <span className="font-heading text-lg">{product.rating}</span>
             <Star size={14} className="text-primary fill-primary" />
@@ -175,7 +171,6 @@ export default function ProductDetailPage() {
             </span>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3">
             <button
               onClick={handleAddToCart}
@@ -197,7 +192,6 @@ export default function ProductDetailPage() {
             </button>
           </div>
 
-          {/* Sticky mobile button */}
           <div className="md:hidden fixed bottom-16 left-0 right-0 z-40 p-4 bg-background border-t border-border">
             <button
               onClick={handleAddToCart}
@@ -211,8 +205,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-
-      {/* Related */}
       {related.length > 0 && (
         <section className="mt-20 border-t border-border pt-12">
           <h2 className="text-[10px] tracking-luxury uppercase text-muted-foreground mb-6">

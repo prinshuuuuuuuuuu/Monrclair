@@ -48,7 +48,6 @@ const App = () => (
             future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
           >
             <Routes>
-              {/* Store Routes */}
               <Route element={<StoreLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/collection" element={<CollectionPage />} />
@@ -71,7 +70,6 @@ const App = () => (
 
               <Route path="/profile" element={<ProfilePage />} />
 
-              {/* Admin Routes */}
               <Route
                 element={<GuestRoute redirectPath="/admin" adminOnly={true} />}
               >

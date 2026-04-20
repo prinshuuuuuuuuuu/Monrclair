@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// Wishlist
 const getWishlist = async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -44,7 +43,7 @@ const toggleWishlist = async (req, res) => {
   }
 };
 
-// Cart
+
 const getCart = async (req, res) => {
   try {
     const [rows] = await db.query(

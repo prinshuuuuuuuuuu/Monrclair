@@ -155,7 +155,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// Address Management
 const getAddresses = async (req, res) => {
   try {
     const addresses = await Address.findByUserId(req.user.id);

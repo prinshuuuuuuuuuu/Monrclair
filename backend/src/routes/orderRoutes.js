@@ -7,7 +7,7 @@ router.use(protect);
 
 router.post('/', createOrder);
 router.get('/check-status/:paymentId', checkStatus);
-router.post('/verify-payment', verifyPayment); // Internal/Admin only usually, but exposing for demo
+router.post('/verify-payment', verifyPayment); 
 router.get('/myorders', getMyOrders);
 router.get('/:id', getOrderById);
 router.post('/:id/cancel', cancelOrder);

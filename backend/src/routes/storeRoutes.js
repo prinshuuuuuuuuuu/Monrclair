@@ -6,7 +6,7 @@ const {
 } = require('../controllers/storeController');
 const { protect } = require('../middleware/authMiddleware');
 
-router.use(protect); // All store operations require auth
+router.use(protect);
 
 router.get('/wishlist', getWishlist);
 router.post('/wishlist/toggle', toggleWishlist);
