@@ -14,34 +14,26 @@ const NAV_COLUMNS = [
   {
     heading: "Shop",
     links: [
-      "New Arrivals",
-      "Women",
-      "Men",
-      "Accessories",
-      "Collections",
-      "Sale",
+      { name: "New Arrivals", href: "/collection?sort=newest" },
+      { name: "Men", href: "/collection?category=men" },
+      { name: "Women", href: "/collection?category=women" },
+      { name: "Accessories", href: "/collection?category=accessories" },
     ],
   },
   {
     heading: "Help & Support",
     links: [
-      "Contact Us",
-      "Shipping & Delivery",
-      "Returns & Exchanges",
-      "Track Your Order",
-      "Size Guide",
-      "FAQs",
+      { name: "Contact Us", href: "/contact" },
+      { name: "Shipping & Delivery", href: "/shipping" },
+      { name: "FAQs", href: "/faq" },
     ],
   },
   {
     heading: "Company",
     links: [
-      "Our Story",
-      "Sustainability",
-      "Ethics & Compliance",
-      "Careers",
-      "Privacy Policy",
-      "Terms of Service",
+      { name: "Journal", href: "/blogs" },
+      { name: "Testimonials", href: "/testimonials" },
+      { name: "Privacy Policy", href: "/privacy" },
     ],
   },
 ] as const;
@@ -66,7 +58,7 @@ function NavColumn({
   links,
 }: {
   heading: string;
-  links: readonly string[];
+  links: readonly { name: string; href: string }[];
 }) {
   return (
     <div>
@@ -75,12 +67,12 @@ function NavColumn({
       </h4>
       <ul className="space-y-0.5">
         {links.map((item) => (
-          <li key={item}>
+          <li key={item.name}>
             <Link
-              to="#"
+              to={item.href}
               className="text-[13px] leading-6 text-muted-foreground hover:text-primary hover:translate-x-1 inline-block transition-all duration-200"
             >
-              {item}
+              {item.name}
             </Link>
           </li>
         ))}

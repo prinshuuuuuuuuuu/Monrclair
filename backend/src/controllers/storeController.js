@@ -21,6 +21,11 @@ const getWishlist = async (req, res) => {
 
 const toggleWishlist = async (req, res) => {
   const { productId } = req.body;
+
+  if (req.user.id === 'admin-env-id') {
+    return res.status(403).json({ message: 'Administrators cannot manage a personal wishlist.' });
+  }
+
   try {
     const [existing] = await db.query(
       'SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?',
@@ -39,7 +44,10 @@ const toggleWishlist = async (req, res) => {
     }
   } catch (error) {
     console.error('toggleWishlist error:', error);
-    res.status(500).json({ message: error.message });
+    if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(400).json({ message: 'Product or user does not exist in the database.' });
+    }
+    res.status(500).json({ message: 'Internal server error.', details: error.message });
   }
 };
 
@@ -59,6 +67,11 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   const { productId, quantity = 1 } = req.body;
+  
+  if (req.user.id === 'admin-env-id') {
+    return res.status(403).json({ message: 'Administrators cannot add to cart. Please log in as a customer.' });
+  }
+
   try {
     await db.query(
       'INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)',
@@ -67,7 +80,13 @@ const addToCart = async (req, res) => {
     res.json({ message: 'Cart updated' });
   } catch (error) {
     console.error('addToCart error:', error);
-    res.status(500).json({ message: error.message });
+    if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(400).json({ message: 'Product or user does not exist in the database.' });
+    }
+    if (error.code === 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD') {
+      return res.status(400).json({ message: 'Invalid product ID format.' });
+    }
+    res.status(500).json({ message: 'Internal server error occurred while adding to cart.', details: error.message });
   }
 };
 

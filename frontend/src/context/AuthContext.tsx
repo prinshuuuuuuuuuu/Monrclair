@@ -17,12 +17,15 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  adminUser: User | null;
   login: (email: string, password: string) => Promise<void>;
+  adminLogin: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   googleLogin: (credential: string) => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
   refreshUser: () => Promise<void>;
   logout: () => void;
+  adminLogout: () => void;
   isLoading: boolean;
 }
 
@@ -30,16 +33,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [adminUser, setAdminUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const { setCart, setWishlist } = useStore();
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
+    const savedAdmin = localStorage.getItem('adminUser');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
       setUser(parsedUser);
       hydrateStore();
+    }
+    if (savedAdmin) {
+      setAdminUser(JSON.parse(savedAdmin));
     }
     setIsLoading(false);
   }, []);
@@ -62,6 +70,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data);
     localStorage.setItem('user', JSON.stringify(data));
     await hydrateStore();
+  };
+
+  const adminLogin = async (email: string, password: string) => {
+    const { data } = await api.post('/auth/login', { email, password });
+    setAdminUser(data);
+    localStorage.setItem('adminUser', JSON.stringify(data));
   };
 
   const register = async (name: string, email: string, password: string) => {
@@ -100,8 +114,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setWishlist([]);
   };
 
+  const adminLogout = () => {
+    setAdminUser(null);
+    localStorage.removeItem('adminUser');
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, googleLogin, updateProfile, refreshUser, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, adminUser, login, adminLogin, register, googleLogin, updateProfile, refreshUser, logout, adminLogout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

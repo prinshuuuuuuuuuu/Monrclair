@@ -77,13 +77,24 @@ export default function AdminProducts() {
   const firstPageLimit = PAGINATION.ADMIN_USERS_FIRST_PAGE; 
   const nextPagesLimit = PAGINATION.ADMIN_USERS_NEXT_PAGES;
 
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ["admin-products"],
+  const { data: serverData, isLoading } = useQuery({
+    queryKey: ["admin-products", currentPage, searchQuery, categoryFilter, statusFilter],
     queryFn: async () => {
-      const { data } = await api.get("/admin/products");
-      return data;
+      const response = await api.get("/admin/products", {
+        params: {
+          page: currentPage,
+          limit: PAGINATION.ADMIN_PRODUCTS_PER_PAGE,
+          search: searchQuery,
+          category: categoryFilter !== "all" ? categoryFilter : undefined,
+          status: statusFilter !== "all" ? statusFilter : undefined
+        }
+      });
+      return response.data;
     },
   });
+
+  const products = serverData?.data || [];
+  const meta = serverData?.meta || { total: 0, pages: 1 };
 
   const stats = useMemo(
     () => [
@@ -141,32 +152,9 @@ export default function AdminProducts() {
     },
   });
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p: any) => {
-      const matchesSearch =
-        p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.brand?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        categoryFilter === "all" || p.category === categoryFilter;
-      const matchesStatus = statusFilter === "all" || p.status === statusFilter;
-      return matchesSearch && matchesCategory && matchesStatus;
-    });
-  }, [products, searchQuery, categoryFilter, statusFilter]);
-
-  const startIndex =
-    currentPage === 1 ? 0 : firstPageLimit + (currentPage - 2) * nextPagesLimit;
-  const currentLimit = currentPage === 1 ? firstPageLimit : nextPagesLimit;
-  const paginatedProducts = filteredProducts.slice(
-    startIndex,
-    startIndex + currentLimit,
-  );
-
-  const totalPages = useMemo(() => {
-    if (filteredProducts.length <= firstPageLimit) return 1;
-    return (
-      1 + Math.ceil((filteredProducts.length - firstPageLimit) / nextPagesLimit)
-    );
-  }, [filteredProducts.length]);
+  const totalPages = meta.pages;
+  const totalItems = meta.total;
+  const paginatedProducts = products;
   return (
     <div className="min-h-screen bg-[#fafafb] dark:bg-[#0a0a0b] pb-20 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -564,40 +552,46 @@ export default function AdminProducts() {
           {totalPages > 1 && (
             <div className="px-6 py-6 border-t border-border/50 bg-secondary/5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
-                Showing{" "}
+                Showing Page{" "}
                 <span className="text-foreground">
-                  {startIndex + 1}-
-                  {Math.min(filteredProducts.length, startIndex + currentLimit)}
+                  {currentPage}
                 </span>{" "}
-                of {filteredProducts.length} Results
+                of {totalPages} ({totalItems} Absolute Units)
               </p>
               <div className="flex items-center gap-2">
                 <button
                   disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   className="p-2.5 rounded-xl border border-border/50 hover:bg-white dark:hover:bg-[#111114] disabled:opacity-30 transition-all active:scale-95"
                 >
                   <ChevronLeft size={18} />
                 </button>
-                <div className="flex gap-1">
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <button
-                      key={i + 1}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={cn(
-                        "w-10 h-10 rounded-xl text-xs font-bold transition-all active:scale-95",
-                        currentPage === i + 1
-                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                          : "hover:bg-secondary/50 text-muted-foreground",
-                      )}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+                <div className="flex gap-1 overflow-x-auto no-scrollbar max-w-[200px] sm:max-w-none">
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const pageNum = i + 1;
+                    // Only show first, last, and pages around current to prevent overflow if many pages
+                    if (totalPages > 7 && Math.abs(pageNum - currentPage) > 2 && pageNum !== 1 && pageNum !== totalPages) {
+                        return null;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={cn(
+                          "w-10 h-10 rounded-xl text-xs font-bold transition-all active:scale-95 shrink-0",
+                          currentPage === pageNum
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                            : "hover:bg-secondary/50 text-muted-foreground",
+                        )}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
                 </div>
                 <button
                   disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   className="p-2.5 rounded-xl border border-border/50 hover:bg-white dark:hover:bg-[#111114] disabled:opacity-30 transition-all active:scale-95"
                 >
                   <ChevronRight size={18} />

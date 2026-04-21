@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 import {
   Search,
@@ -20,6 +20,7 @@ const sortOptions = [
 ];
 
 export default function CollectionPage() {
+  const { data: dbProducts = [], isLoading } = useProducts();
   const [params] = useSearchParams();
   const categoryParam = params.get("category");
   const searchParam = params.get("search") || "";
@@ -32,7 +33,7 @@ export default function CollectionPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    let result = products;
+    let result = dbProducts;
 
     if (categoryParam) {
       result = result.filter((p) => p.category === categoryParam);
@@ -253,7 +254,14 @@ export default function CollectionPage() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-32 px-10 text-center animate-fade-in">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <h2 className="text-sm font-semibold mb-2 uppercase tracking-widest">
+                Loading Collections...
+              </h2>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 px-10 text-center animate-fade-in">
               <div className="w-16 h-16 bg-secondary flex items-center justify-center rounded-full mb-6">
                 <Search size={24} className="text-muted-foreground/50" />

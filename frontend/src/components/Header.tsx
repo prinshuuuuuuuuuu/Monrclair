@@ -7,9 +7,11 @@ import { useAuth } from '@/context/AuthContext';
 import { LogOut } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Classic', href: '/collection?category=classic' },
-  { label: 'Sport', href: '/collection?category=sport' },
-  { label: 'Premium', href: '/collection?category=premium' },
+  { label: "Classic", href: "/collection?category=classic" },
+  { label: "Sport", href: "/collection?category=sport" },
+  { label: "Premium", href: "/collection?category=premium" },
+  { label: "Journal", href: "/blogs" },
+  { label: "FAQ", href: "/faq" },
 ];
 
 export default function Header() {

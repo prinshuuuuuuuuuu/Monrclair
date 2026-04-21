@@ -14,7 +14,8 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  getAllProductsAdmin
+  getAllProductsAdmin,
+  exportOrdersCSV
 } = require('../controllers/adminController');
 const {
   getAllCoupons,
@@ -25,6 +26,7 @@ const {
   getCouponUsage
 } = require('../controllers/couponController');
 const { protect, admin } = require('../middleware/authMiddleware');
+const { validateRequestPayload } = require('../validators/schemas');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -40,6 +42,7 @@ const upload = multer({ storage });
 router.use(protect);
 router.use(admin);
 router.get('/stats', getDashboardStats);
+router.get('/orders/export', exportOrdersCSV);
 router.get('/orders', getAllOrders);
 router.get('/orders/:id', getOrderDetails);
 router.put('/orders/:id/status', updateOrderStatus);
@@ -48,13 +51,13 @@ router.get('/users/:id', getUserProfile);
 router.put('/users/:id/block', blockUser);
 router.delete('/users/:id', deleteUser);
 router.get('/products', getAllProductsAdmin);
-router.post('/products', upload.array('images', 5), createProduct);
-router.put('/products/:id', upload.array('images', 5), updateProduct);
+router.post('/products', upload.array('images', 5), validateRequestPayload('products'), createProduct);
+router.put('/products/:id', upload.array('images', 5), validateRequestPayload('products'), updateProduct);
 router.delete('/products/:id', deleteProduct);
 router.get('/coupons', getAllCoupons);
 router.get('/coupons/stats', getCouponStats);
-router.post('/coupons', createCoupon);
-router.put('/coupons/:id', updateCoupon);
+router.post('/coupons', validateRequestPayload('coupons'), createCoupon);
+router.put('/coupons/:id', validateRequestPayload('coupons'), updateCoupon);
 router.delete('/coupons/:id', deleteCoupon);
 router.get('/coupons/:id/usage', getCouponUsage);
 

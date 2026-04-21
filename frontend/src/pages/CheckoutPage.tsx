@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useStore } from "@/store/useStore";
 import { useNavigate } from "react-router-dom";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import {
@@ -21,6 +21,8 @@ import {
   Headphones,
 } from "lucide-react";
 
+import { X, QrCode, Smartphone } from "lucide-react";
+
 export default function CheckoutPage() {
   const { user, refreshUser } = useAuth();
   const { cart, clearCart } = useStore();
@@ -30,10 +32,16 @@ export default function CheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
     null,
   );
+  const [upiIntentData, setUpiIntentData] = useState<any>(null);
+  const [utrCode, setUtrCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const { data: dbProducts = [] } = useProducts();
 
   const cartItems = cart
     .map((ci) => {
-      const product = products.find((p) => p.id === ci.productId)!;
+      const product = dbProducts.find(
+        (p: any) => String(p.id) === String(ci.productId),
+      );
       return { ...ci, product };
     })
     .filter((ci) => ci.product);
@@ -75,30 +83,69 @@ export default function CheckoutPage() {
       const address = user?.addresses?.find(
         (a: any) => a.id === selectedAddressId,
       );
-      const res = await api.post("/orders", {
+
+      const { data: intentData } = await api.post("/payment/upi/intent", {
+        totalAmount: total,
+      });
+
+      if (!intentData.success) {
+        throw new Error("Could not initialize local UPI gateway.");
+      }
+
+      setUpiIntentData(intentData);
+    } catch (error: any) {
+      toast({
+        title: "Transaction Failed",
+        description: error.response?.data?.message || error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyUtr = async () => {
+    if (utrCode.length < 12) {
+      return toast({
+        title: "Invalid Context",
+        description: "UTR Must be exactly 12 mathematical digits.",
+        variant: "destructive",
+      });
+    }
+
+    setIsVerifying(true);
+    try {
+      const address = user?.addresses?.find(
+        (a: any) => a.id === selectedAddressId,
+      );
+
+      const { data: verifyData } = await api.post("/payment/upi/verify", {
+        utrCode,
+        orderRef: upiIntentData?.orderRef,
+        totalAmount: total,
+        shippingAddress: address,
         cartItems: cartItems.map((i) => ({
           productId: i.productId,
           quantity: i.quantity,
           price: i.product.price,
         })),
-        totalAmount: total,
-        shippingAddress: address,
       });
 
       await clearCart();
+      setUpiIntentData(null);
       toast({
-        title: "Transaction Successful",
-        description: "Order archived and transmission initialized.",
+        title: "Payment Recorded",
+        description: "Archived successfully for administrative verification.",
       });
-      navigate(`/order-confirmation/${res.data.id}`);
-    } catch (error: any) {
+      navigate(`/order-confirmation/${verifyData.orderId}`);
+    } catch (err: any) {
       toast({
-        title: "Transaction Failed",
-        description: error.message,
+        title: "Verification Failed",
+        description: err.response?.data?.message || err.message,
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsVerifying(false);
     }
   };
 
@@ -449,6 +496,87 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {upiIntentData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in p-4">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => !isVerifying && setUpiIntentData(null)}
+          ></div>
+
+          <div className="bg-white rounded-[2.5rem] w-full max-w-md relative z-10 overflow-hidden shadow-2xl shadow-black/50 border border-white/20 scale-in flex flex-col">
+            <div className="p-8 md:p-10 space-y-8 relative overflow-y-auto max-h-[90vh] custom-scrollbar">
+              <button
+                disabled={isVerifying}
+                onClick={() => setUpiIntentData(null)}
+                className="absolute top-8 right-8 text-black/40 hover:text-black transition-colors disabled:opacity-50"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="text-center space-y-3 pt-2">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary mb-6">
+                  <QrCode size={32} />
+                </div>
+                <h3 className="font-headline text-2xl md:text-3xl font-bold tracking-tight text-black">
+                  Direct Transaction
+                </h3>
+                <p className="text-sm font-label text-black/50 uppercase tracking-widest">
+                  Scan to fulfill invoice
+                </p>
+              </div>
+
+              <div className="p-6 bg-black/[0.02] border-2 border-black/5 rounded-3xl flex flex-col items-center justify-center gap-4">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&color=000000&bgcolor=ffffff&data=${encodeURIComponent(upiIntentData.upiUri)}`}
+                  alt="UPI QR Code"
+                  className="w-48 h-48 md:w-56 md:h-56 rounded-2xl shadow-inner border-[12px] border-white"
+                />
+
+                <a
+                  href={upiIntentData.upiUri}
+                  className="md:hidden mt-2 w-full bg-white border border-black/10 hover:border-primary/30 text-black py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-sm tracking-wide shadow-sm"
+                >
+                  <Smartphone size={18} className="text-primary" /> Pay via
+                  Mobile App
+                </a>
+              </div>
+
+              <div className="space-y-4 pt-2">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-label uppercase tracking-[0.2em] font-bold text-black/60 pl-2">
+                    Record 12-Digit Banking UTR
+                  </label>
+                  <input
+                    type="number"
+                    value={utrCode}
+                    onChange={(e) => setUtrCode(e.target.value)}
+                    placeholder="e.g. 312345678901"
+                    disabled={isVerifying}
+                    className="w-full bg-black/5 border-2 border-transparent focus:border-primary/30 rounded-2xl px-6 py-5 outline-none font-bold text-black text-lg transition-all disabled:opacity-50 tracking-widest"
+                  />
+                  <p className="text-xs text-black/40 font-body leading-relaxed px-2">
+                    *After scanning, locate the 12-digit UTR/Reference number on
+                    your Bank/UPI app confirmation screen and log it above.
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleVerifyUtr}
+                  disabled={utrCode.length < 12 || isVerifying}
+                  className="w-full bg-black text-white hover:bg-primary transition-colors py-6 rounded-2xl font-label uppercase tracking-[0.3em] font-bold text-xs disabled:opacity-30 disabled:cursor-not-allowed flex justify-center items-center gap-3"
+                >
+                  {isVerifying ? (
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <span>Submit & Await Audit</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

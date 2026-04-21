@@ -7,6 +7,11 @@ import {
   LogOut,
   Tag,
   Ticket,
+  Image,
+  FileText,
+  HelpCircle,
+  Quote,
+  Scroll,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -19,20 +24,25 @@ const sidebarLinks = [
   { name: "Users", icon: Users, href: "/admin/users" },
   { name: "Categories", icon: Tag, href: "/admin/categories" },
   { name: "Coupons", icon: Ticket, href: "/admin/coupons" },
+  { name: "Banners", icon: Image, href: "/admin/banners" },
+  { name: "Blogs", icon: FileText, href: "/admin/blogs" },
+  { name: "FAQ", icon: HelpCircle, href: "/admin/faq" },
+  { name: "Pages", icon: Scroll, href: "/admin/pages" },
+  { name: "Testimonials", icon: Quote, href: "/admin/testimonials" },
 ];
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isLoading, logout } = useAuth();
+  const { adminUser, isLoading, adminLogout } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && (!user || user.role !== "admin")) {
+    if (!isLoading && (!adminUser || adminUser.role !== "admin")) {
       navigate("/admin/login");
     }
-  }, [user, isLoading, navigate]);
+  }, [adminUser, isLoading, navigate]);
 
-  if (isLoading || !user || user.role !== "admin") {
+  if (isLoading || !adminUser || adminUser.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-[10px] tracking-luxury uppercase animate-pulse">
@@ -50,7 +60,7 @@ export default function AdminLayout() {
     )?.name ?? "Dashboard";
 
   const handleLogout = () => {
-    logout();
+    adminLogout();
     navigate("/admin/login");
   };
 

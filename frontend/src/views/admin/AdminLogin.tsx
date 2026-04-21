@@ -13,7 +13,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("prince@123");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { adminLogin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,7 +21,7 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(email, password);
+      await adminLogin(email, password);
       toast({
         title: "Authorized",
         description: "System Controller access granted.",

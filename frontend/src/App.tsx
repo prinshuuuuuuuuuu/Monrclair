@@ -19,6 +19,13 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import SecurityPage from "./pages/SecurityPage";
 import AddressesPage from "./pages/AddressesPage";
+import FAQPage from "./pages/FAQPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import TestimonialsPage from "./pages/TestimonialsPage";
+import ContactPage from "./pages/ContactPage";
+import ShippingPage from "./pages/ShippingPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./views/admin/AdminLayout";
 import AdminProducts from "./views/admin/AdminProducts";
@@ -28,6 +35,11 @@ import AdminLogin from "./views/admin/AdminLogin";
 import AdminDashboard from "./views/admin/AdminDashboard";
 import AdminCategories from "./views/admin/AdminCategories";
 import AdminCoupons from "./views/admin/AdminCoupons";
+import AdminBanners from "./views/admin/AdminBanners";
+import AdminBlogs from "./views/admin/AdminBlogs";
+import AdminFAQ from "./views/admin/AdminFAQ";
+import AdminTestimonials from "./views/admin/AdminTestimonials";
+import AdminPages from "./views/admin/AdminPages";
 import StoreLayout from "./components/StoreLayout";
 import GuestRoute from "./components/GuestRoute";
 import AdminSettings from "./pages/AdminSettings";
@@ -65,6 +77,13 @@ const App = () => (
                 <Route path="/order-history" element={<OrderHistoryPage />} />
                 <Route path="/security" element={<SecurityPage />} />
                 <Route path="/addresses" element={<AddressesPage />} />
+                <Route path="/faq" element={<FAQPage />} />
+                <Route path="/blogs" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogPostPage />} />
+                <Route path="/testimonials" element={<TestimonialsPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/shipping" element={<ShippingPage />} />
+                <Route path="/privacy" element={<PrivacyPolicyPage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
 
@@ -84,6 +103,11 @@ const App = () => (
                 <Route path="support" element={<AdminSupport />} /> */}
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="coupons" element={<AdminCoupons />} />
+                <Route path="banners" element={<AdminBanners />} />
+                <Route path="blogs" element={<AdminBlogs />} />
+                <Route path="faq" element={<AdminFAQ />} />
+                <Route path="testimonials" element={<AdminTestimonials />} />
+                <Route path="pages" element={<AdminPages />} />
               </Route>
             </Routes>
           </BrowserRouter>

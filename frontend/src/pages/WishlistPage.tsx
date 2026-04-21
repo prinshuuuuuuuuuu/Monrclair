@@ -17,7 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
-import { products as localProducts } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 
 export default function WishlistPage() {
   const [wishlist, setWishlist] = useState<any[]>([]);
@@ -26,6 +26,7 @@ export default function WishlistPage() {
   const navigate = useNavigate();
   const addToCart = useStore((s) => s.addToCart);
   const toggleWishlist = useStore((s) => s.toggleWishlist);
+  const { data: dbProducts = [] } = useProducts();
 
   useEffect(() => {
     fetchWishlist();
@@ -136,8 +137,8 @@ export default function WishlistPage() {
             "
           >
             {wishlist.map((item, i) => {
-              const localProd = localProducts.find(
-                (p) => p.id === String(item.product_id),
+              const localProd = dbProducts.find(
+                (p: any) => String(p.id) === String(item.product_id),
               );
               const displayImg = localProd ? localProd.image : item.image;
 

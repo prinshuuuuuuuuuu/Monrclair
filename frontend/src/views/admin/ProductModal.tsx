@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 interface Props {
   product?: any;
@@ -112,6 +113,16 @@ export default function ProductModal({ product, onClose, onSuccess }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Core Pattern Matching / Validation
+    if (!formData.name || !formData.price || !formData.category) {
+       return toast({
+         title: "Validation Deficit",
+         description: "Core identity specs (Name, Price, Category) must be defined.",
+         variant: "destructive",
+       });
+    }
+
     setLoading(true);
 
     const data = new FormData();
@@ -504,13 +515,10 @@ export default function ProductModal({ product, onClose, onSuccess }: Props) {
             <label className="text-[10px] tracking-luxury uppercase text-muted-foreground block">
               Narrative Description
             </label>
-            <textarea
-              className="w-full bg-secondary/30 border-none px-6 py-4 text-sm outline-none focus:ring-1 ring-primary/30 min-h-[150px] resize-none leading-relaxed"
-              placeholder="Describe the soul of this timepiece..."
+            <RichTextEditor
               value={formData.description || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(val) => setFormData({ ...formData, description: val })}
+              placeholder="Describe the soul of this timepiece..."
             />
           </section>
 

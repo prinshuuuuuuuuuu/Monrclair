@@ -43,9 +43,10 @@ export const useStore = create<StoreState>((set, get) => ({
         }
         return { cart: [...state.cart, { productId, quantity: 1 }] };
       });
-    } catch (err) { 
+    } catch (err: any) { 
       console.error(err); 
-      toast({ title: 'Logistics Error', description: 'Failed to update distribution bag.', variant: 'destructive' });
+      const errMsg = err.response?.data?.message || 'Failed to update distribution bag.';
+      toast({ title: 'Logistics Error', description: errMsg, variant: 'destructive' });
     }
   },
   removeFromCart: async (productId) => {
@@ -89,9 +90,10 @@ export const useStore = create<StoreState>((set, get) => ({
             : [...state.wishlist, productId],
         };
       });
-    } catch (err) { 
+    } catch (err: any) { 
       console.error(err); 
-      toast({ title: 'Archival Failed', description: 'Communication with central vault interrupted.', variant: 'destructive' });
+      const errMsg = err.response?.data?.message || 'Communication with central vault interrupted.';
+      toast({ title: 'Archival Failed', description: errMsg, variant: 'destructive' });
     }
   },
   setSearchQuery: (query) => set({ searchQuery: query }),

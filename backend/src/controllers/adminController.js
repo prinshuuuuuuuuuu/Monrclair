@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const cloudinary = require('../config/cloudinary');
 const fs = require('fs');
+const { sendOrderUpdateEmail } = require('../utils/emailService');
 
 const getDashboardStats = async (req, res) => {
   try {
@@ -18,8 +19,19 @@ const getDashboardStats = async (req, res) => {
       'SELECT id, name, email, created_at FROM users WHERE role = "user" ORDER BY created_at DESC LIMIT 5'
     );
 
-    const [[{ pendingOrdersCount }]] = await db.query('SELECT COUNT(*) as pendingOrdersCount FROM orders WHERE status = "pending"');
+    const [[{ pendingOrdersCount }]] = await db.query('SELECT COUNT(*) as pendingOrdersCount FROM orders WHERE status = "pending" OR status = "payment_pending"');
     const [[{ cancelledOrdersCount }]] = await db.query('SELECT COUNT(*) as cancelledOrdersCount FROM orders WHERE status = "cancelled"');
+
+    const [salesTrend] = await db.query(`
+      SELECT 
+        DATE_FORMAT(created_at, '%Y-%m-%d') as date,
+        SUM(total_amount) as amount,
+        COUNT(*) as orders
+      FROM orders 
+      WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
+      ORDER BY date ASC
+    `);
 
     res.json({
       totalSales: totalSales || 0,
@@ -29,7 +41,8 @@ const getDashboardStats = async (req, res) => {
       cancelledOrdersCount: cancelledOrdersCount || 0,
       recentUsers,
       recentOrders,
-      topProducts
+      topProducts,
+      salesTrend
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -94,7 +107,6 @@ const getAllOrders = async (req, res) => {
 
     const [orders] = await db.query(query, params);
 
-    // Get stats for the header
     const [[stats]] = await db.query(`
       SELECT 
         COUNT(*) as totalOrders,
@@ -161,6 +173,17 @@ const updateOrderStatus = async (req, res) => {
 
     params.push(req.params.id);
     await db.query(`UPDATE orders SET ${updates.join(', ')} WHERE id = ?`, params);
+
+    if (status) {
+      const [[order]] = await db.query(
+        'SELECT u.email FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?', 
+        [req.params.id]
+      );
+      if (order?.email) {
+        sendOrderUpdateEmail(order.email, req.params.id, status);
+      }
+    }
+
     res.json({ message: 'Order updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -361,8 +384,67 @@ const deleteProduct = async (req, res) => {
 
 const getAllProductsAdmin = async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM products ORDER BY created_at DESC');
-    res.json(rows);
+    const { page = 1, limit = 30, search, category, status } = req.query;
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const offset = (pageNum - 1) * limitNum;
+
+    let query = 'SELECT * FROM products WHERE 1=1';
+    const params = [];
+
+    if (search) {
+      query += ' AND (name LIKE ? OR brand LIKE ?)';
+      params.push(`%${search}%`, `%${search}%`);
+    }
+    if (category) {
+      query += ' AND category = ?';
+      params.push(category);
+    }
+    if (status) {
+      query += ' AND status = ? ';
+      params.push(status);
+    }
+
+    const countQuery = query.replace('SELECT *', 'SELECT COUNT(*) as total');
+    const [[{ total }]] = await db.query(countQuery, params);
+
+    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+    params.push(limitNum, offset);
+
+    const [rows] = await db.query(query, params);
+
+    res.json({
+      success: true,
+      data: rows,
+      meta: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        pages: Math.ceil(total / limitNum)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const exportOrdersCSV = async (req, res) => {
+  try {
+    const [orders] = await db.query(`
+      SELECT o.id, u.name as customer, o.total_amount as amount, o.status, o.created_at
+      FROM orders o
+      JOIN users u ON o.user_id = u.id
+      ORDER BY o.created_at DESC
+    `);
+
+    let csv = 'Order ID,Customer,Amount,Status,Date\n';
+    orders.forEach(o => {
+      csv += `${o.id},"${o.customer}",${o.amount},${o.status},${o.created_at}\n`;
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=orders_export.csv');
+    res.status(200).send(csv);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -380,5 +462,6 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
-  getAllProductsAdmin
+  getAllProductsAdmin,
+  exportOrdersCSV
 };

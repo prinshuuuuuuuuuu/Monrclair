@@ -16,7 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { products as localProducts } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 
 const statusConfig = {
   processing: {
@@ -74,6 +74,7 @@ export default function OrderHistoryPage() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { data: dbProducts = [] } = useProducts();
 
   useEffect(() => {
     fetchOrders();
@@ -222,8 +223,8 @@ export default function OrderHistoryPage() {
                       </p>
                       <div className="space-y-2.5">
                         {order.items?.map((item: any) => {
-                          const localProduct = localProducts.find(
-                            (p) => String(p.id) === String(item.product_id),
+                          const localProduct = dbProducts.find(
+                            (p: any) => String(p.id) === String(item.product_id),
                           );
                           const displayImage =
                             localProduct?.image || item.image;

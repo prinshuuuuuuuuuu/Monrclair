@@ -7,7 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { products } from "@/data/products";
+import { useProduct, useProducts } from "@/hooks/useProducts";
 import { useStore } from "@/store/useStore";
 import ProductCard from "@/components/ProductCard";
 import { useAuth } from "@/context/AuthContext";
@@ -19,7 +19,10 @@ export default function ProductDetailPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const product = products.find((p) => p.id === id);
+  const { data: dbProduct, isLoading } = useProduct(id || "");
+  const { data: dbProducts = [] } = useProducts();
+  const product = dbProduct;
+  const products = dbProducts;
   const [imgIndex, setImgIndex] = useState(0);
   const addToCart = useStore((s) => s.addToCart);
   const toggleWishlist = useStore((s) => s.toggleWishlist);
@@ -47,6 +50,17 @@ export default function ProductDetailPage() {
     if (product) toggleWishlist(product.id);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 px-10 text-center animate-fade-in container">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <h2 className="text-sm font-semibold mb-2 uppercase tracking-widest">
+           Querying Archive...
+        </h2>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="container py-20 text-center">
@@ -72,13 +86,13 @@ export default function ProductDetailPage() {
         <div>
           <div className="relative bg-secondary aspect-square overflow-hidden">
             <img
-              src={product.images[imgIndex]}
+              src={product.images && product.images.length > 0 ? product.images[imgIndex] : product.image}
               alt={product.name}
               width={800}
               height={800}
               className="w-full h-full object-contain p-8"
             />
-            {product.images.length > 1 && (
+            {product.images && product.images.length > 1 && (
               <>
                 <button
                   onClick={() =>
@@ -103,12 +117,12 @@ export default function ProductDetailPage() {
               </>
             )}
           </div>
-          <div className="flex gap-2 mt-3">
-            {product.images.map((img, i) => (
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-2 scrollbar-none">
+            {product.images && product.images.length > 0 ? product.images.map((img: string, i: number) => (
               <button
                 key={i}
                 onClick={() => setImgIndex(i)}
-                className={`w-16 h-16 bg-secondary p-1 border ${i === imgIndex ? "border-primary" : "border-transparent"}`}
+                className={`w-16 h-16 bg-secondary p-1 border flex-shrink-0 ${i === imgIndex ? "border-primary" : "border-transparent"}`}
               >
                 <img
                   src={img}
@@ -116,7 +130,11 @@ export default function ProductDetailPage() {
                   className="w-full h-full object-contain"
                 />
               </button>
-            ))}
+            )) : (
+              <button className="w-16 h-16 bg-secondary p-1 border border-primary flex-shrink-0">
+                 <img src={product.image} className="w-full h-full object-contain" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -142,9 +160,13 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-            {product.description}
-          </p>
+          {product.description && product.description.includes('<p>') ? (
+             <div className="text-sm text-muted-foreground leading-relaxed mb-8 prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: product.description }} />
+          ) : (
+            <p className="text-sm text-muted-foreground leading-relaxed mb-8">
+              {product.description}
+            </p>
+          )}
 
           <div className="border-t border-border py-6 space-y-3">
             <h3 className="text-[10px] tracking-luxury uppercase font-medium mb-4">

@@ -27,6 +27,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { Download } from "lucide-react";
 
 export default function AdminDashboard() {
   const { data: stats, isLoading } = useQuery({
@@ -87,6 +97,21 @@ export default function AdminDashboard() {
         </p>
       </div>
 
+      <div className="flex justify-end mb-4">
+        <Button
+          variant="outline"
+          className="gap-2 border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-bold rounded-xl h-12 shadow-sm"
+          onClick={() =>
+            window.open(
+              `${import.meta.env.VITE_API_URL || "http://localhost:5005/api"}/admin/orders/export`,
+              "_blank",
+            )
+          }
+        >
+          <Download size={18} /> Download Intelligence Report (CSV)
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {statCards.map((stat) => (
           <div
@@ -115,6 +140,72 @@ export default function AdminDashboard() {
           </div>
         ))}
       </div>
+
+      <Card className="border-none shadow-premium bg-white dark:bg-[#111114]/50 backdrop-blur-md overflow-hidden rounded-[2.5rem]">
+        <CardHeader className="p-8 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-black tracking-tighter flex items-center gap-3 uppercase">
+                <Activity className="text-primary" size={24} /> Sales{" "}
+                <span className="text-primary italic">Velocity</span>
+              </CardTitle>
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
+                Transaction flow over last 7 cycles
+              </p>
+            </div>
+            <Badge className="bg-emerald-500 text-white border-none px-4 py-1.5 font-black text-[10px] tracking-widest">
+              REALTIME PULSE
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-8 h-[350px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={stats.salesTrend}>
+              <defs>
+                <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#b87333" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#b87333" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#eee"
+              />
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 10, fontWeight: 700, fill: "#64748b" }}
+                dy={10}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 10, fontWeight: 700, fill: "#64748b" }}
+                tickFormatter={(val) => `₹${val / 1000}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: "16px",
+                  border: "none",
+                  boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)",
+                  fontWeight: "bold",
+                  fontSize: "12px",
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="amount"
+                stroke="#b87333"
+                strokeWidth={4}
+                fillOpacity={1}
+                fill="url(#colorAmount)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2 border-none shadow-premium overflow-hidden bg-background/50 backdrop-blur-sm">

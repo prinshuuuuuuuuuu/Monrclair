@@ -8,14 +8,18 @@ const adminRoutes = require("./routes/adminRoutes");
 const storeRoutes = require("./routes/storeRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const { createGenericController } = require("./controllers/genericController");
+const { createGenericRouter } = require("./routes/genericRouter");
+const { validateRequestPayload } = require("./validators/schemas");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5005;
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow all origins (or you can specify http://localhost:8080)
       callback(null, true);
     },
     credentials: true,
@@ -39,11 +43,22 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/store", storeRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/upload", uploadRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Timepiece Treasury API is running...");
+const dynamicModules = ['banners', 'testimonials', 'posts', 'faqs', 'brands', 'teams', 'reviews', 'notifications', 'services', 'pages'];
+dynamicModules.forEach((moduleName) => {
+  const controller = createGenericController(moduleName);
+  const validationMiddleware = [validateRequestPayload(moduleName)];
+  const router = createGenericRouter(controller, validationMiddleware);
+  app.use(`/api/${moduleName}`, router);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.get("/", (req, res) => {
+  res.send("Monrclair Luxury API is running...");
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Monrclair Server Securely Dispatched on Port ${PORT}`);
+  console.log(`🔗 API Endpoint: http://localhost:${PORT}/api`);
 });

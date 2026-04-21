@@ -11,7 +11,7 @@ import {
   IndianRupee,
   ChevronsDown,
 } from "lucide-react";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 import { useStore } from "@/store/useStore";
 import { useState, useRef, useEffect } from "react";
 
@@ -21,10 +21,11 @@ export default function CartPage() {
   const [couponApplied, setCouponApplied] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { data: dbProducts = [], isLoading } = useProducts();
 
   const cartItems = cart
     .map((ci) => {
-      const product = products.find((p) => p.id === ci.productId)!;
+      const product = dbProducts.find((p: any) => String(p.id) === String(ci.productId));
       return { ...ci, product };
     })
     .filter((ci) => ci.product);
@@ -47,6 +48,17 @@ export default function CartPage() {
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (isLoading) {
+     return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4 bg-background">
+        <div className="text-center max-w-xs mx-auto animate-pulse flex flex-col items-center">
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <h1 className="font-heading text-xl mt-4">Loading Logistics...</h1>
+        </div>
+      </div>
+     )
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -139,6 +151,7 @@ export default function CartPage() {
                           alt={product.name}
                           loading={idx < 3 ? "eager" : "lazy"}
                           className="w-full h-full object-contain p-3 sm:p-4 group-hover:scale-[1.04] transition-transform duration-500"
+                          onError={(e: any) => { e.target.src = "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800&q=80"; }}
                         />
                       </Link>
 

@@ -17,12 +17,15 @@ import {
   Clock,
 } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import { useBanners, useTestimonials, useBrands, useServices } from "@/hooks/useModules";
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import ProductCard from "@/components/ProductCard";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/data/products";
 import useEmblaCarousel from "embla-carousel-react";
 
-const slides = [
+const FALLBACK_SLIDES = [
   {
     image: "/hero-luxury-1.png",
     title: "Timeless Style, Modern Precision",
@@ -46,35 +49,15 @@ const slides = [
   },
 ];
 
-const categories = [
-  {
-    name: "Men Watches",
-    img: "/cat-men.png",
-    href: "/collection?category=men",
-  },
-  {
-    name: "Women Watches",
-    img: "/cat-women.png",
-    href: "/collection?category=women",
-  },
-  {
-    name: "Smart Watches",
-    img: "/cat-smart.png",
-    href: "/collection?category=smart",
-  },
-  {
-    name: "Luxury Watches",
-    img: "/cat-luxury.png",
-    href: "/collection?category=luxury",
-  },
-  {
-    name: "Sports Watches",
-    img: "/cat-sport.png",
-    href: "/collection?category=sport",
-  },
+const FALLBACK_CATEGORIES = [
+  { name: "Men Watches", img: "/cat-men.png", href: "/collection?category=men" },
+  { name: "Women Watches", img: "/cat-women.png", href: "/collection?category=women" },
+  { name: "Smart Watches", img: "/cat-smart.png", href: "/collection?category=smart" },
+  { name: "Luxury Watches", img: "/cat-luxury.png", href: "/collection?category=luxury" },
+  { name: "Sports Watches", img: "/cat-sport.png", href: "/collection?category=sport" },
 ];
 
-const trustPoints = [
+const FALLBACK_TRUST = [
   { icon: Truck, title: "Free Shipping", desc: "On all orders above ₹5,000" },
   { icon: Lock, title: "Secure Payment", desc: "100% protected payments" },
   { icon: RotateCcw, title: "Easy Returns", desc: "15-day return policy" },
@@ -82,26 +65,34 @@ const trustPoints = [
   { icon: Award, title: "Premium Quality", desc: "Certified authentic brands" },
 ];
 
-const testimonials = [
-  {
-    name: "Arjun Sharma",
-    text: "The quality of the Montclair Heritage is beyond words. A truly premium experience from ordering to unboxing.",
-    rating: 5,
-  },
-  {
-    name: "Priya Patel",
-    text: "Finally found a place that offers authentic luxury watches with great customer service in India.",
-    rating: 5,
-  },
-  {
-    name: "Vikram Singh",
-    text: "The Smart watch I bought is sleek and functional. Delivery was super fast too!",
-    rating: 4,
-  },
+const FALLBACK_TESTIMONIALS = [
+  { name: "Arjun Sharma", text: "The quality of the Montclair Heritage is beyond words. A truly premium experience from ordering to unboxing.", rating: 5 },
+  { name: "Priya Patel", text: "Finally found a place that offers authentic luxury watches with great customer service in India.", rating: 5 },
+  { name: "Vikram Singh", text: "The Smart watch I bought is sleek and functional. Delivery was super fast too!", rating: 4 },
 ];
 
+const ICON_MAP = {
+  'Truck': Truck, 'Lock': Lock, 'RotateCcw': RotateCcw, 'Headphones': Headphones, 'Award': Award, 'Star': Star
+};
+
 export default function HomePage() {
-  const { data: products = [], isLoading } = useProducts();
+  const { data: dbProducts = [], isLoading: pLoad } = useProducts();
+  const { data: rawBanners } = useBanners();
+  const { data: rawTestimonials } = useTestimonials();
+  const { data: rawBrands } = useBrands();
+  const { data: rawServices } = useServices();
+  const { data: rawCategories } = useQuery({ queryKey: ['categories'], queryFn: async () => { const res = await api.get('/categories'); return res.data || []; }});
+
+  const products = dbProducts;
+  const slides = (rawBanners && rawBanners.length > 0) ? rawBanners.map((b: any) => ({ image: b.image_url, title: b.title, subtitle: b.subtitle, cta1: b.cta_1_text, cta2: b.cta_2_text })) : FALLBACK_SLIDES;
+  const categories = (rawCategories && rawCategories.length > 0) ? rawCategories.map((c: any) => ({ name: c.name, img: c.image_url || c.image || FALLBACK_CATEGORIES[0].img, href: `/collection?category=${c.name}` })) : FALLBACK_CATEGORIES;
+  const testimonials = (rawTestimonials && rawTestimonials.length > 0) ? rawTestimonials.map((t: any) => ({ name: t.user_name, text: t.content, rating: Math.round(t.rating) })) : FALLBACK_TESTIMONIALS;
+  const trustPoints = (rawServices && rawServices.length > 0) ? rawServices.map((s: any) => ({ icon: ICON_MAP[s.icon_name as keyof typeof ICON_MAP] || Star, title: s.title, desc: s.description })) : FALLBACK_TRUST;
+  const brandList = (rawBrands && rawBrands.length > 0) ? rawBrands.map((b: any) => ({ name: b.name, logo: b.logo_url, isPremium: b.is_premium === 1 })) : [
+    { name: "Rolex", logo: "/Rolex.png", isPremium: true }, { name: "Titan", logo: "/titan.webp" }, { name: "Casio", logo: "/Casio.avif" }, { name: "Timex", logo: "/Timex.png" }, { name: "Fossil", logo: "/Fossil.webp" }, { name: "Fastrack", logo: "/Fastract.webp" }
+  ];
+
+  const isLoading = pLoad;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeFilter, setActiveFilter] = useState<
     "new" | "bestseller" | "trending"
@@ -284,14 +275,7 @@ export default function HomePage() {
         <div className="flex animate-marquee whitespace-nowrap gap-12 sm:gap-24 group-hover:[animation-play-state:paused] items-center">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="flex gap-12 sm:gap-24 items-center">
-              {[
-                { name: "Rolex", logo: "/Rolex.png", isPremium: true },
-                { name: "Titan", logo: "/titan.webp" },
-                { name: "Casio", logo: "/Casio.avif" },
-                { name: "Timex", logo: "/Timex.png" },
-                { name: "Fossil", logo: "/Fossil.webp" },
-                { name: "Fastrack", logo: "/Fastract.webp" },
-              ].map((brand) => (
+              {brandList.map((brand) => (
                 <div
                   key={brand.name}
                   className="flex flex-col items-center gap-4 py-8"
