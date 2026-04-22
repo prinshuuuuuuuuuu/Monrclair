@@ -12,26 +12,15 @@ const SOCIALS = [
 
 const NAV_COLUMNS = [
   {
-    heading: "Shop",
-    links: [
-      { name: "New Arrivals", href: "/collection?sort=newest" },
-      { name: "Men", href: "/collection?category=men" },
-      { name: "Women", href: "/collection?category=women" },
-      { name: "Accessories", href: "/collection?category=accessories" },
-    ],
-  },
-  {
     heading: "Help & Support",
     links: [
       { name: "Contact Us", href: "/contact" },
       { name: "Shipping & Delivery", href: "/shipping" },
-      { name: "FAQs", href: "/faq" },
     ],
   },
   {
     heading: "Company",
     links: [
-      { name: "Journal", href: "/blogs" },
       { name: "Testimonials", href: "/testimonials" },
       { name: "Privacy Policy", href: "/privacy" },
     ],

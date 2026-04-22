@@ -1,9 +1,14 @@
 const db = require('../config/db');
 
 const Category = {
-  findAll: async () => {
+  findAll: async (onlyActive = false) => {
     try {
-      const [rows] = await db.query('SELECT * FROM categories ORDER BY id ASC');
+      let query = 'SELECT * FROM categories';
+      if (onlyActive) {
+        query += " WHERE status = 'active'";
+      }
+      query += ' ORDER BY id ASC';
+      const [rows] = await db.query(query);
       return rows;
     } catch (error) {
       throw error;
@@ -30,10 +35,10 @@ const Category = {
 
   create: async (categoryData) => {
     try {
-      const { name, status } = categoryData;
+      const { name, slug, status } = categoryData;
       const [result] = await db.query(
-        'INSERT INTO categories (name, status) VALUES (?, ?)',
-        [name, status || 'active']
+        'INSERT INTO categories (name, slug, status) VALUES (?, ?, ?)',
+        [name, slug, status || 'active']
       );
       return { id: result.insertId, ...categoryData };
     } catch (error) {
@@ -43,10 +48,10 @@ const Category = {
 
   update: async (id, categoryData) => {
     try {
-      const { name, status } = categoryData;
+      const { name, slug, status } = categoryData;
       await db.query(
-        'UPDATE categories SET name = ?, status = ? WHERE id = ?',
-        [name, status, id]
+        'UPDATE categories SET name = ?, slug = ?, status = ? WHERE id = ?',
+        [name, slug, status, id]
       );
       return { id, ...categoryData };
     } catch (error) {

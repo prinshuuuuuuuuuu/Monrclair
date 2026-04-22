@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileNav from "@/components/MobileNav";
+import ScrollToTop from "@/components/ScrollToTop";
 import HomePage from "./pages/HomePage";
 import CollectionPage from "./pages/CollectionPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -59,6 +60,7 @@ const App = () => (
           <BrowserRouter
             future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
           >
+            <ScrollToTop />
             <Routes>
               <Route element={<StoreLayout />}>
                 <Route path="/" element={<HomePage />} />

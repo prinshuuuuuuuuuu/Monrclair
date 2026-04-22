@@ -50,11 +50,11 @@ const FALLBACK_SLIDES = [
 ];
 
 const FALLBACK_CATEGORIES = [
-  { name: "Men Watches", img: "/cat-men.png", href: "/collection?category=men" },
-  { name: "Women Watches", img: "/cat-women.png", href: "/collection?category=women" },
-  { name: "Smart Watches", img: "/cat-smart.png", href: "/collection?category=smart" },
-  { name: "Luxury Watches", img: "/cat-luxury.png", href: "/collection?category=luxury" },
-  { name: "Sports Watches", img: "/cat-sport.png", href: "/collection?category=sport" },
+  { name: "Men Watches", img: "/cat-men.png", href: "/collection?category=men-watches" },
+  { name: "Women Watches", img: "/cat-women.png", href: "/collection?category=women-watches" },
+  { name: "Smart Watches", img: "/cat-smart.png", href: "/collection?category=smart-watches" },
+  { name: "Luxury Watches", img: "/cat-luxury.png", href: "/collection?category=luxury-watches" },
+  { name: "Sports Watches", img: "/cat-sport.png", href: "/collection?category=sports-watches" },
 ];
 
 const FALLBACK_TRUST = [
@@ -85,7 +85,16 @@ export default function HomePage() {
 
   const products = dbProducts;
   const slides = (rawBanners && rawBanners.length > 0) ? rawBanners.map((b: any) => ({ image: b.image_url, title: b.title, subtitle: b.subtitle, cta1: b.cta_1_text, cta2: b.cta_2_text })) : FALLBACK_SLIDES;
-  const categories = (rawCategories && rawCategories.length > 0) ? rawCategories.map((c: any) => ({ name: c.name, img: c.image_url || c.image || FALLBACK_CATEGORIES[0].img, href: `/collection?category=${c.name}` })) : FALLBACK_CATEGORIES;
+  const categories = (rawCategories?.data && rawCategories.data.length > 0) 
+    ? rawCategories.data.map((c: any) => {
+        const slugValue = c.slug || c.name.toLowerCase().replace(/\s+/g, '-');
+        return { 
+          name: c.name, 
+          img: c.image_url || c.image || FALLBACK_CATEGORIES[0].img, 
+          href: `/collection?category=${slugValue}` 
+        };
+      }) 
+    : FALLBACK_CATEGORIES;
   const testimonials = (rawTestimonials && rawTestimonials.length > 0) ? rawTestimonials.map((t: any) => ({ name: t.user_name, text: t.content, rating: Math.round(t.rating) })) : FALLBACK_TESTIMONIALS;
   const trustPoints = (rawServices && rawServices.length > 0) ? rawServices.map((s: any) => ({ icon: ICON_MAP[s.icon_name as keyof typeof ICON_MAP] || Star, title: s.title, desc: s.description })) : FALLBACK_TRUST;
   const brandList = (rawBrands && rawBrands.length > 0) ? rawBrands.map((b: any) => ({ name: b.name, logo: b.logo_url, isPremium: b.is_premium === 1 })) : [
@@ -383,7 +392,7 @@ export default function HomePage() {
                 </div>
 
                 <Link
-                  to="/collection?category=luxury"
+                  to="/collection?category=luxury-watches"
                   className="inline-block bg-primary text-white px-12 py-5 text-xs font-label font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all shadow-2xl shadow-primary/20"
                 >
                   Explore The Collection

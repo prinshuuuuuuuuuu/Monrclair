@@ -33,3 +33,10 @@ export const useServices = () => {
     queryFn: () => fetchModuleData('services'),
   });
 };
+
+export const useCategories = () => {
+  return useQuery({
+    queryKey: ['categories'],
+    queryFn: () => fetchModuleData('categories'),
+  });
+};

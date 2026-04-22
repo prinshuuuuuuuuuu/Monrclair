@@ -6,13 +6,7 @@ import { useStore } from '@/store/useStore';
 import { useAuth } from '@/context/AuthContext';
 import { LogOut } from 'lucide-react';
 
-const navLinks = [
-  { label: "Classic", href: "/collection?category=classic" },
-  { label: "Sport", href: "/collection?category=sport" },
-  { label: "Premium", href: "/collection?category=premium" },
-  { label: "Journal", href: "/blogs" },
-  { label: "FAQ", href: "/faq" },
-];
+const navLinks = [];
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -22,7 +16,7 @@ export default function Header() {
   const navigate = useNavigate();
   const cart = useStore((s) => s.cart);
   const wishlist = useStore((s) => s.wishlist);
-  const cartTotal = cart.reduce((s, i) => s + i.quantity, 0);
+  const cartTotal = cart.length;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

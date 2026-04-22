@@ -7,17 +7,7 @@ const getProducts = async (req, res) => {
     const structuredProducts = products.map((p) => ({
       ...p,
       price: parseFloat(p.price),
-      rating: parseFloat(p.rating),
-      inStock: !!p.inStock,
-      featured: !!p.featured,
-      trending: !!p.trending,
-      specs: {
-        caseSize: p.caseSize,
-        movement: p.movement,
-        waterResistance: p.waterResistance,
-        powerReserve: p.powerReserve,
-        caseMaterial: p.caseMaterial,
-      },
+      mrp: p.mrp ? parseFloat(p.mrp) : null,
     }));
 
     res.json(structuredProducts);
@@ -34,17 +24,7 @@ const getProductById = async (req, res) => {
       const structuredProduct = {
         ...product,
         price: parseFloat(product.price),
-        rating: parseFloat(product.rating),
-        inStock: !!product.inStock,
-        featured: !!product.featured,
-        trending: !!product.trending,
-        specs: {
-          caseSize: product.caseSize,
-          movement: product.movement,
-          waterResistance: product.waterResistance,
-          powerReserve: product.powerReserve,
-          caseMaterial: product.caseMaterial,
-        },
+        mrp: product.mrp ? parseFloat(product.mrp) : null,
       };
       res.json(structuredProduct);
     } else {

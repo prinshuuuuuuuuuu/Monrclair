@@ -105,8 +105,15 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
             {product.brand || 'Montclair'}
           </span>
           <div className="w-1 h-1 rounded-full bg-outline-variant/50" />
+          <Link 
+            to={`/collection?category=${(product as any).category_slug || (product as any).category}`}
+            className="font-label text-[9px] uppercase tracking-widest text-primary hover:underline"
+          >
+            {(product as any).category_name || 'Watch'}
+          </Link>
+          <div className="w-1 h-1 rounded-full bg-outline-variant/50" />
           <span className="font-label text-[9px] uppercase tracking-widest text-outline">
-            {product.specs.caseSize}
+            {product.case_diameter}
           </span>
         </div>
 

@@ -246,10 +246,11 @@ const getUserProfile = async (req, res) => {
 
 const createProduct = async (req, res) => {
   const { 
-    name, brand, price, originalPrice, category, collection, 
-    strapType, dialColor, description, featured, trending, 
-    inStock, status, stock_quantity, 
-    caseSize, movement, waterResistance, powerReserve, caseMaterial 
+    name, brand, model_number, category, collection, mrp, price,
+    case_diameter, case_material, dial_colour, movement_type, caliber,
+    water_resistance, strap_material, crystal, functions, power_reserve,
+    case_thickness, lug_width, warranty, key_highlights, whats_in_the_box,
+    status, stock_quantity
   } = req.body;
 
   try {
@@ -265,24 +266,28 @@ const createProduct = async (req, res) => {
       imageUrls = uploadResults.map(result => result.secure_url);
       imageUrl = imageUrls[0];
 
-      req.files.forEach(file => fs.unlinkSync(file.path));
+      req.files.forEach(file => {
+        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+      });
     }
 
     const sanitizeDecimal = (val) => (val === '' || val === undefined || val === null) ? null : val;
 
     const [result] = await db.query(
       `INSERT INTO products (
-        name, brand, price, originalPrice, image, images, 
-        category, collection, strapType, dialColor, description, 
-        featured, trending, inStock, status, stock_quantity,
-        caseSize, movement, waterResistance, powerReserve, caseMaterial
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        name, brand, model_number, category, collection, mrp, price, image, images,
+        case_diameter, case_material, dial_colour, movement_type, caliber,
+        water_resistance, strap_material, crystal, functions, power_reserve,
+        case_thickness, lug_width, warranty, key_highlights, whats_in_the_box,
+        status, stock_quantity
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        name, brand, sanitizeDecimal(price), sanitizeDecimal(originalPrice), 
-        imageUrl, JSON.stringify(imageUrls), 
-        category, collection, strapType, dialColor, description, 
-        featured || 0, trending || 0, inStock || 1, status || 'active', stock_quantity || 0,
-        caseSize, movement, waterResistance, powerReserve, caseMaterial
+        name, brand, model_number, category, collection, sanitizeDecimal(mrp), sanitizeDecimal(price),
+        imageUrl, JSON.stringify(imageUrls),
+        case_diameter, case_material, dial_colour, movement_type, caliber,
+        water_resistance, strap_material, crystal, functions, power_reserve,
+        case_thickness, lug_width, warranty, key_highlights, whats_in_the_box,
+        status || 'active', stock_quantity || 0
       ]
     );
     res.status(201).json({ message: 'Product created', id: result.insertId });
@@ -302,10 +307,11 @@ const updateProduct = async (req, res) => {
     const params = [];
 
     const possibleFields = [
-      'name', 'brand', 'category', 'collection', 'strapType', 
-      'dialColor', 'description', 'featured', 'trending', 
-      'inStock', 'status', 'stock_quantity', 'caseSize', 
-      'movement', 'waterResistance', 'powerReserve', 'caseMaterial'
+      'name', 'brand', 'model_number', 'category', 'collection',
+      'case_diameter', 'case_material', 'dial_colour', 'movement_type', 'caliber',
+      'water_resistance', 'strap_material', 'crystal', 'functions', 'power_reserve',
+      'case_thickness', 'lug_width', 'warranty', 'key_highlights', 'whats_in_the_box',
+      'status', 'stock_quantity'
     ];
 
     possibleFields.forEach(field => {
@@ -320,12 +326,11 @@ const updateProduct = async (req, res) => {
       params.push(sanitizeDecimal(req.body.price));
     }
     
-    if (req.body.originalPrice !== undefined) {
-      fieldsToUpdate.push(`originalPrice=?`);
-      params.push(sanitizeDecimal(req.body.originalPrice));
+    if (req.body.mrp !== undefined) {
+      fieldsToUpdate.push(`mrp=?`);
+      params.push(sanitizeDecimal(req.body.mrp));
     }
 
-    
     let imagesToSave = null;
     if (req.body.existingImages) {
       imagesToSave = JSON.parse(req.body.existingImages);
@@ -343,7 +348,9 @@ const updateProduct = async (req, res) => {
       } else {
         imagesToSave = [...imagesToSave, ...newImageUrls];
       }
-      req.files.forEach(file => fs.unlinkSync(file.path));
+      req.files.forEach(file => {
+        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+      });
     }
 
     if (imagesToSave !== null) {
@@ -389,26 +396,26 @@ const getAllProductsAdmin = async (req, res) => {
     const limitNum = parseInt(limit);
     const offset = (pageNum - 1) * limitNum;
 
-    let query = 'SELECT * FROM products WHERE 1=1';
+    let query = 'SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category = c.id WHERE 1=1';
     const params = [];
 
     if (search) {
-      query += ' AND (name LIKE ? OR brand LIKE ?)';
+      query += ' AND (p.name LIKE ? OR p.brand LIKE ?)';
       params.push(`%${search}%`, `%${search}%`);
     }
     if (category) {
-      query += ' AND category = ?';
+      query += ' AND p.category = ?';
       params.push(category);
     }
     if (status) {
-      query += ' AND status = ? ';
+      query += ' AND p.status = ? ';
       params.push(status);
     }
 
-    const countQuery = query.replace('SELECT *', 'SELECT COUNT(*) as total');
+    const countQuery = query.replace('SELECT p.*, c.name as category_name', 'SELECT COUNT(*) as total');
     const [[{ total }]] = await db.query(countQuery, params);
 
-    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+    query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
     params.push(limitNum, offset);
 
     const [rows] = await db.query(query, params);

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
@@ -11,8 +11,8 @@ import {
   Check,
 } from "lucide-react";
 
-const collections = ["All", "Chronograph", "Heritage", "Diver", "Aviator"];
-const strapTypes = ["Leather", "Metal", "Silicone"];
+import { useCategories } from "@/hooks/useModules";
+
 const sortOptions = [
   { label: "Featured", value: "popular" },
   { label: "Price: Low-High", value: "price-asc" },
@@ -21,30 +21,37 @@ const sortOptions = [
 
 export default function CollectionPage() {
   const { data: dbProducts = [], isLoading } = useProducts();
+  const { data: categories = [] } = useCategories();
   const [params] = useSearchParams();
   const categoryParam = params.get("category");
   const searchParam = params.get("search") || "";
 
-  const [selectedCollection, setSelectedCollection] = useState("All");
-  const [selectedStrap, setSelectedStrap] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | "All">("All");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1500000]);
   const [sort, setSort] = useState("popular");
   const [search, setSearch] = useState(searchParam);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  // Sync with URL params
+  useEffect(() => {
+    if (categoryParam && Array.isArray(categories)) {
+      const cat = categories.find(
+        (c: any) =>
+          String(c.slug) === String(categoryParam) ||
+          String(c.id) === String(categoryParam) ||
+          c.name.toLowerCase().replace(/\s+/g, "-") === String(categoryParam)
+      );
+      if (cat) setSelectedCategoryId(String(cat.id));
+    }
+  }, [categoryParam, categories]);
+
   const filtered = useMemo(() => {
     let result = dbProducts;
 
-    if (categoryParam) {
-      result = result.filter((p) => p.category === categoryParam);
-    }
-    if (selectedCollection !== "All") {
+    if (selectedCategoryId !== "All") {
       result = result.filter(
-        (p) => p.collection === selectedCollection.toLowerCase(),
+        (p) => String(p.category) === String(selectedCategoryId),
       );
-    }
-    if (selectedStrap.length > 0) {
-      result = result.filter((p) => selectedStrap.includes(p.strapType));
     }
     result = result.filter(
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1],
@@ -53,9 +60,8 @@ export default function CollectionPage() {
       const q = search.toLowerCase();
       result = result.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.brand.toLowerCase().includes(q) ||
-          p.collection.includes(q),
+          p.name?.toLowerCase().includes(q) ||
+          p.brand?.toLowerCase().includes(q)
       );
     }
 
@@ -68,17 +74,16 @@ export default function CollectionPage() {
         return [...result].sort((a, b) => b.reviewCount - a.reviewCount);
     }
   }, [
-    categoryParam,
-    selectedCollection,
-    selectedStrap,
+    selectedCategoryId,
     priceRange,
     sort,
     search,
   ]);
 
-  const title = categoryParam
-    ? categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1)
-    : "All Collections";
+  const activeCategory = Array.isArray(categories) 
+    ? categories.find((c: any) => String(c.id) === String(selectedCategoryId))
+    : null;
+  const title = activeCategory ? activeCategory.name : "Luxury Collection";
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -106,21 +111,34 @@ export default function CollectionPage() {
 
           <div className="space-y-2.5">
             <h3 className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground/70">
-              Collections
+              Categories
             </h3>
             <nav className="space-y-0.5">
-              {collections.map((c) => (
+              <button
+                onClick={() => setSelectedCategoryId("All")}
+                className={`flex items-center justify-between w-full text-xs px-2.5 py-2 rounded-md transition-all duration-200 ${
+                  selectedCategoryId === "All"
+                    ? "bg-primary/10 text-primary font-semibold"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                }`}
+              >
+                <span>All Watches</span>
+                {selectedCategoryId === "All" && (
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                )}
+              </button>
+              {Array.isArray(categories) && categories.map((c: any) => (
                 <button
-                  key={c}
-                  onClick={() => setSelectedCollection(c)}
+                  key={c.id}
+                  onClick={() => setSelectedCategoryId(String(c.id))}
                   className={`flex items-center justify-between w-full text-xs px-2.5 py-2 rounded-md transition-all duration-200 ${
-                    selectedCollection === c
+                    String(selectedCategoryId) === String(c.id)
                       ? "bg-primary/10 text-primary font-semibold"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   }`}
                 >
-                  <span>{c}</span>
-                  {selectedCollection === c && (
+                  <span>{c.name}</span>
+                  {String(selectedCategoryId) === String(c.id) && (
                     <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                   )}
                 </button>
@@ -129,45 +147,11 @@ export default function CollectionPage() {
           </div>
 
           <div className="h-px bg-border/40" />
-          <div className="space-y-2.5">
-            <h3 className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground/70">
-              Material
-            </h3>
-            <div className="space-y-1">
-              {strapTypes.map((s) => (
-                <label
-                  key={s}
-                  className="flex items-center gap-3 px-2.5 py-2 rounded-md hover:bg-muted/40 group cursor-pointer transition-all duration-150"
-                >
-                  <div className="relative flex items-center justify-center shrink-0">
-                    <input
-                      type="checkbox"
-                      checked={selectedStrap.includes(s.toLowerCase())}
-                      onChange={() =>
-                        setSelectedStrap((prev) =>
-                          prev.includes(s.toLowerCase())
-                            ? prev.filter((x) => x !== s.toLowerCase())
-                            : [...prev, s.toLowerCase()],
-                        )
-                      }
-                      className="peer appearance-none w-4 h-4 border border-border/70 rounded-sm checked:bg-primary checked:border-primary hover:border-primary/60 transition-all duration-150 cursor-pointer"
-                    />
-                    <Check className="absolute w-2.5 h-2.5 text-primary-foreground opacity-0 peer-checked:opacity-100 transition-opacity duration-150 pointer-events-none" />
-                  </div>
-                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors duration-150 select-none">
-                    {s}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="h-px bg-border/40" />
 
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <h3 className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground/70">
-                Price
+                Price Range
               </h3>
               <span className="text-[10px] font-mono font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                 ₹{priceRange[1].toLocaleString()}
@@ -176,15 +160,15 @@ export default function CollectionPage() {
             <input
               type="range"
               min={0}
-              max={50000}
-              step={1000}
+              max={1500000}
+              step={10000}
               value={priceRange[1]}
               onChange={(e) => setPriceRange([0, Number(e.target.value)])}
-              className="w-full h-1 bg-muted rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md"
+              className="w-full h-1 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
             />
             <div className="flex justify-between text-[9px] font-semibold text-muted-foreground/60 tracking-wide">
               <span>₹0</span>
-              <span>₹50,000+</span>
+              <span>₹15L+</span>
             </div>
           </div>
         </aside>
@@ -195,7 +179,7 @@ export default function CollectionPage() {
             className="flex-1 flex items-center justify-center gap-2 py-4 text-[10px] font-bold uppercase tracking-[0.2em]"
           >
             <SlidersHorizontal size={12} />
-            Filters {selectedStrap.length > 0 && `(${selectedStrap.length})`}
+            Filters
           </button>
           <div className="flex-1 relative">
             <select
@@ -275,9 +259,8 @@ export default function CollectionPage() {
               </p>
               <button
                 onClick={() => {
-                  setSelectedCollection("All");
-                  setSelectedStrap([]);
-                  setPriceRange([0, 50000]);
+                  setSelectedCategoryId("All");
+                  setPriceRange([0, 1500000]);
                   setSearch("");
                 }}
                 className="mt-8 text-[10px] font-bold uppercase tracking-widest underline underline-offset-4 hover:text-primary transition-colors"
@@ -321,20 +304,30 @@ export default function CollectionPage() {
 
               <div>
                 <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary mb-6">
-                  Collections
+                  Categories
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {collections.map((c) => (
+                  <button
+                    onClick={() => setSelectedCategoryId("All")}
+                    className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
+                      selectedCategoryId === "All"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-muted-foreground active:bg-border"
+                    }`}
+                  >
+                    All Watches
+                  </button>
+                  {Array.isArray(categories) && categories.map((c: any) => (
                     <button
-                      key={c}
-                      onClick={() => setSelectedCollection(c)}
+                      key={c.id}
+                      onClick={() => setSelectedCategoryId(String(c.id))}
                       className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
-                        selectedCollection === c
+                        String(selectedCategoryId) === String(c.id)
                           ? "bg-primary text-primary-foreground"
                           : "bg-secondary text-muted-foreground active:bg-border"
                       }`}
                     >
-                      {c}
+                      {c.name}
                     </button>
                   ))}
                 </div>
@@ -352,8 +345,8 @@ export default function CollectionPage() {
                 <input
                   type="range"
                   min={0}
-                  max={50000}
-                  step={1000}
+                  max={1500000}
+                  step={10000}
                   value={priceRange[1]}
                   onChange={(e) => setPriceRange([0, Number(e.target.value)])}
                   className="w-full h-2 bg-secondary rounded-full appearance-none accent-primary"

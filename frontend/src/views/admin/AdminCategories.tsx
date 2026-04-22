@@ -68,6 +68,7 @@ import { format } from "date-fns";
 interface Category {
   id: number;
   name: string;
+  slug: string;
   status: "active" | "inactive";
   created_at: string;
 }
@@ -80,6 +81,7 @@ export default function AdminCategories() {
   const [isEditPopUpOpen, setIsEditPopUpOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategorySlug, setNewCategorySlug] = useState("");
   const [newCategoryStatus, setNewCategoryStatus] = useState<
     "active" | "inactive"
   >("active");
@@ -95,7 +97,7 @@ export default function AdminCategories() {
     queryKey: ["admin-categories"],
     queryFn: async () => {
       const { data } = await api.get("/categories");
-      return data;
+      return data.data;
     },
   });
 
@@ -103,12 +105,12 @@ export default function AdminCategories() {
     queryKey: ["admin-categories-stats"],
     queryFn: async () => {
       const { data } = await api.get("/categories/stats");
-      return data;
+      return data.data;
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: async (categoryData: { name: string; status: string }) => {
+    mutationFn: async (categoryData: { name: string; slug: string; status: string }) => {
       await api.post("/categories", categoryData);
     },
     onSuccess: () => {
@@ -116,6 +118,7 @@ export default function AdminCategories() {
       queryClient.invalidateQueries({ queryKey: ["admin-categories-stats"] });
       setIsAddPopUpOpen(false);
       setNewCategoryName("");
+      setNewCategorySlug("");
       toast({
         title: "Category Created",
         description: "New category has been added successfully.",
@@ -137,7 +140,7 @@ export default function AdminCategories() {
       data,
     }: {
       id: number;
-      data: { name: string; status: string };
+      data: { name: string; slug: string; status: string };
     }) => {
       await api.put(`/categories/${id}`, data);
     },
@@ -175,13 +178,15 @@ export default function AdminCategories() {
     },
   });
 
-  const filteredCategories = categories.filter((cat) => {
-    const matchesSearch = cat.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || cat.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredCategories = Array.isArray(categories) 
+    ? categories.filter((cat) => {
+        const matchesSearch = cat.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesStatus = statusFilter === "all" || cat.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      })
+    : [];
 
   const handleAddCategory = () => {
     if (!newCategoryName.trim()) {
@@ -192,7 +197,11 @@ export default function AdminCategories() {
       });
       return;
     }
-    createMutation.mutate({ name: newCategoryName, status: newCategoryStatus });
+    createMutation.mutate({ 
+      name: newCategoryName, 
+      slug: newCategorySlug || newCategoryName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+      status: newCategoryStatus 
+    });
   };
 
   const handleUpdateCategory = () => {
@@ -207,7 +216,11 @@ export default function AdminCategories() {
     }
     updateMutation.mutate({
       id: editingCategory.id,
-      data: { name: editingCategory.name, status: editingCategory.status },
+      data: { 
+        name: editingCategory.name, 
+        slug: editingCategory.slug,
+        status: editingCategory.status 
+      },
     });
   };
   const startIndex =
@@ -540,8 +553,20 @@ export default function AdminCategories() {
               <Input
                 placeholder="e.g. Luxury, Sports, Minimalist"
                 value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
+                onChange={(e) => {
+                  setNewCategoryName(e.target.value);
+                  setNewCategorySlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''));
+                }}
                 className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold">Slug (URL Path)</label>
+              <Input
+                placeholder="e.g. luxury-watches"
+                value={newCategorySlug}
+                onChange={(e) => setNewCategorySlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''))}
+                className="h-11 rounded-xl font-mono text-xs"
               />
             </div>
             <div className="space-y-2">
@@ -599,6 +624,19 @@ export default function AdminCategories() {
                     })
                   }
                   className="h-11 rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Slug (URL Path)</label>
+                <Input
+                  value={editingCategory.slug}
+                  onChange={(e) =>
+                    setEditingCategory({
+                      ...editingCategory,
+                      slug: e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+                    })
+                  }
+                  className="h-11 rounded-xl font-mono text-xs"
                 />
               </div>
               <div className="space-y-2">

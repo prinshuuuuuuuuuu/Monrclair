@@ -3,19 +3,19 @@ const Category = require("../models/categoryModel");
 const categoryController = {
   getAllCategories: async (req, res) => {
     try {
-      const categories = await Category.findAll();
-      res.json(categories);
+      const categories = await Category.findAll(true);
+      res.json({ success: true, data: categories });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
   getCategoryStats: async (req, res) => {
     try {
       const stats = await Category.getStats();
-      res.json(stats);
+      res.json({ success: true, data: stats });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 

@@ -167,7 +167,7 @@ export default function CartPage() {
                           </div>
 
                           <button
-                            onClick={() => removeFromCart(product.id)}
+                            onClick={() => removeFromCart(String(product.id))}
                             className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/8 transition-all"
                             aria-label="Remove item"
                           >
@@ -192,7 +192,7 @@ export default function CartPage() {
                           <div className="flex items-center border border-border rounded-xl overflow-hidden bg-secondary/60">
                             <button
                               onClick={() =>
-                                updateQuantity(product.id, quantity - 1)
+                                updateQuantity(String(product.id), quantity - 1)
                               }
                               className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-[#b87333]/12 hover:text-[#b87333] transition-colors"
                               aria-label="Decrease quantity"
@@ -204,7 +204,7 @@ export default function CartPage() {
                             </span>
                             <button
                               onClick={() =>
-                                updateQuantity(product.id, quantity + 1)
+                                updateQuantity(String(product.id), quantity + 1)
                               }
                               className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-[#b87333]/12 hover:text-[#b87333] transition-colors"
                               aria-label="Increase quantity"

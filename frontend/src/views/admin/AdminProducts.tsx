@@ -124,6 +124,15 @@ export default function AdminProducts() {
     [products],
   );
 
+  const { data: categoriesData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const response = await api.get("/categories");
+      return response.data;
+    },
+  });
+  const categories = categoriesData?.data || [];
+
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/admin/products/${id}`);
@@ -233,21 +242,23 @@ export default function AdminProducts() {
             <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-primary whitespace-nowrap">
               <Filter size={14} /> Refine Inventory
             </div>
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <select
-                className="bg-background border border-border/50 px-4 py-2 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all min-w-[140px]"
-                value={categoryFilter}
-                onChange={(e) => {
-                  setCategoryFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
-              >
-                <option value="all">All Categories</option>
-                <option value="classic">Classic</option>
-                <option value="sport">Sport</option>
-                <option value="premium">Premium</option>
-              </select>
-              <select
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <select
+                  className="bg-background border border-border/50 px-4 py-2 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all min-w-[140px]"
+                  value={categoryFilter}
+                  onChange={(e) => {
+                    setCategoryFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value="all">All Categories</option>
+                  {categories.map((cat: any) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                <select
                 className="bg-background border border-border/50 px-4 py-2 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all min-w-[140px]"
                 value={statusFilter}
                 onChange={(e) => {
@@ -366,7 +377,7 @@ export default function AdminProducts() {
                             variant="secondary"
                             className="capitalize font-medium"
                           >
-                            {product.category}
+                            {product.category_name || product.category}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
@@ -688,7 +699,7 @@ function ProductCard({
             {product.status}
           </Badge>
           <Badge className="bg-black/80 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-widest border border-white/20 px-3 py-1">
-            {product.category}
+            {product.category_name || product.category}
           </Badge>
         </div>
 

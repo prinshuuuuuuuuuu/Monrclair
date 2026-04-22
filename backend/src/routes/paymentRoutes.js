@@ -2,89 +2,97 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 const { protect } = require("../middleware/authMiddleware");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
 
-router.post("/upi/intent", protect, async (req, res) => {
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_placeholder",
+  key_secret: process.env.RAZORPAY_KEY_SECRET || "razorpay_secret_placeholder",
+});
+
+console.log(`[PAYMENT] Razorpay initialized with Key ID starting with: ${process.env.RAZORPAY_KEY_ID?.substring(0, 8)}...`);
+
+// Create Razorpay Order
+router.post("/razorpay/order", protect, async (req, res) => {
   try {
-    const { totalAmount } = req.body;
-    if (!totalAmount)
-      return res.status(400).json({ message: "Amount is required" });
+    const { amount } = req.body;
+    const options = {
+      amount: Math.round(amount * 100), // Ensure it is an integer (paise)
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
 
-    const upiId = process.env.MERCHANT_UPI_ID || "merchant@upi";
-    const merchantName = encodeURIComponent(
-      process.env.MERCHANT_NAME || "Monrclair Luxury",
-    );
-    const orderRef = `MC_${Date.now()}_${req.user.id}`;
-
-    const upiUri = `upi://pay?pa=${upiId}&pn=${merchantName}&tr=${orderRef}&am=${totalAmount}&cu=INR`;
-
-    res.status(200).json({
-      success: true,
-      upiUri,
-      orderRef,
-      upiId,
-      amount: totalAmount,
-    });
+    const order = await razorpay.orders.create(options);
+    res.json({ success: true, order });
   } catch (error) {
-    console.error("UPI Intent Generation Error:", error);
-    res.status(500).json({
-      message: "Could not generate native UPI string.",
-      error: error.message,
+    console.error("Razorpay Order Creation Error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Razorpay Error: " + (error.error?.description || error.message || "Order creation failed")
     });
   }
 });
 
-router.post("/upi/verify", protect, async (req, res) => {
+// Verify Razorpay Payment
+router.post("/razorpay/verify", protect, async (req, res) => {
   const connection = await db.getConnection();
   try {
-    const { utrCode, orderRef, totalAmount, shippingAddress, cartItems } =
-      req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      totalAmount,
+      shippingAddress,
+      cartItems
+    } = req.body;
 
-    if (!utrCode || utrCode.length < 12) {
-      return res
-        .status(400)
-        .json({ message: "Invalid 12-Digit Banking UTR Number provided." });
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "razorpay_secret_placeholder")
+      .update(body.toString())
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ success: false, message: "Invalid payment signature" });
     }
 
     await connection.beginTransaction();
 
+    // Inventory Check and Reduction
     for (const item of cartItems) {
       const [products] = await connection.query(
         "SELECT stock_quantity, name FROM products WHERE id = ? FOR UPDATE",
-        [item.productId],
+        [item.productId]
       );
 
-      if (products.length === 0) {
-        throw new Error(`Product ID ${item.productId} not found.`);
-      }
-
+      if (products.length === 0) throw new Error(`Product ID ${item.productId} not found.`);
+      
       const product = products[0];
       if (product.stock_quantity < item.quantity) {
-        throw new Error(
-          `Insufficient stock for ${product.name}. Remaining: ${product.stock_quantity}`,
-        );
+        throw new Error(`Insufficient stock for ${product.name}.`);
       }
 
       await connection.query(
         "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?",
-        [item.quantity, item.productId],
+        [item.quantity, item.productId]
       );
     }
 
+    // Create Order in DB
     const [orderRes] = await connection.query(
-      `
-      INSERT INTO orders (user_id, total_amount, status, shipping_address, payment_id, tracking_number)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `,
+      `INSERT INTO orders (user_id, total_amount, status, shipping_address, payment_id, tracking_number)
+       VALUES (?, ?, ?, ?, ?, ?)`,
       [
         req.user.id,
         totalAmount,
-        "payment_pending",
-        shippingAddress,
-        `UPI_UTR_${utrCode}`,
-        "TRK" + Math.floor(Math.random() * 100000000),
-      ],
+        "paid",
+        JSON.stringify(shippingAddress),
+        razorpay_payment_id,
+        "TRK" + Math.floor(Math.random() * 100000000)
+      ]
     );
 
+    // Insert Order Items
     if (cartItems && cartItems.length > 0) {
       const orderItems = cartItems.map((item) => [
         orderRes.insertId,
@@ -93,33 +101,25 @@ router.post("/upi/verify", protect, async (req, res) => {
         item.price,
       ]);
       await connection.query(
-        `
-        INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?
-      `,
-        [orderItems],
+        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?",
+        [orderItems]
       );
     }
 
-    await connection.query("DELETE FROM cart_items WHERE user_id = ?", [
-      req.user.id,
-    ]);
+    // Clear Cart
+    await connection.query("DELETE FROM cart_items WHERE user_id = ?", [req.user.id]);
 
     await connection.commit();
 
     res.status(200).json({
       success: true,
-      message: "UPI Transaction Recorded and Inventory Reserved",
+      message: "Payment verified and order placed",
       orderId: orderRes.insertId,
     });
   } catch (error) {
     await connection.rollback();
-    console.error("Direct UPI Verification Error:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message.includes("stock")
-        ? error.message
-        : "Server error during payment verification.",
-    });
+    console.error("Razorpay Verification Error:", error);
+    res.status(500).json({ success: false, message: error.message });
   } finally {
     connection.release();
   }
