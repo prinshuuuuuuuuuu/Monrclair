@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
-import { Quote, Star, CheckCircle, Award, Sparkles, MessageSquare } from "lucide-react";
+import { Quote, Star, CheckCircle, Award, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function TestimonialsPage() {
@@ -12,87 +12,81 @@ export default function TestimonialsPage() {
     },
   });
 
-  const activeTestimonials = testimonials?.filter((t: any) => t.status === 'active') || [];
+  const activeTestimonials = testimonials?.filter((t: any) => t.status === "active") || [];
 
   return (
-    <div className="min-h-screen pt-24 md:pt-32 pb-20 bg-background transition-colors duration-500 overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Cinematic Header */}
-        <header className="relative text-center mb-20 md:mb-32 animate-in fade-in slide-in-from-top-4 duration-1000">
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-primary/5 text-primary rounded-full mb-8 border border-primary/10 shadow-sm">
-             <Sparkles size={14} fill="currentColor" strokeWidth={0} className="animate-pulse" />
-             <span className="text-[10px] font-black uppercase tracking-[0.2em]">The Collector's Circle</span>
-          </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black tracking-tighter text-foreground mb-8 leading-[0.9]">
-            Acclaimed <span className="text-primary italic">Heritage</span>
+    <div className="min-h-screen pt-20 md:pt-28 pb-16 bg-background transition-colors duration-500 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+
+        <header className="relative text-center mb-14 md:mb-20 animate-in fade-in slide-in-from-top-4 duration-700">
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-black tracking-tight text-foreground mb-4 leading-tight">
+            Acclaimed <span className="text-primary italic">Voices</span>
           </h1>
-          <p className="text-muted-foreground text-sm md:text-xl font-light max-w-2xl mx-auto leading-relaxed selection:bg-primary/20">
-            Voices from a global community of horological connoisseurs, detailing their journey with Monrclair's rare calibers.
+          <p className="text-muted-foreground text-sm md:text-base font-light max-w-xl mx-auto leading-relaxed">
+            Perspectives from a global community of horological connoisseurs, detailing their journey with Monrclair's rare calibers.
           </p>
-          
-          {/* Subtle decoration */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[300px] bg-primary/5 blur-[120px] -z-10 rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[220px] bg-primary/5 blur-[100px] -z-10 rounded-full pointer-events-none" />
         </header>
 
-        {/* Content Section */}
         {isLoading ? (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="h-64 bg-secondary/10 rounded-[2.5rem] animate-pulse border border-border/20 shadow-inner" />
+              <div
+                key={n}
+                className="h-52 bg-secondary/10 rounded-3xl animate-pulse border border-border/20"
+              />
             ))}
           </div>
         ) : (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8 animate-in fade-in duration-1000 delay-300">
-            {activeTestimonials.map((t: any, idx: number) => (
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5 animate-in fade-in duration-700 delay-200">
+            {activeTestimonials.map((t: any) => (
               <div
                 key={t.id}
                 className={cn(
-                    "break-inside-avoid relative overflow-hidden bg-white dark:bg-neutral-900 border border-border/40 p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem]",
-                    "shadow-xl shadow-black/[0.02] hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/20 transition-all duration-700 group",
+                  "break-inside-avoid relative overflow-hidden",
+                  "bg-white dark:bg-neutral-900",
+                  "border border-border/40 hover:border-primary/25",
+                  "p-5 md:p-6 rounded-2xl md:rounded-3xl",
+                  "shadow-sm hover:shadow-lg hover:shadow-primary/8",
+                  "transition-all duration-500 group"
                 )}
               >
-                {/* Large Background Icon */}
-                <div className="absolute -top-6 -right-6 opacity-[0.03] text-primary group-hover:opacity-[0.08] transition-opacity rotate-12 group-hover:rotate-0 duration-1000">
-                    <Quote size={180} />
+                <div className="absolute -top-3 -right-3 opacity-[0.04] text-primary group-hover:opacity-[0.07] transition-opacity rotate-6 group-hover:rotate-0 duration-700 pointer-events-none">
+                  <Quote size={120} />
                 </div>
 
-                {/* Rating Display */}
-                <div className="flex items-center gap-1 mb-8 text-amber-500 transform group-hover:scale-105 transition-transform duration-500 origin-left">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <Star 
-                            key={i} 
-                            size={12} 
-                            fill={i < t.rating ? "currentColor" : "none"} 
-                            strokeWidth={i < t.rating ? 0 : 2} 
-                            className={cn(i < t.rating ? "animate-in fade-in zoom-in duration-500" : "")}
-                            style={{ animationDelay: `${i * 100}ms` }}
-                        />
-                    ))}
+                <div className="flex items-center gap-0.5 mb-4 text-amber-400">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      size={11}
+                      fill={i < t.rating ? "currentColor" : "none"}
+                      strokeWidth={i < t.rating ? 0 : 1.5}
+                    />
+                  ))}
                 </div>
 
-                {/* Main Content */}
-                <p className="text-lg md:text-xl text-foreground font-heading italic leading-relaxed mb-10 tracking-tight selection:bg-primary/20 relative z-10">
+                <p className="text-sm md:text-[15px] text-foreground font-medium italic leading-relaxed mb-5 relative z-10 line-clamp-5">
                   "{t.content}"
                 </p>
 
-                {/* Identity Header */}
-                <div className="flex items-center justify-between pt-8 border-t border-border/30 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center font-black text-primary border border-primary/10 shadow-inner overflow-hidden">
-                        {t.user_name.charAt(0)}
-                    </div>
-                    <div>
-                        <span className="font-heading font-black text-xs md:text-sm uppercase tracking-widest text-foreground block mb-1">
-                        {t.user_name}
+                <div className="flex items-center gap-3 pt-4 border-t border-border/25 relative z-10">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center font-black text-sm text-primary border border-primary/15 shrink-0">
+                    {t.user_name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <span className="font-heading font-bold text-xs uppercase tracking-wider text-foreground block truncate">
+                      {t.user_name}
+                    </span>
+                    {t.is_verified_purchase && (
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <CheckCircle size={9} className="text-emerald-500 shrink-0" />
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-600/80">
+                          Verified Owner
                         </span>
-                        {t.is_verified_purchase && (
-                        <div className="flex items-center gap-2">
-                            <CheckCircle size={10} className="text-emerald-500" />
-                            <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600/80">Verified Artifact Owner</span>
-                        </div>
-                        )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -100,37 +94,38 @@ export default function TestimonialsPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {activeTestimonials.length === 0 && !isLoading && (
-            <div className="py-20 text-center flex flex-col items-center gap-4 opacity-30">
-                <MessageSquare size={48} className="text-muted-foreground" />
-                <p className="text-xs font-black uppercase tracking-[0.3em] font-medium">The Council has not yet published new testimonials.</p>
-            </div>
+          <div className="py-24 text-center flex flex-col items-center gap-3 opacity-30">
+            <MessageSquare size={36} className="text-muted-foreground" />
+            <p className="text-xs font-black uppercase tracking-[0.25em]">
+              No testimonials published yet.
+            </p>
+          </div>
         )}
 
-        {/* Action Section */}
-        <footer className="mt-20 md:mt-32 py-20 px-8 relative overflow-hidden bg-[#121212] rounded-[3rem] md:rounded-[5rem] text-center border border-white/5 space-y-10 group/footer">
-            <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-                <div className="inline-flex items-center gap-2 text-primary opacity-50 px-4 py-1.5 border border-primary/20 rounded-full mx-auto">
-                    <Award size={14} />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Client Engagement</span>
-                </div>
-                <h3 className="text-3xl md:text-5xl font-heading font-black text-white leading-tight">Authorize Your Experience</h3>
-                <p className="text-white/40 text-sm md:text-lg font-light leading-relaxed max-w-lg mx-auto">
-                    We invite you to share your personal horological acquisitions and experiences with the international community.
-                </p>
-                <div className="pt-4">
-                    <button className="relative px-12 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] md:text-xs overflow-hidden shadow-2xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 group/btn">
-                        <span className="relative z-10">Dispatch Endorsement</span>
-                        <div className="absolute inset-x-0 h-full w-4 bg-white/20 skew-x-12 -translate-x-20 group-hover/btn:translate-x-64 transition-all duration-1000 ease-in-out" />
-                    </button>
-                </div>
+        <footer className="mt-16 md:mt-24 py-14 px-6 md:px-12 relative overflow-hidden bg-primary/[0.03] rounded-3xl md:rounded-[3rem] text-center border border-primary/10 group/footer">
+          <div className="relative z-10 max-w-lg mx-auto space-y-5">
+            <div className="inline-flex items-center gap-2 text-primary px-3 py-1 border border-primary/20 rounded-full bg-primary/5">
+              <Award size={12} />
+              <span className="text-[9px] font-black uppercase tracking-widest">Client Engagement</span>
             </div>
-            
-            {/* Visual background dynamics */}
-            <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[140px] -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover/footer:opacity-100 transition-opacity duration-1000" />
-            <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px] translate-x-1/3 translate-y-1/2 opacity-0 group-hover/footer:opacity-100 transition-opacity duration-1000" />
+            <h3 className="text-2xl md:text-3xl font-heading font-black text-foreground leading-snug">
+              Share Your Experience
+            </h3>
+            <p className="text-muted-foreground text-sm font-light leading-relaxed max-w-sm mx-auto">
+              Join the international community and share your personal horological acquisitions and experiences.
+            </p>
+            <div className="pt-4">
+              <button className="px-10 py-4 bg-primary text-white rounded-xl font-black uppercase tracking-[0.3em] text-[10px] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95">
+                Dispatch Endorsement
+              </button>
+            </div>
+          </div>
+
+          <div className="absolute top-1/2 left-0 w-72 h-72 bg-primary/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover/footer:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-56 h-56 bg-primary/5 rounded-full blur-[80px] translate-x-1/3 translate-y-1/2 opacity-0 group-hover/footer:opacity-100 transition-opacity duration-1000 pointer-events-none" />
         </footer>
+
       </div>
     </div>
   );
