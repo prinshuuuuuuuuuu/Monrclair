@@ -316,11 +316,9 @@ export default function AdminUsers() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col gap-2">
         <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
-          User <span className="text-primary italic">Managment</span>
+          Client <span className="text-primary italic">Management</span>
         </h1>
-        <p className="text-muted-foreground text-lg">
-          Manage all customer accounts and activity.
-        </p>
+       
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">

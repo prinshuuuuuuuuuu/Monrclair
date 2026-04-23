@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const { 
   getDashboardStats, 
+  getGraphStats,
   getAllOrders, 
   getOrderDetails,
   updateOrderStatus, 
@@ -42,6 +43,7 @@ const upload = multer({ storage });
 router.use(protect);
 router.use(admin);
 router.get('/stats', getDashboardStats);
+router.get('/graph-stats', getGraphStats);
 router.get('/orders/export', exportOrdersCSV);
 router.get('/orders', getAllOrders);
 router.get('/orders/:id', getOrderDetails);

@@ -57,7 +57,7 @@ export default function AdminTestimonials() {
     <GenericAdminView
       moduleName="testimonials"
       title="Client Endorsements"
-      description="Curate the voices of your satisfied collectors and connoisseurs."
+      addButtonText="ADD NEW TESTIMONIAL"
       columns={columns as any}
       formFields={formFields as any}
       icon={Quote}

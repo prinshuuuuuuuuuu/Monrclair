@@ -9,7 +9,6 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
-  Eye,
   Package,
   CheckCircle,
   AlertTriangle,
@@ -54,13 +53,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
+
 import {
   Select,
   SelectContent,
@@ -74,7 +67,6 @@ export default function AdminProducts() {
   const { toast } = useToast();
   const { PAGINATION } = APP_CONFIG;
   const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [viewingProduct, setViewingProduct] = useState<any>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -177,11 +169,9 @@ export default function AdminProducts() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
-            Product <span className="text-primary italic">Managment</span>
+            Product <span className="text-primary italic">Management</span>
           </h1>
-          <p className="text-muted-foreground text-lg font-medium">
-            Oversee and curate the prestigious horological collection.
-          </p>
+         
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
@@ -209,7 +199,7 @@ export default function AdminProducts() {
               size={18}
               className="mr-2 group-hover:rotate-90 transition-transform duration-300"
             />
-            Register Masterpiece
+            ADD NEW PRODUCT
           </Button>
         </div>
       </div>
@@ -473,12 +463,7 @@ export default function AdminProducts() {
                               align="end"
                               className="w-48 p-2"
                             >
-                              <DropdownMenuItem
-                                onClick={() => setViewingProduct(product)}
-                                className="gap-2 cursor-pointer"
-                              >
-                                <Eye size={16} /> View Details
-                              </DropdownMenuItem>
+
                               <DropdownMenuItem
                                 onClick={() => setEditingProduct(product)}
                                 className="gap-2 cursor-pointer"
@@ -560,7 +545,7 @@ export default function AdminProducts() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onView={() => setViewingProduct(product)}
+
                     onEdit={() => setEditingProduct(product)}
                     onDelete={() => deleteMutation.mutate(product.id)}
                     onToggleStatus={() =>
@@ -666,22 +651,7 @@ export default function AdminProducts() {
         />
       )}
 
-      <Sheet
-        open={!!viewingProduct}
-        onOpenChange={(open) => !open && setViewingProduct(null)}
-      >
-        <SheetContent className="sm:max-w-2xl w-full p-0 border-l shadow-2xl flex flex-col bg-background h-[100dvh]">
-          {viewingProduct && (
-            <ProductDetailSheet
-              product={viewingProduct}
-              onEdit={() => {
-                setEditingProduct(viewingProduct);
-                setViewingProduct(null);
-              }}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
+
     </div>
   );
 }
@@ -744,13 +714,7 @@ function ProductCard({
 
         <div className="absolute inset-x-4 bottom-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
           <div className="flex gap-2 p-2 bg-white/90 dark:bg-black/90 backdrop-blur-lg rounded-2xl border border-white/20 shadow-2xl">
-            <button
-              onClick={onView}
-              className="flex-1 py-2.5 rounded-xl hover:bg-primary hover:text-white transition-all flex justify-center text-primary"
-              title="View Details"
-            >
-              <Eye size={18} />
-            </button>
+
             <button
               onClick={onEdit}
               className="flex-1 py-2.5 rounded-xl hover:bg-amber-500 hover:text-white transition-all flex justify-center text-amber-500"
@@ -845,94 +809,4 @@ function ProductCard({
   );
 }
 
-function ProductDetailSheet({ product, onEdit }: any) {
-  return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="p-8 border-b bg-muted/20 shrink-0">
-        <SheetHeader className="text-left">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20">
-              {product.brand}
-            </span>
-            <span className="px-3 py-1 bg-secondary/50 rounded-full text-[10px] font-black uppercase tracking-widest border border-border/50">
-              {product.category}
-            </span>
-          </div>
-          <SheetTitle className="text-4xl lg:text-5xl font-heading mb-2 leading-tight">
-            {product.name}
-          </SheetTitle>
-          <SheetDescription className="text-muted-foreground leading-relaxed text-base italic">
-            "
-            {product.description ||
-              "This horological masterpiece represents the pinnacle of craftsmanship and timeless elegance."}
-            "
-          </SheetDescription>
-        </SheetHeader>
-      </div>
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-10">
-        <div className="bg-secondary/10 flex flex-col items-center justify-center rounded-[2rem] border border-border/20 p-8 mb-6">
-          <div className="relative w-full aspect-square bg-white dark:bg-[#16161a] rounded-[2rem] shadow-inner overflow-hidden flex items-center justify-center border border-border/10">
-            <img
-              src={getDisplayImage(product)}
-              alt={product.name}
-              className="w-full h-full object-contain p-12 drop-shadow-2xl"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-secondary/20 p-5 rounded-2xl border border-border/50">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
-              Retail Price
-            </p>
-            <p className="text-3xl font-heading text-primary">
-              ₹{Number(product.price).toLocaleString("en-IN")}
-            </p>
-          </div>
-          <div className="bg-secondary/20 p-5 rounded-2xl border border-border/50">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
-              Available Stock
-            </p>
-            <p className="text-3xl font-heading">
-              {product.stock_quantity}{" "}
-              <span className="text-xs uppercase font-sans text-muted-foreground tracking-widest">
-                Units
-              </span>
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4 text-sm">
-          <h4 className="text-[10px] tracking-luxury uppercase font-bold text-primary mb-2">
-            Technical Blueprint
-          </h4>
-          <DetailRow label="Movement" value={product.movement} />
-          <DetailRow label="Case Size" value={product.caseSize} />
-          <DetailRow label="Case Material" value={product.caseMaterial} />
-          <DetailRow label="Resistance" value={product.waterResistance} />
-        </div>
-      </div>
-
-      <div className="p-8 border-t bg-muted/10 shrink-0 mt-auto">
-        <button
-          onClick={onEdit}
-          className="w-full py-5 bg-primary text-primary-foreground rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95"
-        >
-          Modify Specifications
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="flex items-center justify-between py-4 border-b border-border/10 last:border-0 hover:bg-secondary/5 px-4 transition-colors rounded-2xl">
-      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-        {label}
-      </span>
-      <span className="font-semibold text-sm">{value || "N/A"}</span>
-    </div>
-  );
-}

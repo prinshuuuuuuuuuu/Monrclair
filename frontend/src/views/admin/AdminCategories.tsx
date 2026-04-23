@@ -271,11 +271,9 @@ export default function AdminCategories() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
           <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
-            Category <span className="text-primary italic">Managment</span>
+            Category <span className="text-primary italic">Management</span>
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Organize and manage watch categories for your store.
-          </p>
+         
         </div>
         <Button
           onClick={() => setIsAddPopUpOpen(true)}
