@@ -22,6 +22,7 @@ import {
   Eye,
   Settings,
   AlertCircle,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -269,7 +270,7 @@ export default function AdminCoupons() {
     filteredCoupons.length <= firstPageLimit
       ? 1
       : 1 +
-        Math.ceil((filteredCoupons.length - firstPageLimit) / nextPagesLimit);
+      Math.ceil((filteredCoupons.length - firstPageLimit) / nextPagesLimit);
 
   const statCards = [
     {
@@ -542,7 +543,7 @@ export default function AdminCoupons() {
                                   <Trash2 size={14} /> Delete
                                 </DropdownMenuItem>
                               </AlertDialogTrigger>
-                              <AlertDialogContent className="rounded-2xl">
+                              <AlertDialogContent className="rounded-[32px] border-none shadow-2xl">
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>
                                     Delete Coupon?
@@ -632,430 +633,428 @@ export default function AdminCoupons() {
           </div>
         )}
       </Card>
-      <Dialog open={isAddPopUpOpen} onOpenChange={setIsAddPopUpOpen}>
-        <DialogContent className="sm:max-w-[600px] rounded-3xl p-0 overflow-hidden">
-          <div className="p-6 bg-primary text-white flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <Ticket size={24} />
-            </div>
-            <div>
-              <DialogTitle className="text-2xl font-black italic">
-                CREATE NEW COUPON
-              </DialogTitle>
-              <DialogDescription className="text-white/70">
-                Define rules for the new discount campaign.
-              </DialogDescription>
-            </div>
-          </div>
-          <div className="p-8 space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Coupon Code
-                </label>
-                <Input
-                  placeholder="e.g. SUMMER2024"
-                  value={formData.code}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      code: e.target.value.toUpperCase(),
-                    })
-                  }
-                  className="h-12 rounded-xl font-bold border-slate-200"
-                />
+      {isAddPopUpOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-[580px] max-h-[90vh] flex flex-col shadow-2xl relative rounded-[40px] overflow-hidden border-none animate-in zoom-in-95 duration-300">
+
+
+            <div className="bg-[#b87333] px-6 py-5 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <Ticket size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 leading-none mb-1">
+                    Coupon Management
+                  </p>
+                  <h3 className="text-xl font-bold text-white leading-tight">
+                    Create New Coupon
+                  </h3>
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Discount Type
-                </label>
-                <Select
-                  value={formData.discount_type}
-                  onValueChange={(val: any) =>
-                    setFormData({ ...formData, discount_type: val })
-                  }
-                >
-                  <SelectTrigger className="h-12 rounded-xl border-slate-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="percentage">Percentage (%)</SelectItem>
-                    <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <button
+                onClick={() => setIsAddPopUpOpen(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
+              >
+                <X size={20} />
+              </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Value
-                </label>
-                <div className="relative">
+
+            <div className="p-8 space-y-6">
+
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Coupon Code
+                  </label>
                   <Input
-                    type="number"
-                    value={formData.discount_value}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        discount_value: e.target.value,
-                      })
-                    }
-                    className="h-12 rounded-xl border-slate-200 pl-8"
+                    placeholder="e.g. SUMMER2024"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                    className="h-11 rounded-2xl text-sm font-semibold border-slate-200 bg-slate-50/50 transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
                   />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    {formData.discount_type === "percentage" ? (
-                      <Percent size={14} />
-                    ) : (
-                      <IndianRupee size={14} />
-                    )}
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Discount Type
+                  </label>
+                  <Select
+                    value={formData.discount_type}
+                    onValueChange={(val: any) => setFormData({ ...formData, discount_type: val })}
+                  >
+                    <SelectTrigger className="h-11 rounded-2xl text-sm border-slate-200 bg-slate-50/50 transition-all focus:ring-[#b87333]/10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="percentage">Percentage (%)</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Value
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      value={formData.discount_value}
+                      onChange={(e) => setFormData({ ...formData, discount_value: e.target.value })}
+                      className="h-11 rounded-2xl text-sm border-slate-200 pl-8 bg-slate-50/50 shadow-sm transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                    />
+                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400">
+                      {formData.discount_type === "percentage" ? (
+                        <Percent size={12} />
+                      ) : (
+                        <IndianRupee size={12} />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Min Order
-                </label>
-                <Input
-                  type="number"
-                  value={formData.min_order_value}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      min_order_value: e.target.value,
-                    })
-                  }
-                  className="h-12 rounded-xl border-slate-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Max Cap (%)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Unlimited"
-                  disabled={formData.discount_type === "fixed"}
-                  value={formData.max_discount_limit}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      max_discount_limit: e.target.value,
-                    })
-                  }
-                  className="h-12 rounded-xl border-slate-200"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Start Date
-                </label>
-                <Input
-                  type="datetime-local"
-                  value={formData.start_date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, start_date: e.target.value })
-                  }
-                  className="h-12 rounded-xl border-slate-200"
-                />
-              </div>
-              <div className="space-y-2 bg-rose-50/50 p-3 rounded-2xl border border-rose-100">
-                <label className="text-xs font-bold uppercase tracking-widest text-rose-600">
-                  Expiry Date *
-                </label>
-                <Input
-                  type="datetime-local"
-                  value={formData.expiry_date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, expiry_date: e.target.value })
-                  }
-                  className="h-10 mt-1 rounded-lg border-rose-200 bg-white"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Total Usage Limit
-                </label>
-                <Input
-                  type="number"
-                  placeholder="No limit"
-                  value={formData.usage_limit_total}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      usage_limit_total: e.target.value,
-                    })
-                  }
-                  className="h-12 rounded-xl border-slate-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  Limit Per User
-                </label>
-                <Input
-                  type="number"
-                  value={formData.usage_limit_per_user}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      usage_limit_per_user: e.target.value,
-                    })
-                  }
-                  className="h-12 rounded-xl border-slate-200"
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter className="p-8 bg-slate-50 border-t">
-            <Button
-              variant="ghost"
-              onClick={() => setIsAddPopUpOpen(false)}
-              className="rounded-xl h-12 px-6"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreateSubmit}
-              disabled={createMutation.isPending}
-              className="rounded-xl h-12 px-10 bg-black hover:bg-slate-800 text-white font-bold"
-            >
-              {createMutation.isPending ? "Creating..." : "Save Coupon"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-     <Dialog open={isEditPopUpOpen} onOpenChange={setIsEditPopUpOpen}>
-  <DialogContent className="w-[95%] sm:max-w-[600px] max-h-[90vh] overflow-y-auto rounded-2xl p-0">
-
-    {/* HEADER */}
-    <div className="p-4 sm:p-6 bg-[#96723b] text-white flex items-center gap-3">
-      <Settings size={22} />
-      <div>
-        <DialogTitle className="text-lg sm:text-2xl font-black italic">
-          EDIT COUPON
-        </DialogTitle>
-        <DialogDescription className="text-white/70 text-xs sm:text-sm">
-          Modify existing coupon parameters.
-        </DialogDescription>
-      </div>
-    </div>
-
-    {/* BODY */}
-    {editingCoupon && (
-      <div className="p-4 sm:p-6 md:p-8 space-y-5 bg-slate-50/50">
-
-        {/* ROW 1 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          
-          <div className="space-y-2">
-            <label className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-500">
-              Coupon Code
-            </label>
-            <Input
-              value={editingCoupon.code}
-              disabled
-              className="h-11 sm:h-12 rounded-xl opacity-50"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-500">
-              Discount Type
-            </label>
-            <Select
-              value={editingCoupon.discount_type}
-              onValueChange={(val: any) =>
-                setEditingCoupon({ ...editingCoupon, discount_type: val })
-              }
-            >
-              <SelectTrigger className="h-11 sm:h-12 rounded-xl w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="percentage">Percentage (%)</SelectItem>
-                <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-        </div>
-
-        {/* ROW 2 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-          <div className="space-y-2">
-            <label className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-500">
-              Value
-            </label>
-            <Input
-              value={editingCoupon.discount_value}
-              onChange={(e) =>
-                setEditingCoupon({
-                  ...editingCoupon,
-                  discount_value: Number(e.target.value),
-                })
-              }
-              className="h-11 sm:h-12 rounded-xl w-full"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-500">
-              Min Order
-            </label>
-            <Input
-              value={editingCoupon.min_order_value}
-              onChange={(e) =>
-                setEditingCoupon({
-                  ...editingCoupon,
-                  min_order_value: Number(e.target.value),
-                })
-              }
-              className="h-11 sm:h-12 rounded-xl w-full"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-500">
-              Status
-            </label>
-            <Select
-              value={editingCoupon.status}
-              onValueChange={(val: any) =>
-                setEditingCoupon({ ...editingCoupon, status: val })
-              }
-            >
-              <SelectTrigger className="h-11 sm:h-12 rounded-xl w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="disabled">Disabled</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-        </div>
-
-        {/* CRITICAL SECTION */}
-        <div className="bg-[#fffbeb]/60 p-4 rounded-2xl border border-amber-200">
-
-          <div className="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase mb-3">
-            <AlertCircle size={14} /> Critical Dates
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-amber-600">
-                EXPIRY DATE
-              </label>
-              <Input
-                type="datetime-local"
-                value={format(
-                  new Date(editingCoupon.expiry_date),
-                  "yyyy-MM-dd'T'HH:mm"
-                )}
-                onChange={(e) =>
-                  setEditingCoupon({
-                    ...editingCoupon,
-                    expiry_date: e.target.value,
-                  })
-                }
-                className="h-10 rounded-lg border-amber-200 w-full"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-amber-600">
-                USAGE LIMIT
-              </label>
-              <Input
-                type="number"
-                value={editingCoupon.usage_limit_total || ""}
-                onChange={(e) =>
-                  setEditingCoupon({
-                    ...editingCoupon,
-                    usage_limit_total: Number(e.target.value),
-                  })
-                }
-                className="h-10 rounded-lg border-amber-200 w-full"
-              />
-            </div>
-
-          </div>
-        </div>
-      </div>
-    )}
-
-    {/* FOOTER */}
-    <DialogFooter className="p-4 sm:p-6 md:p-8 bg-white border-t flex flex-col sm:flex-row gap-3 sm:gap-4">
-
-      <Button
-        variant="ghost"
-        onClick={() => setIsEditPopUpOpen(false)}
-        className="w-full sm:w-auto rounded-xl h-11 sm:h-12 px-6"
-      >
-        Cancel
-      </Button>
-
-      <Button
-        onClick={handleUpdateSubmit}
-        disabled={updateMutation.isPending}
-        className="w-full sm:w-auto rounded-xl h-11 sm:h-12 px-8 bg-black hover:bg-slate-800 text-white font-bold"
-      >
-        {updateMutation.isPending ? "Updating..." : "Update Coupon"}
-      </Button>
-
-    </DialogFooter>
-
-  </DialogContent>
-</Dialog>
-      <Dialog open={isUsageModalOpen} onOpenChange={setIsUsageModalOpen}>
-        <DialogContent className="sm:max-w-[750px] rounded-3xl p-0 overflow-hidden h-[80vh] flex flex-col">
-          <div className="p-6 bg-[#96723b] text-white flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Users size={24} />
-              <div>
-                <DialogTitle className="text-2xl font-black italic">
-                  USAGE TRACKING
-                </DialogTitle>
-                <DialogDescription className="text-white/70">
-                  Detailed history for {selectedCouponForUsage?.code}
-                </DialogDescription>
-              </div>
-            </div>
-            {selectedCouponForUsage && (
-              <Badge className="bg-white/20 text-white border-white/30 text-lg py-1 px-4">
-                Total Uses: {selectedCouponForUsage.used_count}
-              </Badge>
-            )}
-          </div>
-
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full p-6">
-              {isUsageLoading ? (
-                <div className="flex items-center justify-center p-20">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Min Order (₹)
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="No minimum"
+                    value={formData.min_order_value}
+                    onChange={(e) => setFormData({ ...formData, min_order_value: e.target.value })}
+                    className="h-11 rounded-2xl text-sm border-slate-200  bg-slate-50/50 shadow-sm transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                  />
                 </div>
-              ) : usageData.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Max Cap (%)
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Unlimited"
+                    disabled={formData.discount_type === "fixed"}
+                    value={formData.max_discount_limit}
+                    onChange={(e) => setFormData({ ...formData, max_discount_limit: e.target.value })}
+                    className="h-11 rounded-2xl text-sm border-slate-200 disabled:opacity-40  bg-slate-50/50 shadow-sm transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                  />
+                </div>
+              </div>
+
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Start Date
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    value={formData.start_date}
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                    className="h-11 rounded-2xl text-sm border-slate-200  bg-slate-50/50 shadow-sm transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                  />
+                </div>
+                <div className="space-y-1 bg-rose-50/60 border border-rose-100 rounded-xl px-3 py-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-rose-600">
+                    Expiry Date *
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    value={formData.expiry_date}
+                    onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
+                    className="h-11 rounded-2xl text-sm border-rose-200 bg-white shadow-sm transition-all focus:border-rose-400 focus:ring-rose-400/20"
+                  />
+                </div>
+              </div>
+
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Total Usage Limit
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="No limit"
+                    value={formData.usage_limit_total}
+                    onChange={(e) => setFormData({ ...formData, usage_limit_total: e.target.value })}
+                    className="h-11 rounded-2xl text-sm border-slate-200  bg-slate-50/50 shadow-sm transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Limit Per User
+                  </label>
+                  <Input
+                    type="number"
+                    value={formData.usage_limit_per_user}
+                    onChange={(e) => setFormData({ ...formData, usage_limit_per_user: e.target.value })}
+                    className="h-11 rounded-2xl text-sm border-slate-200  bg-slate-50/50 shadow-sm transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                  />
+                </div>
+              </div>
+            </div>
+
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+              <Button
+                variant="ghost"
+                onClick={() => setIsAddPopUpOpen(false)}
+                className="flex-1 h-12 rounded-2xl text-sm font-bold text-slate-600 hover:bg-white transition-all active:scale-95"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="flex-[1.5] h-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold shadow-xl shadow-zinc-200 transition-all active:scale-95"
+              >
+                {createMutation.isPending ? "Creating..." : "Save Coupon"}
+              </Button>
+            </div>
+
+          </div>
+        </div>
+      )}
+      {isEditPopUpOpen && editingCoupon && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-[580px] max-h-[90vh] flex flex-col shadow-2xl relative rounded-[40px] overflow-hidden border-none animate-in zoom-in-95 duration-300">
+
+
+            <div className="bg-[#b87333] px-6 py-5 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <Settings size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 leading-none mb-1">
+                    Coupon Management
+                  </p>
+                  <h3 className="text-xl font-bold text-white leading-tight">
+                    Edit Coupon Record
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditPopUpOpen(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+
+            {editingCoupon && (
+              <div className="p-8 space-y-6">
+
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      Coupon Code
+                    </label>
+                    <Input
+                      value={editingCoupon.code}
+                      disabled
+                      className="h-11 rounded-2xl text-sm opacity-50 bg-slate-100/50 border-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      Discount Type
+                    </label>
+                    <Select
+                      value={editingCoupon.discount_type}
+                      onValueChange={(val: any) =>
+                        setEditingCoupon({ ...editingCoupon, discount_type: val })
+                      }
+                    >
+                      <SelectTrigger className="h-10 rounded-2xl text-sm border-slate-200 w-full bg-slate-50/50">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="percentage">Percentage (%)</SelectItem>
+                        <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      Value
+                    </label>
+                    <Input
+                      type="number"
+                      value={editingCoupon.discount_value}
+                      onChange={(e) =>
+                        setEditingCoupon({ ...editingCoupon, discount_value: Number(e.target.value) })
+                      }
+                      className="h-10 rounded-2xl text-sm border-slate-200  bg-slate-50/50"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      Min Order
+                    </label>
+                    <Input
+                      type="number"
+                      value={editingCoupon.min_order_value}
+                      onChange={(e) =>
+                        setEditingCoupon({ ...editingCoupon, min_order_value: Number(e.target.value) })
+                      }
+                      className="h-9 rounded-xl text-sm border-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      Status
+                    </label>
+                    <Select
+                      value={editingCoupon.status}
+                      onValueChange={(val: any) =>
+                        setEditingCoupon({ ...editingCoupon, status: val })
+                      }
+                    >
+                      <SelectTrigger className="h-9 rounded-xl text-sm border-slate-200 w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="disabled">Disabled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+
+                <div className="bg-amber-50/60 border border-amber-200 rounded-[32px] px-5 py-4">
+                  <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[10px] uppercase tracking-widest mb-2.5">
+                    <AlertCircle size={13} />
+                    Critical Dates
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-amber-600">
+                        Expiry Date
+                      </label>
+                      <Input
+                        type="datetime-local"
+                        value={format(new Date(editingCoupon.expiry_date), "yyyy-MM-dd'T'HH:mm")}
+                        onChange={(e) =>
+                          setEditingCoupon({ ...editingCoupon, expiry_date: e.target.value })
+                        }
+                        className="h-10 rounded-2xl text-sm border-amber-200 bg-white shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-amber-600">
+                        Usage Limit
+                      </label>
+                      <Input
+                        type="number"
+                        value={editingCoupon.usage_limit_total || ""}
+                        onChange={(e) =>
+                          setEditingCoupon({ ...editingCoupon, usage_limit_total: Number(e.target.value) })
+                        }
+                        className="h-10 rounded-2xl text-sm border-amber-200 bg-white shadow-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsEditPopUpOpen(false)}
+                className="flex-1 h-12 rounded-2xl text-sm font-bold text-slate-600 hover:bg-white transition-all active:scale-95"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateSubmit}
+                disabled={updateMutation.isPending}
+                className="flex-[1.5] h-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold shadow-xl shadow-zinc-200 transition-all active:scale-95"
+              >
+                {updateMutation.isPending ? "Updating..." : "Update Coupon"}
+              </Button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {isUsageModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-[700px] max-h-[85vh] flex flex-col shadow-2xl relative rounded-[40px] overflow-hidden border-none animate-in zoom-in-95 duration-300">
+
+
+            <div className="bg-[#b87333] px-6 py-5 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <Users size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 leading-none mb-1">
+                    Coupon Tracking
+                  </p>
+                  <h3 className="text-xl font-bold text-white leading-tight">
+                    Usage History
+                  </h3>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {selectedCouponForUsage && (
+                  <Badge className="bg-white/20 text-white border-white/30 text-[10px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-xl">
+                    Uses: {selectedCouponForUsage.used_count}
+                  </Badge>
+                )}
+                <button
+                  onClick={() => setIsUsageModalOpen(false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full px-5 py-4">
+
+                {isUsageLoading ? (
+                  <div className="flex items-center justify-center p-20">
+                    <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#96723b]" />
+                  </div>
+
+                ) : usageData.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Order Info</TableHead>
-                        <TableHead>Saved</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
+                        <TableHead className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                          Customer
+                        </TableHead>
+                        <TableHead className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                          Order Info
+                        </TableHead>
+                        <TableHead className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                          Saved
+                        </TableHead>
+                        <TableHead className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                          Date
+                        </TableHead>
+                        <TableHead className="text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">
+                          Action
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1063,64 +1062,63 @@ export default function AdminCoupons() {
                         <TableRow key={usage.id}>
                           <TableCell>
                             <div className="flex flex-col">
-                              <span className="font-bold">
-                                {usage.user_name}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {usage.user_email}
-                              </span>
+                              <span className="font-semibold text-sm">{usage.user_name}</span>
+                              <span className="text-[11px] text-muted-foreground">{usage.user_email}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col">
-                              <span className="font-mono text-xs">
+                              <span className="font-mono text-[11px] text-muted-foreground">
                                 #{usage.order_id}
                               </span>
                               <Badge
                                 variant="outline"
-                                className="w-fit text-[10px] mt-1"
+                                className="w-fit text-[10px] mt-1 rounded-md px-1.5 py-0"
                               >
                                 ₹{usage.order_total}
                               </Badge>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <span className="text-emerald-600 font-bold">
+                            <span className="text-emerald-600 font-bold text-sm">
                               -₹{usage.discount_amount}
                             </span>
                           </TableCell>
-                          <TableCell className="text-xs">
-                            {format(new Date(usage.used_at), "MMM dd, HH:mm")}
+                          <TableCell>
+                            <span className="text-[11px] text-muted-foreground">
+                              {format(new Date(usage.used_at), "MMM dd, HH:mm")}
+                            </span>
                           </TableCell>
                           <TableCell className="text-right">
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 rounded-full"
+                              className="h-7 w-7 rounded-full"
                             >
-                              <ShoppingBag
-                                size={14}
-                                className="text-indigo-600"
-                              />
+                              <ShoppingBag size={14} className="text-indigo-600" />
                             </Button>
                           </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-20 opacity-30 gap-4">
-                  <ShoppingBag size={64} />
-                  <p className="text-xl font-bold italic uppercase">
-                    No orders used this coupon yet
-                  </p>
-                </div>
-              )}
-            </ScrollArea>
+
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-20 opacity-30 gap-3">
+                    <ShoppingBag size={56} />
+                    <p className="text-base font-bold uppercase tracking-wide">
+                      No orders used this coupon yet
+                    </p>
+                  </div>
+                )}
+
+              </ScrollArea>
+            </div>
+
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
+
     </div>
   );
 }

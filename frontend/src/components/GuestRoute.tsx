@@ -24,19 +24,15 @@ const GuestRoute = ({
 
   if (user) {
     if (adminOnly) {
-      // If going to admin login but already an admin, go to dashboard
+
       if (user.role === "admin") {
         return <Navigate to="/admin" replace />;
       }
-      // If going to admin login but a regular user, maybe let them login as admin?
-      // Or redirect them to home. Usually, it's better to let them see the login
-      // if they need to switch to an admin account.
-      // However, if the requirement is "don't show login if logged in",
-      // then we should redirect.
+
       return <Navigate to="/" replace />;
     }
 
-    // For regular /auth route
+
     return (
       <Navigate to={user.role === "admin" ? "/admin" : redirectPath} replace />
     );

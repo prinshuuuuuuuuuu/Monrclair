@@ -7,7 +7,6 @@ const api = axios.create({
   },
 });
 
-// Add a request interceptor to include the auth token
 api.interceptors.request.use((config) => {
   const isAdminRoute = window.location.pathname.startsWith('/admin');
   const storageKey = isAdminRoute ? 'adminUser' : 'user';

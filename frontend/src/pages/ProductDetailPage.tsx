@@ -55,7 +55,7 @@ export default function ProductDetailPage() {
       <div className="flex flex-col items-center justify-center py-32 px-10 text-center animate-fade-in container">
         <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <h2 className="text-sm font-semibold mb-2 uppercase tracking-widest">
-           Querying Archive...
+          Querying Archive...
         </h2>
       </div>
     );
@@ -115,7 +115,7 @@ export default function ProductDetailPage() {
     <div className="bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <div className="container py-12 md:py-24">
         <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-start">
-          {/* Visual Presentation */}
+
           <div className="sticky top-24">
             <div className="relative bg-secondary/30 aspect-square overflow-hidden border border-border group">
               <img
@@ -151,19 +151,19 @@ export default function ProductDetailPage() {
                 </button>
               )) : (
                 <button className="w-20 h-20 bg-secondary/30 p-2 border border-primary">
-                   <img src={product.image} className="w-full h-full object-contain" />
+                  <img src={product.image} className="w-full h-full object-contain" />
                 </button>
               )}
             </div>
           </div>
 
-          {/* Narrative & Specifications */}
+
           <div className="space-y-12">
             <header className="space-y-4">
               <div className="flex items-center gap-3">
                 <span className="text-[10px] tracking-luxury uppercase text-primary font-bold">{product.brand}</span>
                 <span className="h-px w-8 bg-border" />
-                <Link 
+                <Link
                   to={`/collection?category=${product.category_slug || product.category}`}
                   className="text-[10px] tracking-luxury uppercase text-primary font-bold hover:underline"
                 >
@@ -177,7 +177,7 @@ export default function ProductDetailPage() {
               </h1>
               <div className="flex items-center gap-6 pt-2">
                 <div className="space-y-1">
-                  <span className="text-3xl font-body">₹{Number(product.price).toLocaleString()}</span>
+                  <span className="text-3xl font-body">₹{Number(product.price).toLocaleString("en-IN")}</span>
                   {product.mrp && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground line-through">₹{Number(product.mrp).toLocaleString()}</span>
@@ -195,7 +195,7 @@ export default function ProductDetailPage() {
               </div>
             </header>
 
-            {/* Key Highlights */}
+
             {product.key_highlights && (
               <div className="bg-secondary/20 p-8 border border-border space-y-6">
                 <div className="flex items-center gap-2 text-primary">
@@ -213,7 +213,7 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Actions */}
+
             <div className="flex gap-4">
               <button
                 onClick={handleAddToCart}
@@ -234,7 +234,7 @@ export default function ProductDetailPage() {
               </button>
             </div>
 
-            {/* Technical Matrix */}
+
             <div className="space-y-8 pt-8">
               <h3 className="text-[10px] tracking-luxury uppercase font-bold border-b border-border pb-4">Technical Blueprint</h3>
               <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
@@ -254,7 +254,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Packaging */}
+
             {product.whats_in_the_box && (
               <div className="flex items-start gap-4 p-6 border border-dashed border-border bg-secondary/5">
                 <Package className="text-primary shrink-0" size={20} />
@@ -265,7 +265,7 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Warranty */}
+
             <div className="flex items-center gap-3 py-6 border-y border-border">
               <ShieldCheck className="text-primary" size={20} />
               <div className="flex flex-col">
@@ -276,7 +276,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Related Assets */}
+
         {related.length > 0 && (
           <section className="mt-32 pt-24 border-t border-border">
             <div className="flex items-center justify-between mb-12">

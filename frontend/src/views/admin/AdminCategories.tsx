@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutGrid,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_CONFIG } from "@/config/constants";
@@ -178,14 +179,14 @@ export default function AdminCategories() {
     },
   });
 
-  const filteredCategories = Array.isArray(categories) 
+  const filteredCategories = Array.isArray(categories)
     ? categories.filter((cat) => {
-        const matchesSearch = cat.name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === "all" || cat.status === statusFilter;
-        return matchesSearch && matchesStatus;
-      })
+      const matchesSearch = cat.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || cat.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
     : [];
 
   const handleAddCategory = () => {
@@ -197,10 +198,10 @@ export default function AdminCategories() {
       });
       return;
     }
-    createMutation.mutate({ 
-      name: newCategoryName, 
+    createMutation.mutate({
+      name: newCategoryName,
       slug: newCategorySlug || newCategoryName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
-      status: newCategoryStatus 
+      status: newCategoryStatus
     });
   };
 
@@ -216,10 +217,10 @@ export default function AdminCategories() {
     }
     updateMutation.mutate({
       id: editingCategory.id,
-      data: { 
-        name: editingCategory.name, 
+      data: {
+        name: editingCategory.name,
         slug: editingCategory.slug,
-        status: editingCategory.status 
+        status: editingCategory.status
       },
     });
   };
@@ -235,9 +236,9 @@ export default function AdminCategories() {
     filteredCategories.length <= firstPageLimit
       ? 1
       : 1 +
-        Math.ceil(
-          (filteredCategories.length - firstPageLimit) / nextPagesLimit,
-        );
+      Math.ceil(
+        (filteredCategories.length - firstPageLimit) / nextPagesLimit,
+      );
 
   if (isLoading) {
     return (
@@ -311,7 +312,7 @@ export default function AdminCategories() {
         ))}
       </div>
 
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 bg-background/50 backdrop-blur-sm p-6 rounded-[2rem] border border-border/50 shadow-premium animate-slide-up">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -333,13 +334,13 @@ export default function AdminCategories() {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[160px] h-11 bg-background/50 border-[#e2e8f0] rounded-xl">
+            <SelectTrigger className="w-[180px] h-11 bg-background/50 border-[#e2e8f0] rounded-xl text-xs font-semibold">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-primary" />
                 <SelectValue placeholder="Status" />
               </div>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="active">Active Only</SelectItem>
               <SelectItem value="inactive">Inactive Only</SelectItem>
@@ -354,10 +355,10 @@ export default function AdminCategories() {
                 setStatusFilter("all");
                 setCurrentPage(1);
               }}
-              className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group"
+              className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group rounded-xl"
             >
               <RotateCcw className="h-4 w-4 group-hover:rotate-[-45deg] transition-transform duration-300" />
-              Reset Filters
+              <span className="text-xs">Reset Filters</span>
             </Button>
           )}
         </div>
@@ -537,84 +538,122 @@ export default function AdminCategories() {
           </div>
         )}
       </Card>
-      <Dialog open={isAddPopUpOpen} onOpenChange={setIsAddPopUpOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">
-              Add New Category
-            </DialogTitle>
-            <DialogDescription>
-              Create a new category for the watch collection.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">Category Name</label>
-              <Input
-                placeholder="e.g. Luxury, Sports, Minimalist"
-                value={newCategoryName}
-                onChange={(e) => {
-                  setNewCategoryName(e.target.value);
-                  setNewCategorySlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''));
-                }}
-                className="h-11 rounded-xl"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">Slug (URL Path)</label>
-              <Input
-                placeholder="e.g. luxury-watches"
-                value={newCategorySlug}
-                onChange={(e) => setNewCategorySlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''))}
-                className="h-11 rounded-xl font-mono text-xs"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">Status</label>
-              <Select
-                value={newCategoryStatus}
-                onValueChange={(val: any) => setNewCategoryStatus(val)}
+      {isAddPopUpOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-[480px] max-h-[90vh] flex flex-col shadow-2xl relative rounded-[40px] overflow-hidden border-none animate-in zoom-in-95 duration-300">
+            <div className="bg-[#b87333] px-6 py-5 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <Plus size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 leading-none mb-1">
+                    Category Management
+                  </p>
+                  <h3 className="text-xl font-bold text-white leading-tight">
+                    Add New Category
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsAddPopUpOpen(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
               >
-                <SelectTrigger className="h-11 rounded-xl">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-8 space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  Category Name <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  placeholder="e.g. Luxury, Sports, Minimalist"
+                  value={newCategoryName}
+                  onChange={(e) => {
+                    setNewCategoryName(e.target.value);
+                    setNewCategorySlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''));
+                  }}
+                  className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Slug (URL Path)</label>
+                <Input
+                  placeholder="e.g. luxury-watches"
+                  value={newCategorySlug}
+                  onChange={(e) => setNewCategorySlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''))}
+                  className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 font-mono text-xs focus:border-[#b87333] focus:ring-[#b87333]/10"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Status</label>
+                <Select
+                  value={newCategoryStatus}
+                  onValueChange={(val: any) => setNewCategoryStatus(val)}
+                >
+                  <SelectTrigger className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 transition-all focus:ring-[#b87333]/10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-slate-200 z-[110] shadow-2xl p-1.5">
+                    <SelectItem value="active" className="rounded-xl my-0.5 py-2.5 px-3 focus:bg-[#b87333] focus:text-white cursor-pointer">Active</SelectItem>
+                    <SelectItem value="inactive" className="rounded-xl my-0.5 py-2.5 px-3 focus:bg-[#b87333] focus:text-white cursor-pointer">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+              <Button
+                variant="ghost"
+                onClick={() => setIsAddPopUpOpen(false)}
+                className="flex-1 h-12 rounded-2xl text-sm font-bold text-slate-600 hover:bg-white transition-all active:scale-95"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddCategory}
+                disabled={createMutation.isPending}
+                className="flex-[1.5] h-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold shadow-xl shadow-zinc-200 transition-all active:scale-95"
+              >
+                {createMutation.isPending ? "Creating..." : "Save Category"}
+              </Button>
             </div>
           </div>
-          <DialogFooter>
-            <Button
-              variant="ghost"
-              onClick={() => setIsAddPopUpOpen(false)}
-              className="rounded-xl"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleAddCategory}
-              className="rounded-xl px-8"
-              disabled={createMutation.isPending}
-            >
-              {createMutation.isPending ? "Creating..." : "Save Category"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={isEditPopUpOpen} onOpenChange={setIsEditPopUpOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">
-              Edit Category
-            </DialogTitle>
-            <DialogDescription>Update category information.</DialogDescription>
-          </DialogHeader>
-          {editingCategory && (
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Category Name</label>
+        </div>
+      )}
+
+      {isEditPopUpOpen && editingCategory && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-[480px] max-h-[90vh] flex flex-col shadow-2xl relative rounded-[40px] overflow-hidden border-none animate-in zoom-in-95 duration-300">
+            <div className="bg-[#b87333] px-6 py-5 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <Edit2 size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 leading-none mb-1">
+                    Category Management
+                  </p>
+                  <h3 className="text-xl font-bold text-white leading-tight">
+                    Edit Category
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditPopUpOpen(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-8 space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  Category Name <span className="text-rose-500">*</span>
+                </label>
                 <Input
                   value={editingCategory.name}
                   onChange={(e) =>
@@ -623,11 +662,11 @@ export default function AdminCategories() {
                       name: e.target.value,
                     })
                   }
-                  className="h-11 rounded-xl"
+                  className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 transition-all focus:border-[#b87333] focus:ring-[#b87333]/10"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Slug (URL Path)</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Slug (URL Path)</label>
                 <Input
                   value={editingCategory.slug}
                   onChange={(e) =>
@@ -636,46 +675,47 @@ export default function AdminCategories() {
                       slug: e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
                     })
                   }
-                  className="h-11 rounded-xl font-mono text-xs"
+                  className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 font-mono text-xs focus:border-[#b87333] focus:ring-[#b87333]/10"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Status</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Status</label>
                 <Select
                   value={editingCategory.status}
                   onValueChange={(val: any) =>
                     setEditingCategory({ ...editingCategory, status: val })
                   }
                 >
-                  <SelectTrigger className="h-11 rounded-xl">
+                  <SelectTrigger className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 transition-all focus:ring-[#b87333]/10">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectContent className="rounded-2xl border-slate-200 z-[110] shadow-2xl p-1.5">
+                    <SelectItem value="active" className="rounded-xl my-0.5 py-2.5 px-3 focus:bg-[#b87333] focus:text-white cursor-pointer">Active</SelectItem>
+                    <SelectItem value="inactive" className="rounded-xl my-0.5 py-2.5 px-3 focus:bg-[#b87333] focus:text-white cursor-pointer">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-          )}
-          <DialogFooter>
-            <Button
-              variant="ghost"
-              onClick={() => setIsEditPopUpOpen(false)}
-              className="rounded-xl"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleUpdateCategory}
-              className="rounded-xl px-8"
-              disabled={updateMutation.isPending}
-            >
-              {updateMutation.isPending ? "Updating..." : "Update Category"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+              <Button
+                variant="ghost"
+                onClick={() => setIsEditPopUpOpen(false)}
+                className="flex-1 h-12 rounded-2xl text-sm font-bold text-slate-600 hover:bg-white transition-all active:scale-95"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateCategory}
+                disabled={updateMutation.isPending}
+                className="flex-[1.5] h-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold shadow-xl shadow-zinc-200 transition-all active:scale-95"
+              >
+                {updateMutation.isPending ? "Updating..." : "Update Category"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

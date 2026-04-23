@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   const statCards = [
     {
       label: "Total Revenue",
-      value: `₹${Number(stats.totalSales).toLocaleString()}`,
+      value: `₹${Number(stats.totalSales).toLocaleString("en-IN")}`,
       icon: IndianRupee,
       color: "text-primary",
       bgColor: "bg-primary/10",
@@ -286,7 +286,7 @@ export default function AdminDashboard() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right font-bold text-sm">
-                      ₹{Number(order.total_amount).toLocaleString()}
+                      ₹{Number(order.total_amount).toLocaleString("en-IN")}
                     </TableCell>
                   </TableRow>
                 ))}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Upload, Check, Loader2 } from "lucide-react";
+import { X, Upload, Check, Loader2, Database, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -85,95 +85,124 @@ export function GenericModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-fade-in overflow-hidden">
-      <div className="bg-background border border-border w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative rounded-[2rem]">
-        <div className="flex items-center justify-between p-8 border-b border-border sticky top-0 bg-background z-20">
-          <div>
-            <p className="text-[10px] tracking-luxury uppercase text-primary font-bold mb-1">
-              Data Entry / {moduleName}
-            </p>
-            <h3 className="font-heading text-3xl">
-              {item ? "Modify Entry" : "Add New Record"}
-            </h3>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl relative rounded-[40px] overflow-hidden border-none animate-in zoom-in-95 duration-300">
+
+
+        <div className="bg-[#b87333] px-6 py-5 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+              <Layers size={20} className="text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 leading-none mb-1">
+                {moduleName} Management
+              </p>
+              <h3 className="text-xl font-bold text-white leading-tight">
+                {item ? "Update Record" : "Add New Entry"}
+              </h3>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-3 hover:bg-secondary rounded-full transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-90"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
-          <div className="grid grid-cols-1 gap-8">
-            {fields.map((field) => (
-              <div key={field.name} className="space-y-2">
-                <label className="text-[10px] tracking-luxury uppercase text-muted-foreground block font-bold">
-                  {field.label} {field.required && <span className="text-destructive">*</span>}
-                </label>
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+          <form id="generic-form" onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {fields.map((field) => (
+                <div
+                  key={field.name}
+                  className={cn(
+                    "space-y-1.5",
+                    (field.type === "richtext" || field.type === "textarea") && "md:col-span-2"
+                  )}
+                >
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    {field.label} {field.required && <span className="text-rose-500">*</span>}
+                  </label>
 
-                {field.type === "richtext" ? (
-                  <RichTextEditor
-                    value={formData[field.name]}
-                    onChange={(val) => setFormData({ ...formData, [field.name]: val })}
-                    placeholder={field.placeholder}
-                  />
-                ) : field.type === "textarea" ? (
-                  <Textarea
-                     value={formData[field.name]}
-                     onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                     placeholder={field.placeholder}
-                     className="rounded-xl bg-secondary/20 border-border/50 min-h-[100px]"
-                  />
-                ) : field.type === "select" ? (
-                  <Select
-                    value={String(formData[field.name])}
-                    onValueChange={(val) => setFormData({ ...formData, [field.name]: val })}
-                  >
-                    <SelectTrigger className="rounded-xl h-12 bg-secondary/20 border-border/50">
-                      <SelectValue placeholder={field.placeholder} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {field.options?.map((opt) => (
-                        <SelectItem key={opt.value} value={String(opt.value)}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <Input
-                    type={field.type}
-                    value={formData[field.name]}
-                    onChange={(e) => setFormData({ ...formData, [field.name]: field.type === 'number' ? Number(e.target.value) : e.target.value })}
-                    placeholder={field.placeholder}
-                    required={field.required}
-                    className="h-12 rounded-xl bg-secondary/20 border-border/50"
-                  />
-                )}
+                  {field.type === "richtext" ? (
+                    <div className="rounded-2xl overflow-hidden border border-slate-200">
+                      <RichTextEditor
+                        value={formData[field.name]}
+                        onChange={(val) => setFormData({ ...formData, [field.name]: val })}
+                        placeholder={field.placeholder}
+                      />
+                    </div>
+                  ) : field.type === "textarea" ? (
+                    <Textarea
+                      value={formData[field.name]}
+                      onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+                      placeholder={field.placeholder}
+                      className="rounded-2xl bg-slate-50/50 border-slate-200  min-h-[120px] resize-none p-4"
+                    />
+                  ) : field.type === "select" ? (
+                    <Select
+                      value={String(formData[field.name])}
+                      onValueChange={(val) => setFormData({ ...formData, [field.name]: val })}
+                    >
+                      <SelectTrigger className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 transition-all">
+                        <SelectValue placeholder={field.placeholder} />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-slate-200 z-[110] shadow-2xl p-1.5 animate-in fade-in-0 zoom-in-95">
+                        {field.options?.map((opt) => (
+                          <SelectItem
+                            key={opt.value}
+                            value={String(opt.value)}
+                            className="rounded-xl my-0.5 py-2.5 px-3 focus:bg-[#b87333] focus:text-white cursor-pointer transition-colors"
+                          >
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      type={field.type}
+                      value={formData[field.name]}
+                      onChange={(e) => setFormData({ ...formData, [field.name]: field.type === 'number' ? Number(e.target.value) : e.target.value })}
+                      placeholder={field.placeholder}
+                      required={field.required}
+                      className="h-11 rounded-2xl bg-slate-50/50 border-slate-200 transition-all"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </form>
+        </div>
+
+
+        <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3 flex-shrink-0">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onClose}
+            className="flex-1 h-12 rounded-2xl text-sm font-bold text-slate-600 hover:bg-white transition-all active:scale-95"
+          >
+            Cancel
+          </Button>
+          <Button
+            form="generic-form"
+            type="submit"
+            disabled={loading}
+            className="flex-[1.5] h-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold shadow-xl shadow-zinc-200 transition-all active:scale-95"
+          >
+            {loading ? (
+              <Loader2 className="animate-spin w-5 h-5" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <Check size={18} />
+                <span>{item ? "Commit Changes" : "Save Record"}</span>
               </div>
-            ))}
-          </div>
-
-          <footer className="pt-8 flex gap-4 sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border mt-8 pb-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1 h-14 rounded-2xl text-[10px] font-bold uppercase tracking-widest"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="flex-1 h-14 rounded-2xl bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest shadow-xl shadow-primary/20"
-            >
-              {loading ? <Loader2 className="animate-spin mr-2" /> : <Check className="mr-2" />}
-              {item ? "Commit Changes" : "Save Record"}
-            </Button>
-          </footer>
-        </form>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

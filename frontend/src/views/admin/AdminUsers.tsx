@@ -349,13 +349,13 @@ export default function AdminUsers() {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 bg-background/50 backdrop-blur-sm p-6 rounded-[2rem] border border-border/50 shadow-premium animate-slide-up">
         <div className="flex items-center gap-3 w-full lg:w-auto">
           <div className="relative w-full lg:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
             <Input
               placeholder="Search users..."
-              className="pl-10 h-11 rounded-full bg-background/50 border-[#e2e8f0] focus:ring-primary/20"
+              className="pl-10 h-11 rounded-xl bg-background/50 border-[#e2e8f0] focus:ring-primary/20"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -368,24 +368,24 @@ export default function AdminUsers() {
             roleFilter !== "all" ||
             statusFilter !== "all" ||
             dateFilter !== "all") && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setSearchTerm("");
-                setRoleFilter("all");
-                setStatusFilter("all");
-                setDateFilter("all");
-                setCurrentPage(1);
-              }}
-              className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group shrink-0"
-            >
-              <RotateCcw className="h-4 w-4 group-hover:rotate-[-45deg] transition-transform duration-300" />
-              Reset
-            </Button>
-          )}
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSearchTerm("");
+                  setRoleFilter("all");
+                  setStatusFilter("all");
+                  setDateFilter("all");
+                  setCurrentPage(1);
+                }}
+                className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group shrink-0 rounded-xl"
+              >
+                <RotateCcw className="h-4 w-4 group-hover:rotate-[-45deg] transition-transform duration-300" />
+                <span className="text-xs">Reset</span>
+              </Button>
+            )}
         </div>
 
-        <div className="flex flex-wrap items-center justify-start lg:justify-end gap-3 w-full lg:w-auto lg:ml-auto">
+        <div className="flex flex-wrap items-center justify-start lg:justify-end gap-3 w-full lg:w-auto">
           <Select
             value={roleFilter}
             onValueChange={(val) => {
@@ -393,16 +393,16 @@ export default function AdminUsers() {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[140px] h-11 bg-background/50 border-[#e2e8f0]">
+            <SelectTrigger className="w-[140px] h-11 bg-background/50 border-[#e2e8f0] rounded-xl text-xs font-semibold">
               <div className="flex items-center gap-2">
                 <UserCog className="h-4 w-4 text-primary" />
                 <SelectValue placeholder="Role" />
               </div>
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="admin">Admins</SelectItem>
-              <SelectItem value="user">Users</SelectItem>
+            <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
+              <SelectItem value="all" className="text-xs font-medium">All Roles</SelectItem>
+              <SelectItem value="admin" className="text-xs font-medium">Admins</SelectItem>
+              <SelectItem value="user" className="text-xs font-medium">Users</SelectItem>
             </SelectContent>
           </Select>
 
@@ -413,16 +413,16 @@ export default function AdminUsers() {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[140px] h-11 bg-background/50 border-[#e2e8f0]">
+            <SelectTrigger className="w-[140px] h-11 bg-background/50 border-[#e2e8f0] rounded-xl text-xs font-semibold">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-primary" />
                 <SelectValue placeholder="Status" />
               </div>
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="suspended">Suspended</SelectItem>
+            <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
+              <SelectItem value="all" className="text-xs font-medium">All Status</SelectItem>
+              <SelectItem value="active" className="text-xs font-medium">Active</SelectItem>
+              <SelectItem value="suspended" className="text-xs font-medium">Suspended</SelectItem>
             </SelectContent>
           </Select>
 
@@ -433,26 +433,26 @@ export default function AdminUsers() {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[160px] h-11 bg-background/50 border-[#e2e8f0]">
+            <SelectTrigger className="w-[160px] h-11 bg-background/50 border-[#e2e8f0] rounded-xl text-xs font-semibold">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-primary" />
                 <SelectValue placeholder="Joined" />
               </div>
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Time</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="last7days">Last 7 Days</SelectItem>
-              <SelectItem value="last30days">Last 30 Days</SelectItem>
+            <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
+              <SelectItem value="all" className="text-xs font-medium">All Time</SelectItem>
+              <SelectItem value="today" className="text-xs font-medium">Today</SelectItem>
+              <SelectItem value="last7days" className="text-xs font-medium">Last 7 Days</SelectItem>
+              <SelectItem value="last30days" className="text-xs font-medium">Last 30 Days</SelectItem>
             </SelectContent>
           </Select>
 
           <Button
             onClick={exportToCSV}
-            className="h-11 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white transition-all duration-300 gap-2 font-bold shadow-xl shadow-emerald-500/20 active:scale-95 group border-none rounded-xl shrink-0"
+            className="h-11 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white transition-all duration-300 gap-2 font-bold shadow-xl shadow-emerald-500/20 active:scale-95 group border-none rounded-xl shrink-0 text-xs"
           >
             <Download className="h-4 w-4 group-hover:translate-y-1 transition-transform" />
-            <span className="tracking-tight">Export to CSV</span>
+            <span className="tracking-tight">Export</span>
           </Button>
         </div>
       </div>
@@ -855,13 +855,13 @@ export default function AdminUsers() {
                             className={cn(
                               "capitalize px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest",
                               order.status === "delivered" &&
-                                "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-[0_0_10px_-2px_rgba(16,185,129,0.2)]",
+                              "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-[0_0_10px_-2px_rgba(16,185,129,0.2)]",
                               order.status === "processing" &&
-                                "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_10px_-2px_rgba(245,158,11,0.2)]",
+                              "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_10px_-2px_rgba(245,158,11,0.2)]",
                               order.status === "shipped" &&
-                                "bg-blue-500/10 text-blue-500 border border-blue-500/20 shadow-[0_0_10px_-2px_rgba(59,130,246,0.2)]",
+                              "bg-blue-500/10 text-blue-500 border border-blue-500/20 shadow-[0_0_10px_-2px_rgba(59,130,246,0.2)]",
                               order.status === "refunded" &&
-                                "bg-rose-500/10 text-rose-500 border border-rose-500/20 shadow-[0_0_10px_-2px_rgba(244,63,94,0.2)]",
+                              "bg-rose-500/10 text-rose-500 border border-rose-500/20 shadow-[0_0_10px_-2px_rgba(244,63,94,0.2)]",
                             )}
                           >
                             {order.status.toUpperCase()}
@@ -895,7 +895,7 @@ export default function AdminUsers() {
                     className={cn(
                       "flex-1 h-12 rounded-2xl font-bold transition-all shadow-xl active:scale-95",
                       !userProfile.is_blocked &&
-                        "hover:bg-rose-600 shadow-rose-500/20",
+                      "hover:bg-rose-600 shadow-rose-500/20",
                     )}
                     onClick={() =>
                       blockMutation.mutate({

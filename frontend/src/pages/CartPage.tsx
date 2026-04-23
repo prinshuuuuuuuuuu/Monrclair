@@ -185,7 +185,7 @@ export default function CartPage() {
                               {(product.price * quantity).toLocaleString()}.00
                             </p>
                             <p className="text-[9px] text-muted-foreground mt-1">
-                              ₹{product.price.toLocaleString()} × {quantity}
+                              ₹{product.price.toLocaleString("en-IN")} × {quantity}
                             </p>
                           </div>
 

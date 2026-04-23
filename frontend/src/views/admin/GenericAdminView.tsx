@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Eye,
   MoreVertical,
+  RotateCcw,
   X,
   FileText,
 } from "lucide-react";
@@ -44,6 +45,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { GenericModal } from "./GenericModal";
 
 interface Column {
@@ -134,13 +143,14 @@ export default function GenericAdminView({
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
           <div className="relative w-full sm:w-80">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10"
               size={18}
             />
-            <input
-              type="text"
+            <Input
               placeholder="Search items..."
-              className="w-full bg-background/50 backdrop-blur-sm border border-border/50 rounded-2xl pl-12 pr-4 py-3 text-sm shadow-sm focus:ring-4 ring-primary/10 transition-all outline-none font-medium h-[52px]"
+              className="w-full bg-white border border-gray-300 rounded-xl pl-10 pr-4 py-2.5 text-sm 
+    shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 
+    outline-none transition-all h-[44px]"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -166,28 +176,50 @@ export default function GenericAdminView({
           className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 bg-background/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 shadow-premium"
         >
           <div className="flex items-center gap-4">
-             <div className="p-3 rounded-xl bg-primary/10 text-primary">
-                <Icon size={20} />
-             </div>
-             <div className="flex flex-col">
-                <span className="text-xs font-bold uppercase tracking-widest">{moduleName} Registry</span>
-                <span className="text-[10px] text-muted-foreground">{meta.total} Total Entries Detected</span>
-             </div>
+            <div className="p-3 rounded-xl bg-primary/10 text-primary">
+              <Icon size={20} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold uppercase tracking-widest">{moduleName} Registry</span>
+              <span className="text-[10px] text-muted-foreground">{meta.total} Total Entries Detected</span>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-              <select
-                className="bg-background border border-border/50 px-4 py-2 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all min-w-[140px]"
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
+            <Select
+              value={statusFilter}
+              onValueChange={(val) => {
+                setStatusFilter(val);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[180px] h-11 bg-background/50 border border-border/50 px-4 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-primary" />
+                  <SelectValue placeholder="Status" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
+                <SelectItem value="all" className="text-xs font-medium">Any Status</SelectItem>
+                <SelectItem value="active" className="text-xs font-medium">Active / Published</SelectItem>
+                <SelectItem value="inactive" className="text-xs font-medium">Inactive / Draft</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {(statusFilter !== "all" || searchQuery !== "") && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSearchQuery("");
+                  setStatusFilter("all");
                   setCurrentPage(1);
                 }}
+                className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group rounded-xl"
               >
-                <option value="all">Any Status</option>
-                <option value="active">Active / Published</option>
-                <option value="inactive">Inactive / Draft</option>
-              </select>
+                <RotateCcw className="h-4 w-4 group-hover:rotate-[-45deg] transition-transform duration-300" />
+                <span className="text-xs">Reset</span>
+              </Button>
+            )}
           </div>
         </div>
 
@@ -221,7 +253,7 @@ export default function GenericAdminView({
                     {columns.map((col) => (
                       <TableCell key={col.accessorKey} className="py-4 px-6">
                         {col.cell ? col.cell(item) : (
-                           <span className="font-medium text-sm">{item[col.accessorKey]}</span>
+                          <span className="font-medium text-sm">{item[col.accessorKey]}</span>
                         )}
                       </TableCell>
                     ))}
@@ -282,12 +314,12 @@ export default function GenericAdminView({
                 ))
               ) : (
                 <TableRow>
-                   <TableCell colSpan={columns.length + 1} className="py-20 text-center">
-                      <div className="flex flex-col items-center gap-3 opacity-30">
-                         <Icon size={48} />
-                         <p className="font-black uppercase tracking-tighter">No Records Found</p>
-                      </div>
-                   </TableCell>
+                  <TableCell colSpan={columns.length + 1} className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-3 opacity-30">
+                      <Icon size={48} />
+                      <p className="font-black uppercase tracking-tighter">No Records Found</p>
+                    </div>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -296,23 +328,23 @@ export default function GenericAdminView({
 
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-8">
-             <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                className="rounded-xl"
-             >
-                <ChevronLeft size={18} className="mr-2" /> Previous
-             </Button>
-             <span className="text-xs font-black uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
-             <Button
-                variant="outline"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                className="rounded-xl"
-             >
-                Next <ChevronRight size={18} className="ml-2" />
-             </Button>
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+              className="rounded-xl"
+            >
+              <ChevronLeft size={18} className="mr-2" /> Previous
+            </Button>
+            <span className="text-xs font-black uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
+            <Button
+              variant="outline"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+              className="rounded-xl"
+            >
+              Next <ChevronRight size={18} className="ml-2" />
+            </Button>
           </div>
         )}
       </div>

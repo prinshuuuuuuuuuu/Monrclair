@@ -15,9 +15,9 @@ import {
   AlertTriangle,
   List,
   LayoutGrid,
-  ArrowUpDown,
-  MoreHorizontal,
   MoreVertical,
+  RotateCcw,
+  Tag,
   X,
 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -40,6 +40,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
@@ -60,6 +61,13 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AdminProducts() {
   const queryClient = useQueryClient();
@@ -74,7 +82,7 @@ export default function AdminProducts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"grid" | "table">("table");
 
-  const firstPageLimit = PAGINATION.ADMIN_USERS_FIRST_PAGE; 
+  const firstPageLimit = PAGINATION.ADMIN_USERS_FIRST_PAGE;
   const nextPagesLimit = PAGINATION.ADMIN_USERS_NEXT_PAGES;
 
   const { data: serverData, isLoading } = useQuery({
@@ -179,13 +187,13 @@ export default function AdminProducts() {
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
           <div className="relative w-full sm:w-80">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 z-10"
               size={18}
             />
-            <input
-              type="text"
+            <Input
               placeholder="Search serials, brands..."
-              className="w-full bg-background/50 backdrop-blur-sm border border-border/50 rounded-2xl pl-12 pr-4 py-3 text-sm shadow-sm focus:ring-4 ring-primary/10 transition-all outline-none font-medium h-[52px]"
+              className="w-full bg-white border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm shadow-sm 
+    focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all h-[48px]"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -235,41 +243,72 @@ export default function AdminProducts() {
         </div>
 
         <div
-          className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 bg-background/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 shadow-premium animate-slide-up"
+          className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 bg-background/50 backdrop-blur-sm p-6 rounded-[2rem] border border-border/50 shadow-premium animate-slide-up"
           style={{ animationDelay: "0.5s" }}
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
             <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-primary whitespace-nowrap">
               <Filter size={14} /> Refine Inventory
             </div>
-              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <select
-                  className="bg-background border border-border/50 px-4 py-2 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all min-w-[140px]"
-                  value={categoryFilter}
-                  onChange={(e) => {
-                    setCategoryFilter(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map((cat: any) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-                <select
-                className="bg-background border border-border/50 px-4 py-2 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all min-w-[140px]"
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <Select
+                value={categoryFilter}
+                onValueChange={(val) => {
+                  setCategoryFilter(val);
                   setCurrentPage(1);
                 }}
               >
-                <option value="all">Any Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+                <SelectTrigger className="w-full sm:w-[200px] h-11 bg-background/50 border border-border/50 px-4 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-primary" />
+                    <SelectValue placeholder="All Categories" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
+                  <SelectItem value="all" className="text-xs font-medium">All Categories</SelectItem>
+                  {categories.map((cat: any) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()} className="text-xs font-medium">
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={statusFilter}
+                onValueChange={(val) => {
+                  setStatusFilter(val);
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-[160px] h-11 bg-background/50 border border-border/50 px-4 rounded-xl text-xs font-semibold outline-none focus:ring-2 ring-primary/20 cursor-pointer hover:bg-muted transition-all">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-primary" />
+                    <SelectValue placeholder="Any Status" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/50 shadow-2xl backdrop-blur-md">
+                  <SelectItem value="all" className="text-xs font-medium">Any Status</SelectItem>
+                  <SelectItem value="active" className="text-xs font-medium">Active Only</SelectItem>
+                  <SelectItem value="inactive" className="text-xs font-medium">Inactive Only</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {(categoryFilter !== "all" || statusFilter !== "all" || searchQuery !== "") && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setCategoryFilter("all");
+                    setStatusFilter("all");
+                    setCurrentPage(1);
+                  }}
+                  className="h-11 px-4 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all duration-300 gap-2 font-medium group rounded-xl"
+                >
+                  <RotateCcw className="h-4 w-4 group-hover:rotate-[-45deg] transition-transform duration-300" />
+                  <span className="text-xs">Reset Filters</span>
+                </Button>
+              )}
             </div>
           </div>
 
@@ -382,7 +421,7 @@ export default function AdminProducts() {
                         </TableCell>
                         <TableCell className="text-center">
                           <span className="font-bold">
-                            €{Number(product.price).toLocaleString()}
+                            ₹{Number(product.price).toLocaleString("en-IN")}
                           </span>
                         </TableCell>
                         <TableCell className="hidden lg:table-cell text-center">
@@ -582,7 +621,7 @@ export default function AdminProducts() {
                     const pageNum = i + 1;
                     // Only show first, last, and pages around current to prevent overflow if many pages
                     if (totalPages > 7 && Math.abs(pageNum - currentPage) > 2 && pageNum !== 1 && pageNum !== totalPages) {
-                        return null;
+                      return null;
                     }
                     return (
                       <button
@@ -772,7 +811,7 @@ function ProductCard({
           </div>
           <div className="text-right shrink-0">
             <span className="text-xl font-black font-heading tracking-tighter">
-              €{Number(product.price).toLocaleString()}
+              ₹{Number(product.price).toLocaleString("en-IN")}
             </span>
           </div>
         </div>
@@ -848,7 +887,7 @@ function ProductDetailSheet({ product, onEdit }: any) {
               Retail Price
             </p>
             <p className="text-3xl font-heading text-primary">
-              €{Number(product.price).toLocaleString()}
+              ₹{Number(product.price).toLocaleString("en-IN")}
             </p>
           </div>
           <div className="bg-secondary/20 p-5 rounded-2xl border border-border/50">

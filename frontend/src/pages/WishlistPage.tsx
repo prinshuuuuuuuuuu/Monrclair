@@ -207,7 +207,7 @@ export default function WishlistPage() {
                           className="text-primary group-hover:text-white"
                         />
                         <span className="font-label text-sm font-bold tracking-tight">
-                          {Number(item.price).toLocaleString()}
+                          {Number(item.price).toLocaleString("en-IN")}
                         </span>
                       </div>
                     </div>
