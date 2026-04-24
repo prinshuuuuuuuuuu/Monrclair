@@ -85,7 +85,7 @@ router.post("/razorpay/verify", protect, async (req, res) => {
       [
         req.user.id,
         totalAmount,
-        "paid",
+        "processing",
         JSON.stringify(shippingAddress),
         razorpay_payment_id,
         "TRK" + Math.floor(Math.random() * 100000000)
