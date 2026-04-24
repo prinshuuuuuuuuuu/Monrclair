@@ -24,6 +24,9 @@ interface AuthContextType {
   googleLogin: (credential: string) => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
   refreshUser: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  verifyOTP: (email: string, otp: string) => Promise<void>;
+  resetPassword: (email: string, otp: string, newPassword: string) => Promise<void>;
   logout: () => void;
   adminLogout: () => void;
   isLoading: boolean;
@@ -119,8 +122,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('adminUser');
   };
 
+  const forgotPassword = async (email: string) => {
+    await api.post('/auth/forgot-password', { email });
+  };
+
+  const verifyOTP = async (email: string, otp: string) => {
+    await api.post('/auth/verify-otp', { email, otp });
+  };
+
+  const resetPassword = async (email: string, otp: string, newPassword: string) => {
+    await api.post('/auth/reset-password', { email, otp, newPassword });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, adminUser, login, adminLogin, register, googleLogin, updateProfile, refreshUser, logout, adminLogout, isLoading }}>
+    <AuthContext.Provider value={{
+      user,
+      adminUser,
+      login,
+      adminLogin,
+      register,
+      googleLogin,
+      updateProfile,
+      refreshUser,
+      forgotPassword,
+      verifyOTP,
+      resetPassword,
+      logout,
+      adminLogout,
+      isLoading
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -264,9 +264,6 @@ export default function CheckoutPage() {
                               {addr.street}, {addr.city}, {addr.zip_code}
                             </p>
                             <div className="flex items-center gap-3 mt-3">
-                              <span className="text-[10px] font-label uppercase tracking-widest text-primary font-bold bg-primary/10 px-4 py-2 rounded-lg">
-                                {addr.country}
-                              </span>
                               {addr.is_default && (
                                 <span className="text-[10px] font-label uppercase tracking-widest text-black/40 font-bold bg-black/5 px-4 py-2 rounded-lg">
                                   Default

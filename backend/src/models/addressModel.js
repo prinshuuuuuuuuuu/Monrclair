@@ -22,8 +22,8 @@ const Address = {
     }
 
     const [result] = await db.query(
-      'INSERT INTO addresses (user_id, full_name, street, city, state, zip, country, phone, is_default) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [userId, finalName, street, city, state, finalZip, country, phone, finalIsDefault]
+      'INSERT INTO addresses (user_id, full_name, street, city, zip, phone, is_default) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [userId, finalName, street, city, finalZip, phone, finalIsDefault]
     );
     return result.insertId;
   },
@@ -33,9 +33,7 @@ const Address = {
       full_name, fullName, 
       street, 
       city, 
-      state, 
       zip_code, zip, 
-      country, 
       phone, 
       is_default, isDefault 
     } = data;
@@ -49,8 +47,8 @@ const Address = {
     }
 
     await db.query(
-      'UPDATE addresses SET full_name = ?, street = ?, city = ?, state = ?, zip = ?, country = ?, phone = ?, is_default = ? WHERE id = ? AND user_id = ?',
-      [finalName, street, city, state, finalZip, country, phone, finalIsDefault, id, userId]
+      'UPDATE addresses SET full_name = ?, street = ?, city = ?, zip = ?, phone = ?, is_default = ? WHERE id = ? AND user_id = ?',
+      [finalName, street, city, finalZip, phone, finalIsDefault, id, userId]
     );
   },
 

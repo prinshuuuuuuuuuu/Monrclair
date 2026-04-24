@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; // Synced
 import { useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -32,9 +32,7 @@ export default function AddressesPage() {
     full_name: "",
     street: "",
     city: "",
-    state: "",
     zip_code: "",
-    country: "",
     phone: "",
     is_default: false,
   });
@@ -89,9 +87,7 @@ export default function AddressesPage() {
       full_name: addr.full_name,
       street: addr.street,
       city: addr.city,
-      state: addr.state || "",
       zip_code: addr.zip || addr.zip_code || "",
-      country: addr.country,
       phone: addr.phone,
       is_default: addr.is_default,
     });
@@ -106,9 +102,7 @@ export default function AddressesPage() {
       full_name: "",
       street: "",
       city: "",
-      state: "",
       zip_code: "",
-      country: "",
       phone: "",
       is_default: false,
     });
@@ -322,74 +316,22 @@ export default function AddressesPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <label className={labelClass}>Postal</label>
-                        <input
-                          required
-                          value={formData.zip_code}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              zip_code: e.target.value,
-                            })
-                          }
-                          className={inputClass}
-                          placeholder="Zip"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className={labelClass}>Region</label>
-                        <div className="relative group">
-                          <select
-                            required
-                            value={formData.country}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                country: e.target.value,
-                              })
-                            }
-                            className={cn(
-                              inputClass,
-                              "appearance-none pr-10 cursor-pointer transition-all duration-300",
-                              "hover:border-[#B87333] hover:bg-[#B87333]/5",
-                              "focus:bg-white focus:ring-[#B87333]/10",
-                            )}
-                          >
-                            <option value="" disabled>
-                              Select Region
-                            </option>
-                            <option value="Switzerland">
-                              Switzerland (CH)
-                            </option>
-                            <option value="India">India (IN)</option>
-                            <option value="France">France (FR)</option>
-                            <option value="Germany">Germany (DE)</option>
-                            <option value="Italy">Italy (IT)</option>
-                            <option value="United Kingdom">UK (GB)</option>
-                            <option value="USA">USA (US)</option>
-                            <option value="UAE">UAE (AE)</option>
-                          </select>
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#B5ADA5]">
-                            <svg
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="m6 9 6 6 6-6" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="space-y-1">
+                      <label className={labelClass}>Postal Code</label>
+                      <input
+                        required
+                        value={formData.zip_code}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            zip_code: e.target.value,
+                          })
+                        }
+                        className={inputClass}
+                        placeholder="Zip/Postal Code"
+                      />
                     </div>
                   </div>
-
                   <div className="flex flex-col gap-5 pt-2">
                     <label className="flex items-center gap-3 cursor-pointer group">
                       <input
@@ -500,7 +442,7 @@ export default function AddressesPage() {
                       {addr.street}
                     </p>
                     <p className="text-xs text-[#888888] font-semibold">
-                      {addr.city}, {addr.zip_code} — {addr.country}
+                      {addr.city}, {addr.zip_code}
                     </p>
                   </div>
 
