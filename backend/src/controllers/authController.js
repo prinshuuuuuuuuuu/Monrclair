@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const Address = require('../models/addressModel');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
+const { sendOTPEmail } = require('../utils/emailService');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -55,7 +56,7 @@ const login = async (req, res) => {
       if (user.is_blocked) {
         return res.status(403).json({ message: 'This account has been suspended' });
       }
-      
+
       // Update last login
       await db.query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?', [user.id]);
 
@@ -142,7 +143,7 @@ const changePassword = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     const fullUser = await db.query('SELECT password FROM users WHERE id = ?', [req.user.id]);
-    
+
     // In a real app, use bcrypt. Here we follow the simple direct comparison used in login
     if (fullUser[0][0].password !== currentPassword) {
       return res.status(400).json({ message: 'Current password incorrect' });
@@ -200,17 +201,97 @@ const setDefaultAddress = async (req, res) => {
   }
 };
 
-module.exports = { 
-  register, 
-  login, 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes
+
+    // Delete existing OTPs for this email
+    await db.query('DELETE FROM password_resets WHERE email = ?', [email]);
+
+    // Save new OTP
+    await db.query(
+      'INSERT INTO password_resets (email, otp, expires_at) VALUES (?, ?, ?)',
+      [email, otp, expiresAt]
+    );
+
+    await sendOTPEmail(email, otp);
+
+    res.json({ message: 'Verification code sent to your email' });
+  } catch (error) {
+    console.error('Forgot Password Error:', {
+      message: error.message,
+      stack: error.stack,
+      email: email
+    });
+    res.status(500).json({ 
+      message: 'Email dispatch failed', 
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+    });
+  }
+};
+
+const verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM password_resets WHERE email = ? AND otp = ? AND expires_at > NOW()',
+      [email, otp]
+    );
+
+    if (rows.length === 0) {
+      return res.status(400).json({ message: 'Invalid or expired code' });
+    }
+
+    res.json({ success: true, message: 'Code verified' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM password_resets WHERE email = ? AND otp = ? AND expires_at > NOW()',
+      [email, otp]
+    );
+
+    if (rows.length === 0) {
+      return res.status(400).json({ message: 'Invalid or expired code' });
+    }
+
+    await User.updatePasswordByEmail(email, newPassword);
+    
+    // Delete the used OTP
+    await db.query('DELETE FROM password_resets WHERE email = ?', [email]);
+
+    res.json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  register,
+  login,
   googleLogin,
-  getMe, 
-  updateProfile, 
+  getMe,
+  updateProfile,
   changePassword,
   getAddresses,
   addAddress,
   deleteAddress,
   updateAddress,
-  setDefaultAddress
+  setDefaultAddress,
+  forgotPassword,
+  verifyOTP,
+  resetPassword
 };
 

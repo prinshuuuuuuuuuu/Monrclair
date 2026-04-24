@@ -9,8 +9,8 @@ import { FaApple } from "react-icons/fa";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("prince123@gmail.com");
-  const [password, setPassword] = useState("prince@123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { adminLogin } = useAuth();
@@ -93,12 +93,9 @@ export default function AdminLogin() {
                 </span>
               </div>
               <h2 className="font-heading text-4xl text-neutral-900 mb-3 tracking-tight">
-                Secure Login
+                Admin Login
               </h2>
-              <p className="text-sm text-neutral-400 font-light leading-relaxed">
-                Enter your administrative credentials to access the secure
-                dashboard.
-              </p>
+
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
@@ -122,14 +119,9 @@ export default function AdminLogin() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                   <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold">
-                    Access Key
+                    Password
                   </label>
-                  <button
-                    type="button"
-                    className="text-[9px] tracking-[0.1em] uppercase text-[#B87333] hover:underline font-bold"
-                  >
-                    Forgot?
-                  </button>
+
                 </div>
                 <div className="relative group">
                   <input
@@ -151,23 +143,7 @@ export default function AdminLogin() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 py-1">
-                <label className="relative flex items-center cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    className="peer sr-only"
-                    defaultChecked
-                  />
-                  <div className="w-4 h-4 border border-neutral-200 rounded transition-all group-hover:border-[#B87333] peer-checked:bg-[#B87333] peer-checked:border-[#B87333]" />
-                  <CheckCircle2
-                    size={10}
-                    className="absolute left-[3px] top-[3px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"
-                  />
-                  <span className="ml-3 text-[10px] tracking-[0.1em] uppercase text-neutral-400 font-medium group-hover:text-neutral-600 transition-colors">
-                    Maintain Authentication
-                  </span>
-                </label>
-              </div>
+
 
               <button
                 type="submit"
@@ -191,18 +167,7 @@ export default function AdminLogin() {
               </button>
             </form>
 
-            <div className="mt-12">
-              <div className="grid grid-cols-2 gap-4">
-                <button className="flex items-center justify-center gap-2 border border-neutral-100 py-3.5 rounded-xl text-[10px] tracking-[0.1em] uppercase text-neutral-500 hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold">
-                  <FcGoogle size={18} />
-                  Google
-                </button>
-                <button className="flex items-center justify-center gap-2 border border-neutral-100 py-3.5 rounded-xl text-[10px] tracking-[0.1em] uppercase text-neutral-500 hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold">
-                  <FaApple size={18} className="text-black" />
-                  Apple
-                </button>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

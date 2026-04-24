@@ -45,6 +45,10 @@ const User = {
 
   updatePassword: async (id, password) => {
     await db.query('UPDATE users SET password = ? WHERE id = ?', [password, id]);
+  },
+
+  updatePasswordByEmail: async (email, password) => {
+    await db.query('UPDATE users SET password = ? WHERE email = ?', [password, email]);
   }
 };
 

@@ -21,9 +21,12 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isForgot, setIsForgot] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login, register, googleLogin } = useAuth();
+  const { login, register, googleLogin, forgotPassword, verifyOTP, resetPassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -32,12 +35,32 @@ export default function AuthPage() {
     setLoading(true);
     try {
       if (isForgot) {
-        toast({
-          title: "Reset Sequence Initialized",
-          description: "Verification protocols sent to your email identifier.",
-        });
-        setIsForgot(false);
-        setIsLogin(true);
+        if (forgotStep === 1) {
+          await forgotPassword(email);
+          toast({
+            title: "Verification Sent",
+            description: "A secure code has been dispatched to your email.",
+          });
+          setForgotStep(2);
+        } else if (forgotStep === 2) {
+          await verifyOTP(email, otp);
+          toast({
+            title: "Code Verified",
+            description: "You may now establish a new security key.",
+          });
+          setForgotStep(3);
+        } else if (forgotStep === 3) {
+          await resetPassword(email, otp, newPassword);
+          toast({
+            title: "Security Key Updated",
+            description: "Your credentials have been successfully reset.",
+          });
+          setIsForgot(false);
+          setForgotStep(1);
+          setIsLogin(true);
+          setOtp("");
+          setNewPassword("");
+        }
       } else if (isLogin) {
         await login(email, password);
         toast({
@@ -55,8 +78,8 @@ export default function AuthPage() {
       }
     } catch (error: any) {
       toast({
-        title: "Authentication Failed",
-        description: error.response?.data?.message || "Check your credentials.",
+        title: "Process Failed",
+        description: error.response?.data?.message || "An error occurred during authentication.",
         variant: "destructive",
       });
     } finally {
@@ -146,7 +169,11 @@ export default function AuthPage() {
               </h2>
               <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed">
                 {isForgot
-                  ? "Enter your email to receive a secure recovery link."
+                  ? forgotStep === 1 
+                    ? "Enter your email to receive a secure recovery code."
+                    : forgotStep === 2
+                      ? "Enter the 6-digit code sent to your email."
+                      : "Enter your new security key to regain access."
                   : isLogin
                     ? "Enter your Email and Password to access the exclusive collection."
                     : "Create an User account to start your luxury journey."}
@@ -172,22 +199,69 @@ export default function AuthPage() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
-                  Email ID
-                </label>
-                <div className="relative group">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoComplete="email"
-                    required
-                    placeholder="name@example.com"
-                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200"
-                  />
+              {(!isForgot || forgotStep === 1) && (
+                <div className="space-y-2">
+                  <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
+                    Email ID
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                      required
+                      placeholder="name@example.com"
+                      disabled={isForgot && forgotStep > 1}
+                      className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200 disabled:opacity-50"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {isForgot && forgotStep === 2 && (
+                <div className="space-y-2 animate-in fade-in duration-500">
+                  <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
+                    Verification Code
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      required
+                      maxLength={6}
+                      placeholder="Enter 6-digit code"
+                      className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200 text-center tracking-[1em] font-bold"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {isForgot && forgotStep === 3 && (
+                <div className="space-y-2 animate-in fade-in duration-500">
+                  <label className="text-[10px] tracking-[0.2em] uppercase text-neutral-500 font-bold ml-1">
+                    New Password
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                      placeholder="••••••••••••"
+                      className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200 pr-12"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {!isForgot && (
                 <div className="space-y-2 animate-in fade-in duration-500">
@@ -259,7 +333,11 @@ export default function AuthPage() {
                   ) : (
                     <>
                       {isForgot
-                        ? "Initialize Reset"
+                        ? forgotStep === 1
+                          ? "Send Code"
+                          : forgotStep === 2
+                            ? "Verify Code"
+                            : "Reset Password"
                         : isLogin
                           ? "Login"
                           : "Create Profile"}
@@ -314,7 +392,7 @@ export default function AuthPage() {
                   theme="outline"
                   size="large"
                   shape="pill"
-                  width="100%"
+                  width="350"
                 />
               </div>
             </div>
@@ -328,7 +406,10 @@ export default function AuthPage() {
                   <button
                     onClick={() => {
                       setIsForgot(false);
+                      setForgotStep(1);
                       setIsLogin(true);
+                      setOtp("");
+                      setNewPassword("");
                     }}
                     className="text-[#B87333] hover:text-[#A0632D] transition-colors font-bold uppercase tracking-[0.2em]"
                   >
