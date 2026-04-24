@@ -232,7 +232,7 @@ const forgotPassword = async (req, res) => {
     });
     res.status(500).json({ 
       message: 'Email dispatch failed', 
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+      details: error.message 
     });
   }
 };
