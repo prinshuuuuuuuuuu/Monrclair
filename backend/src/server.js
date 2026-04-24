@@ -58,7 +58,11 @@ app.get("/", (req, res) => {
   res.send("Monrclair Luxury API is running...");
 });
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Monrclair Server Securely Dispatched on Port ${PORT}`);
-  console.log(`🔗 API Endpoint: http://localhost:${PORT}/api`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Monrclair Server Securely Dispatched on Port ${PORT}`);
+    console.log(`🔗 API Endpoint: http://localhost:${PORT}/api`);
+  });
+}
+
+module.exports = app;
