@@ -73,7 +73,8 @@ interface FormField {
 interface GenericAdminViewProps {
   moduleName: string;
   title: string;
-  description: string;
+  description?: string;
+  addButtonText?: string;
   columns: Column[];
   formFields: FormField[];
   icon: any;
@@ -83,6 +84,7 @@ export default function GenericAdminView({
   moduleName,
   title,
   description,
+  addButtonText,
   columns,
   formFields,
   icon: Icon,
@@ -135,9 +137,11 @@ export default function GenericAdminView({
           <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
             {title.split(' ')[0]} <span className="text-primary italic">{title.split(' ').slice(1).join(' ')}</span>
           </h1>
-          <p className="text-muted-foreground text-lg font-medium">
-            {description}
-          </p>
+          {description && (
+            <p className="text-muted-foreground text-lg font-medium">
+              {description}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
@@ -166,7 +170,7 @@ export default function GenericAdminView({
               size={18}
               className="mr-2 group-hover:rotate-90 transition-transform duration-300"
             />
-            New Record
+            {addButtonText || "New Record"}
           </Button>
         </div>
       </div>
@@ -180,8 +184,7 @@ export default function GenericAdminView({
               <Icon size={20} />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold uppercase tracking-widest">{moduleName} Registry</span>
-              <span className="text-[10px] text-muted-foreground">{meta.total} Total Entries Detected</span>
+              <span className="text-xs font-bold uppercase tracking-widest">{moduleName} Register</span>
             </div>
           </div>
 

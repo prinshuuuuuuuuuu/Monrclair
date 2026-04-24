@@ -62,7 +62,7 @@ export default function AdminBanners() {
     <GenericAdminView
       moduleName="banners"
       title="Promotional Banners"
-      description="Manage the frontline visual identity and seasonal campaigns of the storefront."
+      addButtonText="ADD NEW BANNER"
       columns={columns as any}
       formFields={formFields as any}
       icon={ImageIcon}

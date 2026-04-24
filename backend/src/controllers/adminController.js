@@ -49,6 +49,127 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const getGraphStats = async (req, res) => {
+  try {
+    const { range = '1w' } = req.query;
+    let days = 7;
+    let format = '%Y-%m-%d';
+    let step = 'day';
+
+    switch (range) {
+      case '1d':
+        days = 1;
+        format = '%Y-%m-%d %H:00';
+        step = 'hour';
+        break;
+      case '1w':
+        days = 7;
+        format = '%Y-%m-%d';
+        step = 'day';
+        break;
+      case '1m':
+        days = 30;
+        format = '%Y-%m-%d';
+        step = 'day';
+        break;
+      case '3m':
+        days = 90;
+        format = '%Y-%m-%d';
+        step = 'day';
+        break;
+      case '6m':
+        days = 180;
+        format = '%Y-%m';
+        step = 'month';
+        break;
+      case '1y':
+        days = 365;
+        format = '%Y-%m';
+        step = 'month';
+        break;
+    }
+
+    // Revenue and Sales Trend
+    const [trendData] = await db.query(`
+      SELECT 
+        DATE_FORMAT(created_at, ?) as date,
+        SUM(total_amount) as revenue,
+        COUNT(*) as orders
+      FROM orders 
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+      GROUP BY DATE_FORMAT(created_at, ?)
+      ORDER BY created_at ASC
+    `, [format, days, format]);
+
+    // Fill gaps in trend data
+    const trend = [];
+    const now = new Date();
+    const startDate = new Date();
+    
+    if (step === 'hour') {
+      startDate.setHours(now.getHours() - 24, 0, 0, 0);
+    } else if (step === 'month') {
+      startDate.setMonth(now.getMonth() - (range === '6m' ? 6 : 12));
+      startDate.setDate(1);
+    } else {
+      startDate.setDate(now.getDate() - days);
+    }
+
+    const dataMap = new Map(trendData.map(item => [item.date, item]));
+
+    let current = new Date(startDate);
+    while (current <= now) {
+      let dateKey;
+      if (step === 'hour') {
+        dateKey = current.toISOString().slice(0, 13).replace('T', ' ') + ':00';
+      } else if (step === 'month') {
+        dateKey = current.toISOString().slice(0, 7);
+      } else {
+        dateKey = current.toISOString().slice(0, 10);
+      }
+
+      const existing = dataMap.get(dateKey);
+      trend.push({
+        date: dateKey,
+        revenue: existing ? Number(existing.revenue) : 0,
+        orders: existing ? Number(existing.orders) : 0
+      });
+
+      if (step === 'hour') current.setHours(current.getHours() + 1);
+      else if (step === 'month') current.setMonth(current.getMonth() + 1);
+      else current.setDate(current.getDate() + 1);
+    }
+
+    // Category breakdown
+    const [categorySalesRaw] = await db.query(`
+      SELECT 
+        c.name as category,
+        COUNT(oi.id) as count,
+        SUM(oi.price * oi.quantity) as revenue
+      FROM order_items oi
+      JOIN products p ON oi.product_id = p.id
+      JOIN categories c ON p.category = c.id
+      JOIN orders o ON oi.order_id = o.id
+      WHERE o.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+      GROUP BY c.id
+      ORDER BY revenue DESC
+    `, [days]);
+
+    const categorySales = categorySalesRaw.map(item => ({
+      ...item,
+      count: Number(item.count),
+      revenue: Number(item.revenue)
+    }));
+
+    res.json({
+      trend,
+      categorySales
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getAllOrders = async (req, res) => {
   try {
     const { 
@@ -459,6 +580,7 @@ const exportOrdersCSV = async (req, res) => {
 
 module.exports = {
   getDashboardStats,
+  getGraphStats,
   getAllOrders,
   getOrderDetails,
   updateOrderStatus,

@@ -308,9 +308,7 @@ export default function AdminCoupons() {
           <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
             Coupon <span className="text-primary italic">Management</span>
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Create and track promotional offers for your customers.
-          </p>
+         
         </div>
         <Button
           onClick={() => {

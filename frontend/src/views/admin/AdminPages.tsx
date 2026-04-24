@@ -49,7 +49,7 @@ export default function AdminPages() {
     <GenericAdminView
       moduleName="pages"
       title="Site Content Pages"
-      description="Manage informational pages like Privacy Policy, Terms of Service, and Ethics."
+      addButtonText="ADD NEW PAGES"
       columns={columns as any}
       formFields={formFields as any}
       icon={FileText}

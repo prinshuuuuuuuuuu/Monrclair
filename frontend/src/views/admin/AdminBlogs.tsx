@@ -63,7 +63,7 @@ export default function AdminBlogs() {
     <GenericAdminView
       moduleName="posts"
       title="Editorial Content"
-      description="Craft and manage the narrative of the Montclair Luxury brand."
+      addButtonText="ADD NEW BLOGS"
       columns={columns as any}
       formFields={formFields as any}
       icon={FileText}

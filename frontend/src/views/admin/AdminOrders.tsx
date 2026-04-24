@@ -392,9 +392,7 @@ export default function AdminOrders() {
         <h1 className="text-5xl font-black tracking-tighter text-[#1e293b] dark:text-white">
           Order <span className="text-primary italic">Management</span>
         </h1>
-        <p className="text-muted-foreground text-lg">
-          Track and manage customer orders and shipments.
-        </p>
+       
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6">

@@ -52,7 +52,7 @@ export default function AdminFAQ() {
     <GenericAdminView
       moduleName="faqs"
       title="Intelligence & FAQ"
-      description="Refine the knowledge base to empower and inform your clientele."
+      addButtonText="ADD NEW FAQ"
       columns={columns as any}
       formFields={formFields as any}
       icon={HelpCircle}
