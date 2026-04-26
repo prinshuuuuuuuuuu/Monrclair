@@ -122,91 +122,77 @@ export default function ProfilePage() {
         />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-10">
-          <div className="flex items-center justify-between mb-8 animate-fade-in">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate(-1)}
-                className="group p-2.5 rounded-xl bg-white border border-[#EFEFEF] shadow-sm hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
-                aria-label="Go back"
-              >
-                <ArrowLeft
-                  size={18}
-                  className="text-[#666] group-hover:text-primary group-hover:-translate-x-0.5 transition-transform"
-                />
-              </button>
-              <div>
-                <h1 className="text-xl md:text-2xl font-bold text-black tracking-tight">
-                  Account Settings
-                </h1>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <Link
-                    to="/"
-                    className="text-[10px] uppercase tracking-widest text-[#999] hover:text-primary transition-colors"
-                  >
-                    Home
-                  </Link>
-                  <span className="text-[#DDD] text-[10px]">/</span>
-                  <span className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                    Profile
-                  </span>
-                </div>
-              </div>
-            </div>
+          <div className="mb-10 animate-fade-in text-center md:text-left">
+            <h1 className="text-3xl md:text-5xl font-heading font-light text-black tracking-tight mb-2">
+              Account <span className="italic">Excellence</span>
+            </h1>
+            <p className="text-muted-foreground text-sm uppercase tracking-[0.2em] font-label">
+              Manage your elite horology profile
+            </p>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6 lg:gap-8 items-start">
-            <div className="w-full md:w-72 flex-shrink-0 flex flex-col gap-5">
-              <div className="bg-white rounded-2xl border border-[#EFEFEF] p-5 flex flex-col items-center text-center gap-3">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+            {/* Sidebar Card */}
+            <div className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6">
+              <div className="bg-white rounded-3xl border border-[#EFEFEF] p-8 flex flex-col items-center text-center gap-4 shadow-sm">
                 <div
                   className="relative group cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <img
-                    src={
-                      profileData.avatar ||
-                      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
-                    }
-                    alt="avatar"
-                    className="w-20 h-20 rounded-2xl object-cover border border-[#EFEFEF]"
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 rounded-2xl flex items-center justify-center transition-opacity">
-                    <Camera size={16} className="text-white" />
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 p-1 group-hover:border-primary transition-all duration-500">
+                    <img
+                      src={
+                        profileData.avatar ||
+                        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+                      }
+                      alt="avatar"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 rounded-full flex items-center justify-center transition-opacity">
+                    <Camera size={18} className="text-white" />
                   </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-black text-base">
+                
+                <div className="space-y-1">
+                  <p className="font-heading text-xl text-black font-medium">
                     {user?.name}
                   </p>
-                  <p className="text-xs text-[#999] mt-0.5">{user?.email}</p>
+                  <p className="text-xs font-label uppercase tracking-widest text-muted-foreground">{user?.email}</p>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B87333] bg-[#FDF3EC] px-3 py-1 rounded-full">
-                  Verified
-                </span>
+
+                <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">
+                    Identity Verified
+                  </span>
+                </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-[#EFEFEF] overflow-hidden divide-y divide-[#F5F5F5]">
+              {/* Navigation Card */}
+              <div className="bg-white rounded-3xl border border-[#EFEFEF] overflow-hidden shadow-sm">
                 {[
                   {
                     id: "orders",
-                    label: "Orders",
+                    label: "Order History",
                     icon: Package,
                     link: "/order-history",
                   },
                   {
                     id: "wishlist",
-                    label: "Wishlist",
+                    label: "Wishlist Gallery",
                     icon: ImageIcon,
                     link: "/wishlist",
                   },
                   {
                     id: "addresses",
-                    label: "Addresses",
+                    label: "Delivery Nodes",
                     icon: MapPin,
                     link: "/addresses",
                   },
                   {
                     id: "security",
-                    label: "Security",
+                    label: "Vault Security",
                     icon: Lock,
                     link: "/security",
                   },
@@ -214,16 +200,16 @@ export default function ProfilePage() {
                   <button
                     key={item.id}
                     onClick={() => navigate(item.link)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#444] hover:bg-[#FAFAFA] hover:text-black transition-all group"
+                    className="w-full flex items-center gap-4 px-6 py-5 text-sm font-label font-bold uppercase tracking-widest text-[#444] hover:bg-primary/5 hover:text-primary transition-all group border-b border-[#F5F5F5] last:border-0"
                   >
                     <item.icon
-                      size={15}
-                      className="text-[#BBB] group-hover:text-[#B87333] transition-colors"
+                      size={16}
+                      className="text-muted-foreground group-hover:text-primary transition-colors"
                     />
                     {item.label}
                     <ChevronRight
-                      size={13}
-                      className="ml-auto text-[#DDD] group-hover:text-[#B87333] transition-colors"
+                      size={14}
+                      className="ml-auto text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all"
                     />
                   </button>
                 ))}
@@ -234,81 +220,92 @@ export default function ProfilePage() {
                   logout();
                   navigate("/");
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl border border-[#EFEFEF] bg-white text-sm text-[#999] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all"
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-red-50 text-[10px] font-label font-bold uppercase tracking-widest text-red-500 hover:bg-red-100 transition-all border border-red-100"
               >
-                <LogOut size={14} /> Sign Out
+                <LogOut size={16} /> Secure Logout
               </button>
             </div>
-            <div className="flex-1 bg-white rounded-2xl border border-[#EFEFEF] overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#F5F5F5]">
-                <p className="text-sm font-semibold text-black">Edit Profile</p>
-                <p className="text-xs text-[#AAA] mt-0.5">
-                  Update your personal information
+
+            {/* Main Content Area */}
+            <div className="flex-1 w-full bg-white rounded-3xl border border-[#EFEFEF] overflow-hidden shadow-sm">
+              <div className="px-8 py-6 border-b border-[#F5F5F5] bg-secondary/5">
+                <p className="text-sm font-label font-bold uppercase tracking-widest text-black">Master Identity</p>
+                <p className="text-xs text-muted-foreground mt-1 font-light italic">
+                  Update your global synchronization credentials
                 </p>
               </div>
 
-              <div className="p-6 flex flex-col gap-5">
-                <div>
-                  <label className="block text-xs font-semibold text-[#AAA] uppercase tracking-wider mb-1.5">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={profileData.name}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    className="w-full px-4 py-2.5 text-sm border border-[#EBEBEB] rounded-xl bg-[#FAFAFA] focus:outline-none focus:border-[#B87333] focus:ring-2 focus:ring-[#B87333]/10 text-black transition-all"
-                    placeholder="Your name"
-                  />
+              <div className="p-8 flex flex-col gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <label className="block text-[10px] font-bold text-primary uppercase tracking-[0.2em] ml-1">
+                      Full Legal Name
+                    </label>
+                    <input
+                      type="text"
+                      value={profileData.name}
+                      onChange={(e) =>
+                        setProfileData((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
+                      className="w-full px-6 py-4 text-sm font-medium border border-[#EBEBEB] rounded-2xl bg-secondary/10 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 text-black transition-all"
+                      placeholder="Your name"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="block text-[10px] font-bold text-primary uppercase tracking-[0.2em] ml-1">
+                      Global Contact Phone
+                    </label>
+                    <input
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e) =>
+                        setProfileData((prev) => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
+                      className="w-full px-6 py-4 text-sm font-medium border border-[#EBEBEB] rounded-2xl bg-secondary/10 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 text-black transition-all"
+                      placeholder="Your phone number"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-[#AAA] uppercase tracking-wider mb-1.5">
-                    Phone
+                <div className="space-y-3">
+                  <label className="block text-[10px] font-bold text-primary uppercase tracking-[0.2em] ml-1">
+                    Verified Email Protocol
                   </label>
-                  <input
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
-                        ...prev,
-                        phone: e.target.value,
-                      }))
-                    }
-                    className="w-full px-4 py-2.5 text-sm border border-[#EBEBEB] rounded-xl bg-[#FAFAFA] focus:outline-none focus:border-[#B87333] focus:ring-2 focus:ring-[#B87333]/10 text-black transition-all"
-                    placeholder="Your phone number"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#AAA] uppercase tracking-wider mb-1.5">
-                    Email
-                  </label>
-                  <div className="w-full px-4 py-2.5 text-sm border border-[#EBEBEB] rounded-xl bg-[#F5F5F5] text-[#999] flex items-center justify-between">
+                  <div className="w-full px-6 py-5 text-sm font-medium border border-[#EBEBEB] rounded-2xl bg-[#F9F9F9] text-muted-foreground flex items-center justify-between">
                     <span>{user?.email}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#B87333]">
-                      Verified
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">
+                        Immutable
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleUpdateProfile()}
                   disabled={loading}
-                  className="mt-2 w-full py-4 bg-primary text-white text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all duration-300"
+                  className="mt-4 w-full py-5 bg-primary text-white text-[11px] font-bold uppercase tracking-[0.3em] rounded-2xl hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/20 active:scale-[0.98] disabled:opacity-50 transition-all duration-500"
                 >
-                  {loading ? "Synchronizing…" : "Save Identity Changes"}
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <span>Synchronizing...</span>
+                    </div>
+                  ) : "Update Identity matrix"}
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

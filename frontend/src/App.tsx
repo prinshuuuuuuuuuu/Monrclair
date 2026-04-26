@@ -86,10 +86,9 @@ const App = () => (
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/shipping" element={<ShippingPage />} />
                 <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
-
-              <Route path="/profile" element={<ProfilePage />} />
 
               <Route
                 element={<GuestRoute redirectPath="/admin" adminOnly={true} />}
