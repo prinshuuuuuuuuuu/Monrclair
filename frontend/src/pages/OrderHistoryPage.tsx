@@ -123,7 +123,7 @@ export default function OrderHistoryPage() {
     );
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] pb-24 selection:bg-[#B87333]/10">
+    <div className="bg-[#FAFAF9] pb-24 selection:bg-[#B87333]/10">
       <div className="max-w-5xl mx-auto px-4 sm:px-8 pt-10 sm:pt-14">
         <div className="mb-10 sm:mb-14">
           <div className="flex flex-col items-start gap-4">

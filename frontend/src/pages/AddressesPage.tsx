@@ -158,7 +158,7 @@ export default function AddressesPage() {
   const labelClass = "block text-sm font-semibold text-[#666666] mb-2 ml-1";
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] text-[#1A1714]">
+    <div className="bg-[#FDFDFD] text-[#1A1714] pb-20">
       <div className="bg-white/80 backdrop-blur-md border-b border-[#F0F0F0] sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <button

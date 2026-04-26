@@ -112,7 +112,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="min-h-screen bg-[#F6F6F6]">
+      <div className="bg-[#F6F6F6] pb-10">
         <input
           type="file"
           ref={fileInputRef}
