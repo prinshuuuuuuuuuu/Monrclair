@@ -260,8 +260,8 @@ export default function HomePage() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-24 sm:py-32 container px-6">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 gap-8">
+      <section className="py-12 sm:py-32 container px-4 sm:px-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 sm:mb-16 gap-6 sm:gap-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-primary text-[10px] font-label tracking-[0.4em] uppercase font-bold">Discover</span>
@@ -284,7 +284,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6">
           {categories.map((cat, i) => (
             <Link
               key={i}
@@ -297,11 +297,11 @@ export default function HomePage() {
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute bottom-8 left-8 right-8 text-white translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                <p className="text-[10px] font-label tracking-[0.3em] uppercase mb-2 opacity-60">
+              <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8 text-white translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                <p className="text-[8px] sm:text-[10px] font-label tracking-[0.3em] uppercase mb-1 sm:mb-2 opacity-60">
                   Shop
                 </p>
-                <h3 className="text-xl sm:text-2xl font-heading font-medium tracking-wide">
+                <h3 className="text-base sm:text-2xl font-heading font-medium tracking-wide">
                   {cat.name}
                 </h3>
               </div>
@@ -350,9 +350,9 @@ export default function HomePage() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-24 sm:py-32 bg-secondary/20">
-        <div className="container px-6">
-          <div className="text-center mb-20 max-w-3xl mx-auto">
+      <section className="py-16 sm:py-32 bg-secondary/20">
+        <div className="container px-4 sm:px-6">
+          <div className="text-center mb-12 sm:mb-20 max-w-3xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-6">
               <span className="w-8 h-px bg-primary/40" />
               <span className="text-primary text-[10px] font-label tracking-[0.4em] uppercase font-bold">Showcase</span>
@@ -404,9 +404,9 @@ export default function HomePage() {
       </section>
 
       {/* Promo Section */}
-      <section className="py-24 sm:py-32 px-6">
+      <section className="py-12 sm:py-32 px-4 sm:px-6">
         <div className="container p-0">
-          <div className="relative overflow-hidden bg-black text-white p-12 sm:p-20 lg:p-32 rounded-[2rem] sm:rounded-[4rem] group">
+          <div className="relative overflow-hidden bg-black text-white p-8 sm:p-20 lg:p-32 rounded-[2rem] sm:rounded-[4rem] group">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20 pointer-events-none" />
             <div className="absolute top-0 right-0 w-[60%] h-full bg-primary/5 -skew-x-12 translate-x-1/2 group-hover:translate-x-1/3 transition-transform duration-1000" />
 
@@ -457,21 +457,21 @@ export default function HomePage() {
       </section>
 
       {/* Trust Points */}
-      <section className="py-24 bg-secondary/10 border-y border-border/40 px-6">
+      <section className="py-12 sm:py-24 bg-secondary/10 border-y border-border/40 px-4 sm:px-6">
         <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 sm:gap-16">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-y-10 gap-x-4 sm:gap-16">
             {trustPoints.map((point, i) => (
               <div
                 key={i}
                 className="flex flex-col items-center text-center group"
               >
-                <div className="w-20 h-20 rounded-full bg-background border flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-xl">
-                  <point.icon size={32} strokeWidth={1.2} />
+                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-background border flex items-center justify-center mb-4 sm:mb-8 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-xl">
+                  <point.icon size={24} className="sm:w-8 sm:h-8" strokeWidth={1.5} />
                 </div>
-                <h3 className="font-heading text-xl mb-3 tracking-wide uppercase font-medium">
+                <h3 className="font-heading text-sm sm:text-xl mb-1.5 sm:mb-3 tracking-wide uppercase font-medium">
                   {point.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed px-4 opacity-70">
+                <p className="text-[10px] sm:text-sm text-muted-foreground leading-relaxed px-2 sm:px-4 opacity-70 line-clamp-2">
                   {point.desc}
                 </p>
               </div>
@@ -481,9 +481,9 @@ export default function HomePage() {
       </section>
 
       {/* New Arrivals Slider */}
-      <section className="py-24 sm:py-32 overflow-hidden px-6">
+      <section className="py-16 sm:py-32 overflow-hidden px-4 sm:px-6">
         <div className="container">
-          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-16 gap-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-10 sm:mb-16 gap-6 sm:gap-8">
             <div className="text-center sm:text-left">
               <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-3 block">
                 Seasonal Drops
@@ -509,15 +509,15 @@ export default function HomePage() {
           </div>
 
           <div className="embla" ref={emblaRef}>
-            <div className="embla__container flex gap-8">
+            <div className="embla__container flex gap-4 sm:gap-8">
               {newArrivals.map((product) => (
                 <div
                   key={product.id}
-                  className="embla__slide flex-[0_0_90%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0"
+                  className="embla__slide flex-[0_0_75%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0"
                 >
                   <div className="relative group p-1">
                     <ProductCard product={product} />
-                    <div className="absolute top-6 left-6 bg-primary text-primary-foreground text-[9px] font-label font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg z-20 pointer-events-none">
+                    <div className="absolute top-4 left-4 bg-primary text-primary-foreground text-[8px] font-label font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-lg z-20 pointer-events-none">
                       NEW
                     </div>
                   </div>

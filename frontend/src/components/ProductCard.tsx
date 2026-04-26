@@ -81,21 +81,21 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
           fill={isWished ? "currentColor" : "none"}
         />
       </button>
-      <div className="flex flex-col flex-1 p-4 gap-3">
+      <div className="flex flex-col flex-1 p-3 sm:p-4 gap-2 sm:gap-3">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-headline text-base sm:text-lg font-light text-on-surface leading-snug line-clamp-2 flex-1 group-hover:text-primary transition-colors">
+          <h3 className="font-headline text-sm sm:text-lg font-light text-on-surface leading-snug line-clamp-2 flex-1 group-hover:text-primary transition-colors">
             <Link to={`/product/${product.id}`}>
               {product.name}
             </Link>
           </h3>
           
-          <div className="flex items-center gap-1 bg-primary/5 px-2.5 py-1.5 rounded-lg border border-primary/10 transition-colors group-hover:bg-primary group-hover:text-white group-hover:border-primary shrink-0">
+          <div className="flex items-center gap-1 bg-primary/5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border border-primary/10 transition-colors group-hover:bg-primary group-hover:text-white group-hover:border-primary shrink-0">
             <IndianRupee
-              size={13}
+              size={12}
               strokeWidth={3}
               className="text-primary group-hover:text-white"
             />
-            <span className="font-label text-sm font-bold tracking-tight">
+            <span className="font-label text-xs sm:text-sm font-bold tracking-tight">
               {product.price.toLocaleString("en-IN")}
             </span>
           </div>

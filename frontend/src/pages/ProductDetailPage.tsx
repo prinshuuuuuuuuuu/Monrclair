@@ -113,8 +113,8 @@ export default function ProductDetailPage() {
 
   return (
     <div className="bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
-      <div className="container py-12 md:py-24">
-        <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-start">
+      <div className="container py-8 md:py-24">
+        <div className="grid lg:grid-cols-2 gap-10 md:gap-24 items-start">
 
           <div className="sticky top-24">
             <div className="relative bg-secondary/30 aspect-square overflow-hidden border border-border group">
@@ -278,7 +278,7 @@ export default function ProductDetailPage() {
 
 
         {related.length > 0 && (
-          <section className="mt-32 pt-24 border-t border-border">
+          <section className="mt-16 sm:mt-32 pt-12 sm:pt-24 border-t border-border">
             <div className="flex items-center justify-between mb-12">
               <h2 className="text-[10px] tracking-luxury uppercase text-muted-foreground font-bold">Related Archives</h2>
               <Link to="/collection" className="text-[10px] tracking-luxury uppercase font-bold text-primary hover:underline">View Full Registry</Link>

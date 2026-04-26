@@ -37,10 +37,10 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-[60] bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
-        <div className="container flex items-center justify-between h-20">
-          <div className="flex items-center gap-8">
+        <div className="container flex items-center justify-between h-12 sm:h-20">
+          <div className="flex items-center gap-4 sm:gap-8">
             <Link to="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
-              <img src={logo} alt="Montclair" className="h-16 w-auto object-contain" />
+              <img src={logo} alt="Montclair" className="h-8 sm:h-16 w-auto object-contain" />
             </Link>
 
             <nav className="hidden lg:flex items-center gap-8">

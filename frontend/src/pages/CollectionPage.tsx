@@ -269,7 +269,7 @@ export default function CollectionPage() {
               </button>
             </div>
           ) : (
-            <div className="grid gap-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 p-5 md:p-8 lg:p-10">
+            <div className="grid gap-3 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 p-3 sm:p-8 lg:p-10">
               {filtered.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
@@ -306,7 +306,7 @@ export default function CollectionPage() {
                 <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary mb-6">
                   Categories
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col flex-1 p-3 sm:p-4 gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCategoryId("All")}
                     className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
