@@ -21,7 +21,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
 
     const result = await cloudinary.uploader.upload(dataURI, {
-      folder: "monrclair",
+      folder: "montclair",
       resource_type: "auto",
     });
 

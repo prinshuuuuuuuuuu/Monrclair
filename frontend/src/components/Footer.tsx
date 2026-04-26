@@ -39,7 +39,7 @@ const CONTACT_INFO = [
     ),
   },
   { Icon: Phone, text: "+1 (555) 000-1234" },
-  { Icon: Mail, text: "concierge@monrclair.com" },
+  { Icon: Mail, text: "concierge@montclair.com" },
 ] as const;
 
 function NavColumn({

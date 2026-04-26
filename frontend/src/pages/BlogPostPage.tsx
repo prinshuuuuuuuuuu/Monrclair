@@ -110,7 +110,7 @@ export default function BlogPostPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900">
-                Monrclair Editorial
+                Montclair Editorial
               </p>
               <p className="text-xs text-slate-400 font-medium">
                 Design & Strategy
@@ -167,7 +167,7 @@ export default function BlogPostPage() {
                   Written By
                 </p>
                 <h4 className="font-extrabold text-xl text-slate-900">
-                  Monrclair Editorial
+                  Montclair Editorial
                 </h4>
                 <p className="text-sm text-slate-500 mt-1 max-w-xs">
                   Curating stories about design, lifestyle, and modern

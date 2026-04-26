@@ -74,7 +74,7 @@ function LeafletMap() {
       .bindPopup(
         `<div style="font-family:sans-serif;font-size:12px;font-weight:700;
                      color:#111;line-height:1.6">
-           Monrclair Flagship Boutique
+           Montclair Flagship Boutique
            <br/><span style="font-weight:400;color:#666;font-size:11px">
              123 Luxury Avenue, NY 10001
            </span>
@@ -169,7 +169,7 @@ export default function ContactPage() {
                 {
                   icon: Mail,
                   title: "Correspondence",
-                  value: "concierge@monrclair.com",
+                  value: "concierge@montclair.com",
                   sub: "Replies within 4 working hours",
                 },
               ].map((item, i) => (
@@ -274,7 +274,7 @@ export default function ContactPage() {
                       </label>
                       <input
                         type="email"
-                        placeholder="av@monrclair.com"
+                        placeholder="av@montclair.com"
                         className={`${fieldCls} h-12`}
                       />
                     </div>

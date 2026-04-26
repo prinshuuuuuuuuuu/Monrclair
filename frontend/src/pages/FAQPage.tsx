@@ -38,7 +38,7 @@ export default function FAQPage() {
           </h1>
 
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed">
-            A comprehensive guide to Monrclair’s luxury services, shipping protocols, and technical maintenance.
+            A comprehensive guide to Montclair’s luxury services, shipping protocols, and technical maintenance.
             Can’t find your answer? Our experts are ready to assist.
           </p>
 
@@ -166,7 +166,7 @@ export default function FAQPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <a
-                href="mailto:concierge@monrclair.com"
+                href="mailto:concierge@montclair.com"
                 className="px-10 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] text-center hover:opacity-95 transition-all shadow-xl shadow-primary/20 active:scale-95"
               >
                 Contact Concierge

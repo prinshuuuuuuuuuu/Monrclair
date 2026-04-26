@@ -380,7 +380,7 @@ const createProduct = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map(file => 
-        cloudinary.uploader.upload(file.path, { folder: 'monrclair/products' })
+        cloudinary.uploader.upload(file.path, { folder: 'montclair/products' })
       );
       const uploadResults = await Promise.all(uploadPromises);
       
@@ -459,7 +459,7 @@ const updateProduct = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map(file => 
-        cloudinary.uploader.upload(file.path, { folder: 'monrclair/products' })
+        cloudinary.uploader.upload(file.path, { folder: 'montclair/products' })
       );
       const uploadResults = await Promise.all(uploadPromises);
       const newImageUrls = uploadResults.map(result => result.secure_url);

@@ -53,7 +53,7 @@ export default function AdminLogin() {
             <div className="absolute inset-0 z-20 flex flex-col justify-between p-6 lg:p-10">
               <div className="animate-fade-in">
                 <h1 className="text-xl font-heading tracking-[0.5em] uppercase text-white drop-shadow-lg">
-                  Monrclair
+                  Montclair
                 </h1>
               </div>
 
@@ -110,7 +110,7 @@ export default function AdminLogin() {
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
                     required
-                    placeholder="name@monrclair.com"
+                    placeholder="name@montclair.com"
                     className="w-full bg-neutral-50 border border-neutral-100 rounded-xl px-5 py-4 text-sm outline-none transition-all duration-300 focus:bg-white focus:border-[#B87333] focus:ring-4 focus:ring-[#B87333]/5 placeholder:text-neutral-300 group-hover:border-neutral-200"
                   />
                 </div>

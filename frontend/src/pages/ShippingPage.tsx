@@ -66,7 +66,7 @@ export default function ShippingPage() {
           </h2>
           <div className="space-y-4 sm:space-y-5 lg:space-y-6 text-white/70 leading-relaxed">
             <p className="text-xs sm:text-sm lg:text-base">
-              For our most exclusive acquisitions, Monrclair offers an optional personal
+              For our most exclusive acquisitions, Montclair offers an optional personal
               courier service. A member of our concierge team will hand-deliver your
               timepiece anywhere in the world, ensuring a personal exchange and on-site fitting.
             </p>

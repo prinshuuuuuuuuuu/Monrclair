@@ -122,7 +122,7 @@ export default function CheckoutPage() {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_placeholder",
         amount: data.order.amount,
         currency: data.order.currency,
-        name: "Monrclair Luxury",
+        name: "Montclair Luxury",
         description: "Horological Acquisition",
         image: "/logo.png",
         order_id: data.order.id,

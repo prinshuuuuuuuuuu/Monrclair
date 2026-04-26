@@ -55,12 +55,12 @@ dynamicModules.forEach((moduleName) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Monrclair Luxury API is running...");
+  res.send("Montclair Luxury API is running...");
 });
 
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Monrclair Server Securely Dispatched on Port ${PORT}`);
+    console.log(`🚀 Montclair Server Securely Dispatched on Port ${PORT}`);
     console.log(`🔗 API Endpoint: http://localhost:${PORT}/api`);
   });
 }

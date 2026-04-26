@@ -168,7 +168,7 @@ export default function HomePage() {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-primary tracking-widest uppercase text-xs font-bold">
-            Monclair Horology
+            Montclair Horology
           </p>
         </div>
       </div>

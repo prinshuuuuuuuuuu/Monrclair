@@ -251,7 +251,7 @@ export default function AdminUsers() {
     link.setAttribute("href", url);
     link.setAttribute(
       "download",
-      `monrclair_users_${format(new Date(), "yyyy-MM-dd")}.csv`,
+      `montclair_users_${format(new Date(), "yyyy-MM-dd")}.csv`,
     );
     link.style.visibility = "hidden";
     document.body.appendChild(link);

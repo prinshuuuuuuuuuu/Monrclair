@@ -30,14 +30,14 @@ const sendOrderUpdateEmail = async (userEmail, orderId, newStatus) => {
   const mailOptions = {
     from: {
       address: process.env.EMAIL_USER || "hello@demomailtrap.co",
-      name: "Monrclair Luxury"
+      name: "Montclair Luxury"
     },
     to: userEmail,
     subject: `Order Update: #${orderId} has been updated to ${newStatus.toUpperCase()}`,
     category: "Order Update",
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-        <h2 style="color: #b87333; text-align: center;">Monrclair Luxury</h2>
+        <h2 style="color: #b87333; text-align: center;">Montclair Luxury</h2>
         <p>Dear Client,</p>
         <p>The protocols for your acquisition <strong>#${orderId}</strong> have been updated.</p>
         <div style="background: ${statusColors[newStatus] || "#000"}; color: white; padding: 10px; text-align: center; border-radius: 5px; font-weight: bold; text-transform: uppercase;">
@@ -62,14 +62,14 @@ const sendOTPEmail = async (userEmail, otp) => {
   const mailOptions = {
     from: {
       address: process.env.EMAIL_USER || "hello@demomailtrap.co",
-      name: "Monrclair Security"
+      name: "Montclair Security"
     },
     to: userEmail,
     subject: "Security Access Code",
     category: "Security",
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-        <h2 style="color: #b87333; text-align: center;">Monrclair Security</h2>
+        <h2 style="color: #b87333; text-align: center;">Montclair Security</h2>
         <p>A request has been initiated to reset your security credentials.</p>
         <p>Your one-time authentication code is:</p>
         <div style="background: #f4f4f4; color: #b87333; padding: 20px; text-align: center; border-radius: 5px; font-size: 32px; font-weight: bold; letter-spacing: 5px;">

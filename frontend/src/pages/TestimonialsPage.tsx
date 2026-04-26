@@ -24,7 +24,7 @@ export default function TestimonialsPage() {
             Acclaimed <span className="text-primary italic">Voices</span>
           </h1>
           <p className="text-muted-foreground text-sm md:text-base font-light max-w-xl mx-auto leading-relaxed">
-            Perspectives from a global community of horological connoisseurs, detailing their journey with Monrclair's rare calibers.
+            Perspectives from a global community of horological connoisseurs, detailing their journey with Montclair's rare calibers.
           </p>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[220px] bg-primary/5 blur-[100px] -z-10 rounded-full pointer-events-none" />
         </header>

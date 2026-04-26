@@ -22,7 +22,7 @@ async function migrate() {
       await db.execute("INSERT INTO pages (title, slug, content, status) VALUES (" +
           "'Privacy Policy', " +
           "'privacy', " +
-          "'<h2>1. Collection of Information</h2><p>At Monrclair, we collect information that you provide directly to us when you create an account, make a purchase, or communicate with our concierge team.</p><h2>2. Use of Information</h2><p>We use the information we collect to process your orders, provide customer support, and send you updates about our collections and services.</p>', " +
+          "'<h2>1. Collection of Information</h2><p>At Montclair, we collect information that you provide directly to us when you create an account, make a purchase, or communicate with our concierge team.</p><h2>2. Use of Information</h2><p>We use the information we collect to process your orders, provide customer support, and send you updates about our collections and services.</p>', " +
           "'active'" +
         ")");
     }

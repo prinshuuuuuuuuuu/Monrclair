@@ -102,7 +102,7 @@ export default function AuthPage() {
             <div className="absolute inset-0 z-20 flex flex-col justify-between p-6 lg:p-10">
               <div className="animate-fade-in">
                 <h1 className="text-sm sm:text-base lg:text-xl font-heading tracking-[0.5em] uppercase text-white drop-shadow-lg">
-                  Monrclair
+                  Montclair
                 </h1>
               </div>
 
