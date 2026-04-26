@@ -138,79 +138,66 @@ export default function Header() {
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-[9999] bg-white overflow-y-auto pt-20">
-          <div className="container py-10 flex flex-col gap-12">
-            {/* Close button for mobile menu when it covers the screen */}
+          <div className="container py-8 flex flex-col gap-8">
+            {/* Close button */}
             <button 
-              className="absolute top-6 right-6 p-2 text-foreground"
+              className="absolute top-6 right-6 p-2 text-muted-foreground hover:text-primary transition-colors"
               onClick={() => setMobileOpen(false)}
             >
-              <X size={24} />
+              <X size={20} />
             </button>
 
-            {/* Search for Mobile Menu */}
-            <div className="sm:hidden relative">
-              <input
-                type="text"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch(e as any)}
-                placeholder="Search Collection..."
-                className="w-full bg-secondary/30 rounded-xl px-12 py-4 text-[10px] font-label font-bold uppercase tracking-widest outline-none border border-transparent focus:border-primary/20"
-              />
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            </div>
-
-            <div className="space-y-8">
-              <h3 className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-primary/60 px-2 flex items-center gap-3">
-                <span className="w-6 h-px bg-primary/20" /> Explore
+            <div className="space-y-6">
+              <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary/60 px-4 flex items-center gap-2">
+                Navigation
               </h3>
-              <nav className="flex flex-col gap-3">
+              <nav className="flex flex-col gap-2">
                 {navLinks.map((l) => (
                   <Link
                     key={l.label}
                     to={l.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-6 py-5 rounded-2xl bg-secondary/20 text-lg font-heading tracking-wide text-foreground hover:bg-secondary transition-all"
+                    className="flex items-center justify-between px-5 py-3.5 rounded-xl bg-secondary/10 text-sm font-label font-bold uppercase tracking-wider text-foreground hover:bg-secondary/20 transition-all group"
                   >
                     {l.label}
-                    <ChevronRight size={18} className="text-muted-foreground/30" />
+                    <ChevronRight size={14} className="text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                   </Link>
                 ))}
               </nav>
             </div>
 
-            <div className="space-y-8">
-              <div className="flex items-center justify-between px-2">
-                <h3 className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-primary/60 flex items-center gap-3">
-                  <span className="w-6 h-px bg-primary/20" /> Collections
+            <div className="space-y-6">
+              <div className="flex items-center justify-between px-4">
+                <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary/60">
+                  Collections
                 </h3>
                 {isLoading && <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />}
               </div>
-              <nav className="flex flex-col gap-3">
+              <nav className="flex flex-col gap-2">
                 <Link
                   to="/collection"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-between px-6 py-5 rounded-2xl bg-primary text-primary-foreground text-lg font-heading tracking-wide shadow-xl shadow-primary/20"
+                  className="flex items-center justify-between px-5 py-3.5 rounded-xl bg-primary/10 text-primary border border-primary/10 text-sm font-label font-bold uppercase tracking-wider shadow-sm"
                 >
-                  All Masterpieces
-                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <span>All Masterpieces</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                 </Link>
                 
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-2">
                   {Array.isArray(categories) && categories.length > 0 ? (
                     categories.map((c: any) => (
                       <Link
                         key={c.id}
                         to={`/collection?category=${c.slug || c.id}`}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-between px-6 py-5 rounded-2xl bg-secondary/20 text-lg font-heading tracking-wide text-foreground hover:bg-secondary transition-all group"
+                        className="flex items-center justify-between px-5 py-3.5 rounded-xl bg-secondary/10 text-sm font-label font-bold uppercase tracking-wider text-foreground/70 hover:text-foreground hover:bg-secondary/20 transition-all group border border-transparent hover:border-border"
                       >
                         <span>{c.name}</span>
-                        <ChevronRight size={18} className="text-muted-foreground/30 group-hover:text-primary transition-all" />
+                        <ChevronRight size={14} className="text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                       </Link>
                     ))
                   ) : !isLoading && (
-                    <div className="px-6 py-5 text-sm text-muted-foreground italic font-light">
+                    <div className="px-5 py-4 text-xs text-muted-foreground italic font-light">
                       No collections currently available.
                     </div>
                   )}
@@ -219,12 +206,12 @@ export default function Header() {
             </div>
 
             {user && (
-              <div className="pt-8 border-t border-border mt-auto">
+              <div className="pt-6 border-t border-border mt-4">
                 <button 
                   onClick={() => { logout(); setMobileOpen(false); }}
-                  className="w-full flex items-center justify-center gap-3 bg-red-50 text-red-500 py-5 rounded-2xl text-xs font-label font-bold uppercase tracking-[0.2em] hover:bg-red-100 transition-all"
+                  className="w-full flex items-center justify-center gap-3 bg-red-50 text-red-500 py-4 rounded-xl text-[10px] font-label font-bold uppercase tracking-[0.2em] hover:bg-red-100 transition-all"
                 >
-                  <LogOut size={18} /> Secure Logout
+                  <LogOut size={16} /> Secure Logout
                 </button>
               </div>
             )}
