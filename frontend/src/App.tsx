@@ -15,6 +15,7 @@ import CartPage from "./pages/CartPage";
 import WishlistPage from "./pages/WishlistPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
+import AboutPage from "./pages/AboutPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
@@ -86,6 +87,7 @@ const App = () => (
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/shipping" element={<ShippingPage />} />
                 <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
