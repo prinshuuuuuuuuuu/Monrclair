@@ -140,17 +140,17 @@ export default function ProductDetailPage() {
                 </>
               )}
             </div>
-            <div className="flex gap-4 mt-6 overflow-x-auto pb-4 scrollbar-none justify-center">
+            <div className="flex gap-3 mt-3 overflow-x-auto pb-4 scrollbar-none justify-center">
               {product.images && product.images.length > 0 ? product.images.map((img: string, i: number) => (
                 <button
                   key={i}
                   onClick={() => setImgIndex(i)}
-                  className={`w-20 h-20 bg-secondary/30 p-2 border transition-all ${i === imgIndex ? "border-primary scale-105" : "border-border hover:border-primary/50"}`}
+                  className={`w-20 h-20 bg-secondary/30 p-1 border transition-all ${i === imgIndex ? "border-primary scale-105" : "border-border hover:border-primary/50"}`}
                 >
                   <img src={img} alt="" className="w-full h-full object-contain" />
                 </button>
               )) : (
-                <button className="w-20 h-20 bg-secondary/30 p-2 border border-primary">
+                <button className="w-20 h-20 bg-secondary/30 p-1 border border-primary">
                   <img src={product.image} className="w-full h-full object-contain" />
                 </button>
               )}
