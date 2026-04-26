@@ -176,8 +176,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="bg-background text-foreground overflow-hidden">
-      <section className="relative h-[80vh] md:h-[90vh] overflow-hidden">
+    <div className="bg-background text-foreground overflow-hidden selection:bg-primary/30 selection:text-primary">
+      {/* Hero Section */}
+      <section className="relative h-[85vh] sm:h-[90vh] lg:h-screen overflow-hidden">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -187,88 +188,120 @@ export default function HomePage() {
             )}
           >
             <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-[10000ms] ease-linear"
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-[10000ms] ease-out"
               style={{
                 backgroundImage: `url(${slide.image})`,
                 transform: index === currentSlide ? "scale(1.1)" : "scale(1)",
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
+            
+            {/* Subtle Overlay Pattern */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
 
-            <div className="relative container h-full flex flex-col justify-center items-start pt-20">
+            <div className="relative container h-full flex flex-col justify-center items-start px-6 sm:px-10 lg:px-20 pt-20">
               <div
                 className={cn(
-                  "max-w-2xl transition-all duration-1000 delay-300 transform",
+                  "max-w-3xl transition-all duration-1000 delay-300 transform",
                   index === currentSlide
-                    ? "translate-x-0 opacity-100"
-                    : "-translate-x-12 opacity-0",
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0",
                 )}
               >
-                <h1 className="text-5xl md:text-8xl font-heading text-white leading-[1.1] mb-6 drop-shadow-lg">
-                  {slide.title}
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="w-8 sm:w-12 h-px bg-primary/60" />
+                  <span className="text-[10px] sm:text-xs font-label tracking-[0.4em] uppercase font-bold text-primary drop-shadow-md">
+                    Exquisite Horology
+                  </span>
+                </div>
+                <h1 className="text-4xl sm:text-6xl lg:text-8xl font-heading text-white leading-[1.05] mb-8 drop-shadow-2xl">
+                  {slide.title.split(', ').map((part, i) => (
+                    <span key={i} className="block italic first:not-italic first:font-bold">
+                      {part}
+                    </span>
+                  ))}
                 </h1>
-                <p className="text-lg md:text-xl text-white/80 mb-10 font-light tracking-wide max-w-lg">
+                <p className="text-base sm:text-lg lg:text-xl text-white/70 mb-10 font-light tracking-wide max-w-lg leading-relaxed">
                   {slide.subtitle}
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     to="/collection"
-                    className="bg-primary text-primary-foreground px-8 py-4 text-sm font-label font-bold tracking-widest uppercase hover:bg-white hover:text-primary transition-all flex items-center gap-2 group"
+                    className="bg-primary text-primary-foreground px-10 py-5 text-xs sm:text-sm font-label font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3 group shadow-xl shadow-primary/20"
                   >
-                    {slide.cta1}{" "}
+                    {slide.cta1}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
-                    to="/collection"
-                    className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 text-sm font-label font-bold tracking-widest uppercase hover:bg-white/20 transition-all"
+                    to="/about"
+                    className="bg-white/5 backdrop-blur-xl text-white border border-white/20 px-10 py-5 text-xs sm:text-sm font-label font-bold tracking-[0.2em] uppercase hover:bg-white/20 transition-all flex items-center justify-center"
                   >
                     {slide.cta2}
                   </Link>
                 </div>
               </div>
             </div>
+
+            {/* Slide Indicators */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={cn(
+                    "h-1 transition-all duration-500 rounded-full",
+                    i === currentSlide ? "w-12 bg-primary" : "w-6 bg-white/20 hover:bg-white/40"
+                  )}
+                />
+              ))}
+            </div>
           </div>
         ))}
       </section>
 
-      <section className="py-24 container">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div className="max-w-xl">
-            <h2 className="text-4xl md:text-5xl font-heading mb-4">
-              Curated Collections
+      {/* Categories Section */}
+      <section className="py-24 sm:py-32 container px-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 gap-8">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-primary text-[10px] font-label tracking-[0.4em] uppercase font-bold">Discover</span>
+              <span className="w-8 h-px bg-primary/30" />
+            </div>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading mb-6 leading-tight">
+              Curated <span className="italic font-light">Collections</span>
             </h2>
-            <p className="text-muted-foreground">
-              Discover the perfect timepiece for every occasion, from heritage
-              classics to modern performance.
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-lg">
+              Explore our masterfully crafted categories, from timeless heritage 
+              classics to cutting-edge modern complications.
             </p>
           </div>
           <Link
             to="/collection"
-            className="text-primary font-label font-bold tracking-widest uppercase text-sm flex items-center gap-2 group"
+            className="group inline-flex items-center gap-3 text-primary font-label font-bold tracking-[0.2em] uppercase text-xs sm:text-sm border-b border-primary/20 pb-2 hover:border-primary transition-all"
           >
-            View All Categories{" "}
+            View All Categories
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-5 gap-6">
           {categories.map((cat, i) => (
             <Link
               key={i}
               to={cat.href}
-              className="group relative aspect-[4/5] overflow-hidden bg-secondary"
+              className="group relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-secondary rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500"
             >
               <img
                 src={cat.img}
                 alt={cat.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute bottom-6 left-6 text-white translate-y-2 group-hover:translate-y-0 transition-transform">
-                <p className="text-xs font-label tracking-[0.3em] uppercase mb-1 opacity-70">
+              <div className="absolute bottom-8 left-8 right-8 text-white translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                <p className="text-[10px] font-label tracking-[0.3em] uppercase mb-2 opacity-60">
                   Shop
                 </p>
-                <h3 className="text-lg font-heading font-medium tracking-wide">
+                <h3 className="text-xl sm:text-2xl font-heading font-medium tracking-wide">
                   {cat.name}
                 </h3>
               </div>
@@ -277,35 +310,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-12 border-y border-border/50 bg-secondary/10 overflow-hidden relative group">
-        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      {/* Brand Marquee */}
+      <section className="py-16 border-y border-border/50 bg-secondary/5 overflow-hidden relative group">
+        <div className="absolute inset-y-0 left-0 w-24 sm:w-48 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 sm:w-48 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-        <div className="flex animate-marquee whitespace-nowrap gap-12 sm:gap-24 group-hover:[animation-play-state:paused] items-center">
+        <div className="flex animate-marquee whitespace-nowrap gap-16 sm:gap-32 group-hover:[animation-play-state:paused] items-center py-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex gap-12 sm:gap-24 items-center">
+            <div key={i} className="flex gap-16 sm:gap-32 items-center">
               {brandList.map((brand) => (
                 <div
                   key={brand.name}
-                  className="flex flex-col items-center gap-4 py-8"
+                  className="flex flex-col items-center gap-5 group/brand"
                 >
-                  <div className="relative w-28 h-28 sm:w-36 sm:h-36">
-                    <div className="w-full h-full rounded-full bg-white border border-border/40 shadow-lg flex items-center justify-center p-8 overflow-hidden">
+                  <div className="relative w-24 h-24 sm:w-32 sm:h-32">
+                    <div className="w-full h-full rounded-full bg-white border border-border/40 shadow-sm flex items-center justify-center p-6 sm:p-8 overflow-hidden group-hover/brand:shadow-xl group-hover/brand:border-primary/20 transition-all duration-500">
                       <img
                         src={brand.logo}
                         alt={brand.name}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain grayscale opacity-60 group-hover/brand:grayscale-0 group-hover/brand:opacity-100 transition-all duration-500"
                       />
                     </div>
 
                     {brand.isPremium && (
-                      <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full z-20 shadow-lg">
-                        Premium
+                      <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full z-20 shadow-lg border border-white/20">
+                        Elite
                       </div>
                     )}
                   </div>
 
-                  <span className="text-[10px] font-label font-bold uppercase tracking-[0.3em] text-foreground opacity-60">
+                  <span className="text-[10px] font-label font-bold uppercase tracking-[0.3em] text-foreground opacity-40 group-hover/brand:opacity-100 transition-opacity">
                     {brand.name}
                   </span>
                 </div>
@@ -314,77 +348,87 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      <section className="py-24 bg-secondary/30">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-heading mb-8">
-              Premium Timepieces
+
+      {/* Featured Products */}
+      <section className="py-24 sm:py-32 bg-secondary/20">
+        <div className="container px-6">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <span className="w-8 h-px bg-primary/40" />
+              <span className="text-primary text-[10px] font-label tracking-[0.4em] uppercase font-bold">Showcase</span>
+              <span className="w-8 h-px bg-primary/40" />
+            </div>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-heading mb-10 leading-tight">
+              Masterpieces of <span className="italic font-light text-primary">Precision</span>
             </h2>
 
-            <div className="flex justify-center gap-2 md:gap-4 overflow-x-auto pb-4 no-scrollbar">
+            <div className="flex justify-center gap-2 sm:gap-4 overflow-x-auto pb-6 no-scrollbar">
               {[
-                { id: "new", label: "New Arrivals", icon: Zap },
-                { id: "bestseller", label: "Best Sellers", icon: Star },
-                { id: "trending", label: "Trending", icon: Flame },
+                { id: "new", label: "New", icon: Zap },
+                { id: "bestseller", label: "Top Rated", icon: Star },
+                { id: "trending", label: "Hot", icon: Flame },
               ].map((filter) => (
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id as any)}
                   className={cn(
-                    "flex items-center gap-2 px-6 py-3 text-xs font-label tracking-widest uppercase font-bold transition-all border shrink-0",
+                    "flex items-center gap-2.5 px-8 py-4 text-[10px] font-label tracking-[0.2em] uppercase font-bold transition-all border rounded-full shrink-0",
                     activeFilter === filter.id
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background text-foreground border-border hover:border-primary/50",
+                      ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20"
+                      : "bg-background text-foreground border-border hover:border-primary/50"
                   )}
                 >
-                  <filter.icon className="w-4 h-4" />
+                  <filter.icon className="w-3.5 h-3.5" />
                   {filter.label}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} showAddToCart />
             ))}
           </div>
 
-          <div className="mt-16 text-center">
+          <div className="mt-24 text-center">
             <Link
               to="/collection"
-              className="inline-flex items-center gap-3 border-2 border-primary text-primary px-10 py-5 text-sm font-label font-bold tracking-widest uppercase hover:bg-primary hover:text-white transition-all"
+              className="inline-flex items-center gap-4 bg-foreground text-background px-12 py-6 text-xs sm:text-sm font-label font-bold tracking-[0.2em] uppercase hover:bg-primary hover:text-white transition-all rounded-full shadow-2xl"
             >
-              Explore Full Collection
+              Discover Full Inventory
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
-      <section className="py-20">
-        <div className="container">
-          <div className="relative overflow-hidden bg-black text-white p-12 md:p-24 group">
-            <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/10 -skew-x-12 translate-x-1/2 group-hover:translate-x-1/3 transition-transform duration-1000" />
 
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-              <div className="max-w-xl text-center md:text-left">
-                <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+      {/* Promo Section */}
+      <section className="py-24 sm:py-32 px-6">
+        <div className="container p-0">
+          <div className="relative overflow-hidden bg-black text-white p-12 sm:p-20 lg:p-32 rounded-[2rem] sm:rounded-[4rem] group">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-[60%] h-full bg-primary/5 -skew-x-12 translate-x-1/2 group-hover:translate-x-1/3 transition-transform duration-1000" />
+
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
+              <div className="max-w-2xl text-center lg:text-left order-2 lg:order-1">
+                <div className="flex items-center justify-center lg:justify-start gap-4 mb-8">
                   <span className="w-12 h-px bg-primary/50" />
-                  <span className="text-[10px] font-label tracking-[0.4em] uppercase font-bold text-primary">
-                    Limited Procurement Window
+                  <span className="text-[10px] font-label tracking-[0.5em] uppercase font-bold text-primary">
+                    Private Reserve
                   </span>
                 </div>
-                <h2 className="text-5xl md:text-7xl font-heading mb-8 leading-[1.1]">
-                  The Platinum
+                <h2 className="text-5xl sm:text-7xl lg:text-8xl font-heading mb-10 leading-[1] tracking-tight">
+                  The <span className="italic text-primary font-light">Platinum</span>
                   <br />
                   Standard
                 </h2>
-                <p className="text-lg text-white/60 mb-10 font-light italic leading-relaxed max-w-lg">
-                  “Horology is the fusion of engineering discipline and artistic
-                  expression. Access our most prestigious calibers at an
-                  exceptional acquisition value.”
+                <p className="text-lg sm:text-xl text-white/60 mb-12 font-light italic leading-relaxed max-w-lg">
+                  “Access our most prestigious calibers at an exceptional 
+                  acquisition value. A true testament to horological mastery.”
                 </p>
 
-                <div className="flex justify-center md:justify-start gap-3 mb-12">
+                <div className="flex justify-center lg:justify-start gap-4 sm:gap-6 mb-16">
                   <CountdownBox value={timeLeft.days} unit="Days" />
                   <CountdownBox value={timeLeft.hrs} unit="Hrs" />
                   <CountdownBox value={timeLeft.mins} unit="Mins" />
@@ -393,39 +437,41 @@ export default function HomePage() {
 
                 <Link
                   to="/collection?category=luxury-watches"
-                  className="inline-block bg-primary text-white px-12 py-5 text-xs font-label font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all shadow-2xl shadow-primary/20"
+                  className="inline-block bg-primary text-white px-16 py-6 text-xs sm:text-sm font-label font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all shadow-2xl shadow-primary/40 rounded-full"
                 >
-                  Explore The Collection
+                  Access Collection
                 </Link>
               </div>
 
-              <div className="relative w-full max-w-md aspect-square lg:scale-125">
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+              <div className="relative w-full max-w-lg aspect-square lg:scale-125 order-1 lg:order-2">
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
                 <img
                   src="/hero-luxury-2.png"
-                  alt="Promo Watch"
-                  className="w-full h-full object-contain relative z-10 drop-shadow-[0_40px_60px_rgba(0,0,0,0.8)] hover:scale-105 transition-transform duration-1000"
+                  alt="Exclusive Timepiece"
+                  className="w-full h-full object-contain relative z-10 drop-shadow-[0_40px_80px_rgba(0,0,0,1)] hover:scale-110 transition-transform duration-1000"
                 />
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section className="py-24 bg-secondary">
+
+      {/* Trust Points */}
+      <section className="py-24 bg-secondary/10 border-y border-border/40 px-6">
         <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 sm:gap-16">
             {trustPoints.map((point, i) => (
               <div
                 key={i}
                 className="flex flex-col items-center text-center group"
               >
-                <div className="w-16 h-16 rounded-full bg-background border flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-500">
-                  <point.icon size={24} strokeWidth={1.5} />
+                <div className="w-20 h-20 rounded-full bg-background border flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-xl">
+                  <point.icon size={32} strokeWidth={1.2} />
                 </div>
-                <h3 className="font-heading text-lg mb-2 tracking-wide uppercase">
+                <h3 className="font-heading text-xl mb-3 tracking-wide uppercase font-medium">
                   {point.title}
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed px-4">
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed px-4 opacity-70">
                   {point.desc}
                 </p>
               </div>
@@ -433,43 +479,45 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <section className="py-24 overflow-hidden">
+
+      {/* New Arrivals Slider */}
+      <section className="py-24 sm:py-32 overflow-hidden px-6">
         <div className="container">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <span className="text-primary text-xs font-label tracking-widest uppercase font-bold mb-2 block">
-                Just Landed
+          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-16 gap-8">
+            <div className="text-center sm:text-left">
+              <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-3 block">
+                Seasonal Drops
               </span>
-              <h2 className="text-4xl font-heading">New Arrivals</h2>
+              <h2 className="text-4xl sm:text-5xl font-heading">New <span className="italic font-light">Arrivals</span></h2>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={scrollPrev}
-                className="p-3 border hover:border-primary hover:text-primary transition-colors"
+                className="p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
                 aria-label="Previous slide"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={22} />
               </button>
               <button
                 onClick={scrollNext}
-                className="p-3 border hover:border-primary hover:text-primary transition-colors"
+                className="p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
                 aria-label="Next slide"
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={22} />
               </button>
             </div>
           </div>
 
           <div className="embla" ref={emblaRef}>
-            <div className="embla__container flex gap-6">
+            <div className="embla__container flex gap-8">
               {newArrivals.map((product) => (
                 <div
                   key={product.id}
-                  className="embla__slide flex-[0_0_85%] sm:flex-[0_0_45%] lg:flex-[0_0_22%] min-w-0"
+                  className="embla__slide flex-[0_0_90%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0"
                 >
-                  <div className="relative group">
+                  <div className="relative group p-1">
                     <ProductCard product={product} />
-                    <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-label font-bold tracking-widest uppercase px-3 py-1 pointer-events-none">
+                    <div className="absolute top-6 left-6 bg-primary text-primary-foreground text-[9px] font-label font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full shadow-lg z-20 pointer-events-none">
                       NEW
                     </div>
                   </div>
@@ -480,43 +528,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 bg-zinc-50 text-zinc-900 relative overflow-hidden">
+      {/* Testimonials */}
+      <section className="py-24 sm:py-32 bg-zinc-50 text-zinc-900 relative overflow-hidden px-6">
         <div className="container relative z-10">
-          <div className="text-center mb-12 max-w-xl mx-auto">
-            <span className="text-primary text-[10px] font-label tracking-[0.4em] uppercase font-bold mb-3 block">
-              Testimonials
+          <div className="text-center mb-20 max-w-2xl mx-auto">
+            <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-4 block">
+              The Experience
             </span>
-            <h2 className="text-2xl md:text-3xl font-heading mb-4 tracking-tight">
-              Customer Voices
+            <h2 className="text-4xl sm:text-5xl font-heading mb-6 tracking-tight">
+              Customer <span className="italic font-light">Voices</span>
             </h2>
-            <div className="flex justify-center gap-1 mb-4 opacity-80">
+            <div className="flex justify-center gap-1.5 mb-6 opacity-80">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className="w-3.5 h-3.5 fill-primary text-primary"
+                  className="w-4 h-4 fill-primary text-primary"
                 />
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className="group relative bg-white border border-zinc-200/60 p-8 lg:p-10 rounded-2xl flex flex-col items-center text-center hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:border-primary/20 transition-all duration-700 overflow-hidden"
+                className="group relative bg-white border border-zinc-200/60 p-10 sm:p-12 rounded-[2.5rem] flex flex-col items-center text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-700"
               >
-                <div className="absolute top-0 inset-x-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center" />
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center rounded-full" />
 
-                <span className="text-4xl font-serif text-primary/5 absolute top-6 left-8 italic pointer-events-none group-hover:text-primary/10 transition-colors">
+                <span className="text-6xl font-serif text-primary/5 absolute top-10 left-10 italic pointer-events-none group-hover:text-primary/10 transition-colors">
                   &ldquo;
                 </span>
 
-                <div className="mb-6 flex gap-1 transform group-hover:scale-105 transition-transform duration-500">
+                <div className="mb-8 flex gap-1.5 transform group-hover:scale-110 transition-transform duration-500">
                   {[...Array(5)].map((_, j) => (
                     <Star
                       key={j}
                       className={cn(
-                        "w-3.5 h-3.5 transition-colors duration-500",
+                        "w-4 h-4 transition-colors duration-500",
                         j < t.rating
                           ? "fill-primary text-primary"
                           : "text-zinc-200",
@@ -525,18 +574,18 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                <p className="text-sm italic text-zinc-600 mb-8 font-light leading-relaxed relative z-10">
+                <p className="text-base sm:text-lg italic text-zinc-600 mb-10 font-light leading-relaxed relative z-10">
                   {t.text}
                 </p>
 
                 <div className="mt-auto">
-                  <div className="w-8 h-[2px] bg-primary/30 mx-auto mb-4 group-hover:w-16 transition-all duration-700" />
-                  <p className="text-[11px] font-label tracking-[0.2em] uppercase font-bold text-zinc-900 mb-1">
+                  <div className="w-10 h-[2px] bg-primary/30 mx-auto mb-6 group-hover:w-20 transition-all duration-700" />
+                  <p className="text-xs font-label tracking-[0.3em] uppercase font-extrabold text-zinc-900 mb-2">
                     {t.name}
                   </p>
-                  <p className="text-[9px] font-label text-zinc-400 uppercase tracking-widest flex items-center justify-center gap-1.5">
-                    <span className="w-1 h-1 bg-green-500 rounded-full" />
-                    Verified Purchase
+                  <p className="text-[10px] font-label text-zinc-400 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                    Verified Collector
                   </p>
                 </div>
               </div>
@@ -544,50 +593,50 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <section className="py-12 bg-primary text-primary-foreground relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-black/20" />
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
+
+      {/* Newsletter */}
+      <section className="py-24 sm:py-32 bg-primary text-primary-foreground relative overflow-hidden group px-6">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-black/40" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 animate-pulse" />
 
         <div className="container relative z-10">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/20 mb-6">
-              <Mail className="w-5 h-5 opacity-90" />
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 border border-white/20 mb-10 backdrop-blur-md">
+              <Mail className="w-7 h-7 opacity-90" />
             </div>
 
-            <h2 className="text-2xl md:text-4xl font-heading mb-4 uppercase tracking-wider leading-tight">
-              Join the <span className="opacity-70 italic">Elite Circle</span>
+            <h2 className="text-4xl sm:text-6xl font-heading mb-6 uppercase tracking-wider leading-tight">
+              The <span className="opacity-70 italic font-light">Elite Circle</span>
             </h2>
-            <p className="text-xs md:text-sm mb-8 opacity-80 font-light leading-relaxed max-w-lg mx-auto">
-              Experience the pinnacle of horology. Receive exclusive updates on
-              rare acquisitions and private collection previews.
+            <p className="text-base sm:text-lg mb-12 opacity-80 font-light leading-relaxed max-w-xl mx-auto">
+              Experience the pinnacle of horological exclusivity. Receive early 
+              notifications on rare vintage drops and private collection launches.
             </p>
 
             <form
-              className="flex flex-col sm:flex-row gap-0 max-w-lg mx-auto bg-white/5 backdrop-blur-md border border-white/20 p-1"
+              className="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl overflow-hidden p-1.5 shadow-2xl"
               onSubmit={(e) => e.preventDefault()}
             >
               <input
                 type="email"
                 placeholder="Official Email Address"
-                className="flex-1 bg-transparent px-5 py-3 text-white placeholder:text-white/40 focus:outline-none font-label text-[10px] tracking-widest uppercase w-full"
+                className="flex-1 bg-transparent px-8 py-5 text-white placeholder:text-white/40 focus:outline-none font-label text-xs sm:text-sm tracking-[0.2em] uppercase w-full"
                 required
               />
-              <button className="bg-white text-primary px-8 py-3 font-label font-bold tracking-[0.2em] uppercase hover:bg-black hover:text-white transition-all whitespace-nowrap text-[10px]">
+              <button className="bg-white text-primary px-12 py-5 font-label font-bold tracking-[0.3em] uppercase hover:bg-black hover:text-white transition-all whitespace-nowrap text-xs sm:text-sm rounded-xl">
                 Subscribe
               </button>
             </form>
 
-            <p className="mt-6 text-[8px] font-label uppercase tracking-[0.3em] opacity-40">
-              Privacy Protected & Secure Subscription
+            <p className="mt-8 text-[10px] font-label uppercase tracking-[0.4em] opacity-40">
+              Discreet & Secured Communication
             </p>
           </div>
         </div>
       </section>
 
-      <div className="h-20" />
+      <div className="h-24 sm:h-32" />
     </div>
-  );
-}
 
 function CountdownBox({ value, unit }: { value: number; unit: string }) {
   return (
