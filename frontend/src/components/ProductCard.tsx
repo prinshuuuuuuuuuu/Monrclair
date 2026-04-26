@@ -52,82 +52,70 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
   };
 
   return (
-    <article className="group relative flex flex-col bg-white rounded-3xl border border-[#F0F0F0] hover:border-primary/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-500 animate-fade-up">
+    <article className="group relative flex flex-col bg-white rounded-2xl border border-[#EEEEEE] hover:border-primary/30 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-xl">
       <Link
         to={`/product/${product.id}`}
-        className="relative aspect-square sm:aspect-[4/5] bg-[#F9F9F9] overflow-hidden flex items-center justify-center cursor-pointer group/img"
+        className="relative block w-full aspect-square bg-[#FBFBFB] overflow-hidden group/img"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/[0.02]" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/[0.01] to-transparent" />
         <img
           src={product.image}
           alt={product.name}
-          className="w-[65%] h-[65%] object-contain transition-transform duration-1000 group-hover/img:scale-110 drop-shadow-2xl"
+          className="absolute inset-0 w-full h-full object-contain p-6 transition-transform duration-700 group-hover/img:scale-110"
           onError={(e: any) => {
             e.target.src = "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800&q=80";
           }}
         />
         
-        {/* Quick View Overlay (Desktop only) */}
-        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-center justify-center">
-           <span className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-             Explore Details
-           </span>
+        {/* Detail Badge */}
+        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded text-[8px] font-bold uppercase tracking-widest text-foreground/40 border border-[#F0F0F0] opacity-0 group-hover:opacity-100 transition-opacity">
+          Ref. {product.id.toString().padStart(4, '0')}
         </div>
       </Link>
 
       <button
         onClick={handleWishlist}
         className={cn(
-          "absolute top-4 right-4 w-9 h-9 rounded-full z-10 flex items-center justify-center transition-all duration-300",
+          "absolute top-3 right-3 w-8 h-8 rounded-full z-10 flex items-center justify-center transition-all duration-300",
           isWished 
-            ? "bg-primary text-white shadow-lg" 
-            : "bg-white/80 backdrop-blur-md text-foreground/40 border border-[#F0F0F0] hover:text-red-500 hover:border-red-100 hover:bg-red-50 opacity-0 group-hover:opacity-100"
+            ? "bg-primary text-white" 
+            : "bg-white/60 backdrop-blur-md text-foreground/30 hover:text-red-500 opacity-0 group-hover:opacity-100"
         )}
       >
-        <Heart
-          size={16}
-          fill={isWished ? "currentColor" : "none"}
-        />
+        <Heart size={14} fill={isWished ? "currentColor" : "none"} />
       </button>
 
-      <div className="flex flex-col flex-1 p-4 sm:p-5 gap-3 sm:gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="font-label text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-bold text-primary">
-              {product.brand || 'Montclair'}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-primary/20" />
-            <span className="font-label text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-              {(product as any).category_name || 'Watch'}
-            </span>
-          </div>
-          <h3 className="font-heading text-sm sm:text-base font-medium text-foreground leading-tight line-clamp-1 group-hover:text-primary transition-colors">
+      <div className="flex flex-col p-4 gap-3">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-1">
+            {product.brand || 'Montclair'}
+          </p>
+          <h3 className="text-sm font-heading font-medium leading-tight line-clamp-1 group-hover:text-primary transition-colors">
             <Link to={`/product/${product.id}`}>
               {product.name}
             </Link>
           </h3>
         </div>
 
-        <div className="flex items-center justify-between mt-auto">
+        <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-1">
             <span className="text-[10px] font-bold text-primary">₹</span>
-            <span className="font-body text-base sm:text-lg font-semibold tracking-tight">
+            <span className="text-base font-semibold tracking-tight">
               {product.price.toLocaleString("en-IN")}
             </span>
           </div>
-
-          <div className="flex items-center gap-1.5 opacity-40">
-             <span className="text-[8px] font-bold uppercase tracking-widest">{product.case_diameter}</span>
-          </div>
+          <span className="text-[9px] font-medium text-muted-foreground/60 uppercase tracking-widest">
+            {product.case_diameter}
+          </span>
         </div>
 
         {showAddToCart && (
           <button
             onClick={handleAddToCart}
-            className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-3 rounded-xl font-label text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-primary hover:text-white transition-all duration-300 mt-2"
+            className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-2.5 rounded-lg text-[9px] font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300 mt-1"
           >
             <ShoppingBag size={12} />
-            Acquire
+            Add to Bag
           </button>
         )}
       </div>
