@@ -481,29 +481,29 @@ export default function HomePage() {
       </section>
 
       {/* New Arrivals Slider */}
-      <section className="py-16 sm:py-32 overflow-hidden px-4 sm:px-6">
+      <section className="py-12 sm:py-32 overflow-hidden px-4 sm:px-6">
         <div className="container">
-          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-10 sm:mb-16 gap-6 sm:gap-8">
-            <div className="text-center sm:text-left">
-              <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-3 block">
+          <div className="flex justify-between items-end mb-8 sm:mb-16">
+            <div className="text-left">
+              <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-2 block">
                 Seasonal Drops
               </span>
-              <h2 className="text-4xl sm:text-5xl font-heading">New <span className="italic font-light">Arrivals</span></h2>
+              <h2 className="text-3xl sm:text-5xl font-heading leading-tight">New <span className="italic font-light">Arrivals</span></h2>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={scrollPrev}
-                className="p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
+                className="p-2.5 sm:p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
                 aria-label="Previous slide"
               >
-                <ChevronLeft size={22} />
+                <ChevronLeft size={18} className="sm:w-[22px] sm:h-[22px]" />
               </button>
               <button
                 onClick={scrollNext}
-                className="p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
+                className="p-2.5 sm:p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
                 aria-label="Next slide"
               >
-                <ChevronRight size={22} />
+                <ChevronRight size={18} className="sm:w-[22px] sm:h-[22px]" />
               </button>
             </div>
           </div>
@@ -513,11 +513,11 @@ export default function HomePage() {
               {newArrivals.map((product) => (
                 <div
                   key={product.id}
-                  className="embla__slide flex-[0_0_75%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0"
+                  className="embla__slide flex-[0_0_48%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0"
                 >
-                  <div className="relative group p-1">
+                  <div className="relative group p-0.5 sm:p-1">
                     <ProductCard product={product} />
-                    <div className="absolute top-4 left-4 bg-primary text-primary-foreground text-[8px] font-label font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-lg z-20 pointer-events-none">
+                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary text-primary-foreground text-[7px] sm:text-[8px] font-label font-bold tracking-[0.2em] uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-lg z-20 pointer-events-none">
                       NEW
                     </div>
                   </div>
@@ -529,43 +529,43 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 sm:py-32 bg-zinc-50 text-zinc-900 relative overflow-hidden px-6">
+      <section className="py-16 sm:py-32 bg-zinc-50 text-zinc-900 relative overflow-hidden px-4 sm:px-6">
         <div className="container relative z-10">
-          <div className="text-center mb-20 max-w-2xl mx-auto">
-            <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-4 block">
+          <div className="text-center mb-12 sm:mb-20 max-w-2xl mx-auto">
+            <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-3 block">
               The Experience
             </span>
-            <h2 className="text-4xl sm:text-5xl font-heading mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-heading mb-4 tracking-tight">
               Customer <span className="italic font-light">Voices</span>
             </h2>
-            <div className="flex justify-center gap-1.5 mb-6 opacity-80">
+            <div className="flex justify-center gap-1 mb-4 opacity-80">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className="w-4 h-4 fill-primary text-primary"
+                  className="w-3.5 h-3.5 fill-primary text-primary"
                 />
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12">
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className="group relative bg-white border border-zinc-200/60 p-10 sm:p-12 rounded-[2.5rem] flex flex-col items-center text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-700"
+                className="group relative bg-white border border-zinc-200/60 p-6 sm:p-12 rounded-[1.5rem] sm:rounded-[2.5rem] flex flex-col items-center text-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-700"
               >
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center rounded-full" />
+                <div className="absolute top-0 inset-x-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center rounded-full" />
 
-                <span className="text-6xl font-serif text-primary/5 absolute top-10 left-10 italic pointer-events-none group-hover:text-primary/10 transition-colors">
+                <span className="text-4xl sm:text-6xl font-serif text-primary/5 absolute top-6 left-6 italic pointer-events-none group-hover:text-primary/10 transition-colors">
                   &ldquo;
                 </span>
 
-                <div className="mb-8 flex gap-1.5 transform group-hover:scale-110 transition-transform duration-500">
+                <div className="mb-6 flex gap-1 transform group-hover:scale-105 transition-transform duration-500">
                   {[...Array(5)].map((_, j) => (
                     <Star
                       key={j}
                       className={cn(
-                        "w-4 h-4 transition-colors duration-500",
+                        "w-3 h-3 sm:w-4 sm:h-4 transition-colors duration-500",
                         j < t.rating
                           ? "fill-primary text-primary"
                           : "text-zinc-200",
@@ -574,17 +574,17 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                <p className="text-base sm:text-lg italic text-zinc-600 mb-10 font-light leading-relaxed relative z-10">
+                <p className="text-sm sm:text-lg italic text-zinc-600 mb-8 font-light leading-relaxed relative z-10">
                   {t.text}
                 </p>
 
-                <div className="mt-auto">
-                  <div className="w-10 h-[2px] bg-primary/30 mx-auto mb-6 group-hover:w-20 transition-all duration-700" />
-                  <p className="text-xs font-label tracking-[0.3em] uppercase font-extrabold text-zinc-900 mb-2">
+                <div className="mt-auto w-full">
+                  <div className="w-8 h-[1px] bg-primary/30 mx-auto mb-4 group-hover:w-16 transition-all duration-700" />
+                  <p className="text-[10px] font-label tracking-[0.3em] uppercase font-extrabold text-zinc-900 mb-1">
                     {t.name}
                   </p>
-                  <p className="text-[10px] font-label text-zinc-400 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <p className="text-[8px] font-label text-zinc-400 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                    <span className="w-1 h-1 bg-green-500 rounded-full" />
                     Verified Collector
                   </p>
                 </div>
