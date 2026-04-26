@@ -62,7 +62,8 @@ const getCouponUsage = async (req, res) => {
 
 const validateCoupon = async (req, res) => {
   try {
-    const { code, amount } = req.body;
+    const { code, amount: rawAmount } = req.body;
+    const amount = Number(rawAmount);
     const coupon = await Coupon.findByCode(code);
 
     if (!coupon) {
@@ -78,20 +79,23 @@ const validateCoupon = async (req, res) => {
       return res.status(400).json({ message: "Coupon has expired" });
     }
 
-    if (amount < coupon.min_order_value) {
+    const minOrder = Number(coupon.min_order_value);
+    if (amount < minOrder) {
       return res.status(400).json({ 
-        message: `Minimum order value for this coupon is ₹${coupon.min_order_value}` 
+        message: `Minimum order value for this coupon is ₹${minOrder.toLocaleString()}` 
       });
     }
 
     let discount = 0;
+    const discValue = Number(coupon.discount_value);
+    
     if (coupon.discount_type === "percentage") {
-      discount = (amount * coupon.discount_value) / 100;
-      if (coupon.max_discount_limit && discount > coupon.max_discount_limit) {
-        discount = coupon.max_discount_limit;
+      discount = (amount * discValue) / 100;
+      if (coupon.max_discount_limit && discount > Number(coupon.max_discount_limit)) {
+        discount = Number(coupon.max_discount_limit);
       }
     } else {
-      discount = coupon.discount_value;
+      discount = discValue;
     }
 
     res.json({
@@ -99,8 +103,8 @@ const validateCoupon = async (req, res) => {
       coupon: {
         code: coupon.code,
         discount_type: coupon.discount_type,
-        discount_value: coupon.discount_value,
-        discount_amount: Math.round(discount)
+        discount_value: discValue,
+        discount_amount: Math.round(discount) // Keep round for whole numbers if that's preferred, but let's ensure it's calculated right
       }
     });
   } catch (error) {
