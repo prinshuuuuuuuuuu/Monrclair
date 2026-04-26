@@ -116,7 +116,7 @@ export default function ProductDetailPage() {
       <div className="container py-8 md:py-24">
         <div className="grid lg:grid-cols-2 gap-10 md:gap-24 items-start">
 
-          <div className="sticky top-24">
+          <div className="lg:sticky lg:top-24">
             <div className="relative bg-secondary/30 aspect-square overflow-hidden border border-border group">
               <img
                 src={product.images && product.images.length > 0 ? product.images[imgIndex] : product.image}
