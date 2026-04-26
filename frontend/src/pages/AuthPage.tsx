@@ -348,7 +348,7 @@ export default function AuthPage() {
                     </>
                   )}
                 </div>
-                <div className="absolute inset-0 bg-[#B87333] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]" />
+                <div className="absolute inset-0 bg-[#B87333] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
               </button>
             </form>
 

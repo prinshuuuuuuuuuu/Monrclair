@@ -168,7 +168,6 @@ export default function OrderHistoryPage() {
             </Link>
           </div>
         ) : (
-        ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               {orders.slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage).map((order) => {
