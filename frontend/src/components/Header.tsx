@@ -137,8 +137,16 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 top-20 z-[100] bg-white overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 z-[9999] bg-white overflow-y-auto pt-20">
           <div className="container py-10 flex flex-col gap-12">
+            {/* Close button for mobile menu when it covers the screen */}
+            <button 
+              className="absolute top-6 right-6 p-2 text-foreground"
+              onClick={() => setMobileOpen(false)}
+            >
+              <X size={24} />
+            </button>
+
             {/* Search for Mobile Menu */}
             <div className="sm:hidden relative">
               <input
