@@ -18,7 +18,7 @@ export default function Header() {
   const { user, logout } = useAuth();
   const { data: categories = [], isLoading } = useCategories();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const { searchOpen, setSearchOpen } = useStore();
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
   const cart = useStore((s) => s.cart);
@@ -70,11 +70,11 @@ export default function Header() {
               </form>
             </div>
 
-            <button onClick={() => setSearchOpen(!searchOpen)} className="sm:hidden text-foreground hover:text-primary transition-colors p-2">
+            <button onClick={() => setSearchOpen(!searchOpen)} className="hidden lg:flex text-foreground hover:text-primary transition-colors p-2">
               <Search size={18} />
             </button>
 
-            <Link to="/wishlist" className="relative text-foreground hover:text-primary transition-colors p-2">
+            <Link to="/wishlist" className="hidden lg:flex relative text-foreground hover:text-primary transition-colors p-2">
               <Heart size={18} />
               {wishlist.length > 0 && (
                 <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[8px] font-bold flex items-center justify-center rounded-full">
@@ -83,7 +83,7 @@ export default function Header() {
               )}
             </Link>
 
-            <Link to="/cart" className="relative text-foreground hover:text-primary transition-colors p-2">
+            <Link to="/cart" className="hidden lg:flex relative text-foreground hover:text-primary transition-colors p-2">
               <ShoppingBag size={18} />
               {cartTotal > 0 && (
                 <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[8px] font-bold flex items-center justify-center rounded-full">
@@ -93,7 +93,7 @@ export default function Header() {
             </Link>
 
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="hidden lg:flex items-center gap-3">
                 <Link to="/profile" className="w-8 h-8 rounded-full overflow-hidden border border-border hover:border-primary transition-all active:scale-95">
                   {user.avatar ? (
                     <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
@@ -108,7 +108,7 @@ export default function Header() {
                 </button>
               </div>
             ) : (
-              <Link to="/auth" className="text-foreground hover:text-primary transition-colors p-2">
+              <Link to="/auth" className="hidden lg:flex text-foreground hover:text-primary transition-colors p-2">
                 <User size={18} />
               </Link>
             )}
@@ -120,7 +120,7 @@ export default function Header() {
         </div>
 
         {searchOpen && (
-          <div className="sm:hidden border-t border-border py-4 animate-in slide-in-from-top duration-300 bg-background">
+          <div className="lg:hidden border-t border-border py-4 animate-in slide-in-from-top duration-300 bg-background">
             <form onSubmit={handleSearch} className="container relative">
               <input
                 autoFocus

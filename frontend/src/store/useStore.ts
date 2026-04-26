@@ -11,6 +11,7 @@ interface StoreState {
   cart: CartItem[];
   wishlist: string[];
   searchQuery: string;
+  searchOpen: boolean;
   setCart: (cart: CartItem[]) => void;
   setWishlist: (wishlist: string[]) => void;
   addToCart: (productId: string) => Promise<void>;
@@ -19,6 +20,7 @@ interface StoreState {
   clearCart: () => Promise<void>;
   toggleWishlist: (productId: string) => Promise<void>;
   setSearchQuery: (query: string) => void;
+  setSearchOpen: (open: boolean) => void;
   cartCount: () => number;
 }
 
@@ -26,6 +28,7 @@ export const useStore = create<StoreState>((set, get) => ({
   cart: [],
   wishlist: [],
   searchQuery: '',
+  searchOpen: false,
   setCart: (cart) => set({ cart }),
   setWishlist: (wishlist) => set({ wishlist }),
   addToCart: async (productId) => {
@@ -97,5 +100,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
   },
   setSearchQuery: (query) => set({ searchQuery: query }),
+  setSearchOpen: (open) => set({ searchOpen: open }),
   cartCount: () => get().cart.reduce((sum, i) => sum + i.quantity, 0),
 }));
