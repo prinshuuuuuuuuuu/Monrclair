@@ -21,6 +21,11 @@ interface StoreState {
   toggleWishlist: (productId: string) => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSearchOpen: (open: boolean) => void;
+  coupon: {
+    code: string;
+    discount_amount: number;
+  } | null;
+  setCoupon: (coupon: { code: string; discount_amount: number } | null) => void;
   cartCount: () => number;
 }
 
@@ -29,8 +34,10 @@ export const useStore = create<StoreState>((set, get) => ({
   wishlist: [],
   searchQuery: '',
   searchOpen: false,
+  coupon: null,
   setCart: (cart) => set({ cart }),
   setWishlist: (wishlist) => set({ wishlist }),
+  setCoupon: (coupon) => set({ coupon }),
   addToCart: async (productId) => {
     try {
       await api.post('/store/cart/add', { productId });

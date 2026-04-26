@@ -18,12 +18,8 @@ import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity } = useStore();
+  const { cart, removeFromCart, updateQuantity, coupon: couponApplied, setCoupon: setCouponApplied } = useStore();
   const [coupon, setCoupon] = useState("");
-  const [couponApplied, setCouponApplied] = useState<{
-    code: string;
-    discount_amount: number;
-  } | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { data: dbProducts = [], isLoading } = useProducts();

@@ -41,7 +41,7 @@ const loadRazorpayScript = () => {
 
 export default function CheckoutPage() {
   const { user, refreshUser } = useAuth();
-  const { cart, clearCart } = useStore();
+  const { cart, clearCart, coupon: couponApplied } = useStore();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -63,8 +63,10 @@ export default function CheckoutPage() {
     (s, i) => s + i.product.price * i.quantity,
     0,
   );
-  const vat = Math.round(subtotal * 0.2);
-  const total = subtotal + vat;
+  const discount = couponApplied?.discount_amount || 0;
+  const taxableAmount = Math.max(0, subtotal - discount);
+  const vat = Math.round(taxableAmount * 0.2);
+  const total = taxableAmount + vat;
 
   useEffect(() => {
     if (!user) navigate("/auth");
@@ -75,6 +77,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (user?.addresses) {
+      if (user.addresses.length === 0) {
+        navigate("/addresses", { state: { from: "checkout" } });
+        return;
+      }
       const def = user.addresses.find((a: any) => a.is_default);
       if (def) setSelectedAddressId(def.id);
       else if (user.addresses.length > 0 && !selectedAddressId)
@@ -221,7 +227,7 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
                 <button
-                  onClick={() => navigate("/addresses")}
+                  onClick={() => navigate("/addresses", { state: { from: "checkout" } })}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 text-xs font-label uppercase tracking-widest text-white bg-black hover:bg-primary transition-all duration-500 font-bold px-8 py-4 rounded-2xl md:rounded-full shadow-xl shadow-black/5 group"
                 >
                   <Plus
@@ -438,6 +444,22 @@ export default function CheckoutPage() {
                     </span>
                   </div>
                 </div>
+
+                {couponApplied && (
+                  <div className="flex justify-between text-xs md:text-sm font-label uppercase tracking-widest text-green-600 font-bold group">
+                    <span>Coupon Discount ({couponApplied.code})</span>
+                    <div className="flex items-center gap-1.5 font-bold">
+                      - <IndianRupee
+                        size={14}
+                        strokeWidth={2.5}
+                        className="opacity-40"
+                      />
+                      <span className="tracking-tight">
+                        {discount.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex justify-between text-xs md:text-sm font-label uppercase tracking-widest text-black/60 font-bold group">
                   <span>Logistics Protocol</span>

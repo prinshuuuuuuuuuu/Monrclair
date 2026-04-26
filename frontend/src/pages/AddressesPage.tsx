@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"; // Synced
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Trash2,
@@ -24,6 +24,8 @@ export default function AddressesPage() {
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromCheckout = location.state?.from === "checkout";
   const [loading, setLoading] = useState(false);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -70,6 +72,10 @@ export default function AddressesPage() {
       handleCloseForm();
       fetchAddresses();
       refreshUser();
+      
+      if (fromCheckout && !editingId) {
+        navigate("/checkout");
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -162,14 +168,14 @@ export default function AddressesPage() {
       <div className="bg-white/80 backdrop-blur-md border-b border-[#F0F0F0] sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <button
-            onClick={() => navigate("/profile")}
+            onClick={() => fromCheckout ? navigate("/checkout") : navigate("/profile")}
             className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#666666] hover:text-[#B87333] transition-colors"
           >
             <ArrowLeft
               size={16}
               className="group-hover:-translate-x-1 transition-transform"
             />
-            <span>Back</span>
+            <span>{fromCheckout ? "Back to Checkout" : "Back"}</span>
           </button>
 
           <button
