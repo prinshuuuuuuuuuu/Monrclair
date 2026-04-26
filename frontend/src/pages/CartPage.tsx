@@ -63,9 +63,10 @@ export default function CartPage() {
     (s, i) => s + i.product.price * i.quantity,
     0,
   );
-  const vat = Math.round(subtotal * 0.2);
   const discount = couponApplied?.discount_amount || 0;
-  const total = subtotal + vat - discount;
+  const taxableAmount = Math.max(0, subtotal - discount);
+  const vat = Math.round(taxableAmount * 0.2);
+  const total = taxableAmount + vat;
   const hasScroll = cartItems.length > 3;
 
   useEffect(() => {
