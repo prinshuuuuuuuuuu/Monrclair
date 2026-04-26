@@ -16,7 +16,7 @@ const navLinks = [
 
 export default function Header() {
   const { user, logout } = useAuth();
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [], isLoading } = useCategories();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -155,30 +155,42 @@ export default function Header() {
               </nav>
             </div>
 
-            <div>
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-6 flex items-center gap-2">
-                <span className="w-4 h-px bg-primary/30" /> Categories
-              </h3>
-              <nav className="flex flex-col gap-5">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary/60">
+                  Collections
+                </h3>
+                {isLoading && <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />}
+              </div>
+              <nav className="flex flex-col gap-2">
                 <Link
                   to="/collection"
                   onClick={() => setMobileOpen(false)}
-                  className="text-lg font-heading tracking-wide text-foreground flex items-center justify-between group"
+                  className="flex items-center justify-between w-full text-[11px] font-label font-bold uppercase tracking-[0.15em] px-5 py-4 rounded-2xl bg-primary/10 text-primary border border-primary/10 shadow-sm"
                 >
-                  All Collections
-                  <ChevronRight size={16} className="text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <span>All Masterpieces</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 animate-pulse" />
                 </Link>
-                {Array.isArray(categories) && categories.map((c: any) => (
-                  <Link
-                    key={c.id}
-                    to={`/collection?category=${c.slug || c.id}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-lg font-heading tracking-wide text-foreground flex items-center justify-between group"
-                  >
-                    {c.name}
-                    <ChevronRight size={16} className="text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                  </Link>
-                ))}
+                
+                <div className="grid grid-cols-1 gap-2">
+                  {Array.isArray(categories) && categories.length > 0 ? (
+                    categories.map((c: any) => (
+                      <Link
+                        key={c.id}
+                        to={`/collection?category=${c.slug || c.id}`}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center justify-between w-full text-[11px] font-label font-bold uppercase tracking-[0.15em] px-5 py-4 rounded-2xl bg-secondary/30 text-foreground/70 hover:text-primary hover:bg-primary/5 transition-all group border border-transparent hover:border-primary/10"
+                      >
+                        <span>{c.name}</span>
+                        <ChevronRight size={14} className="text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    ))
+                  ) : !isLoading && (
+                    <div className="px-5 py-4 text-[10px] text-muted-foreground italic uppercase tracking-widest opacity-50">
+                      No collections available
+                    </div>
+                  )}
+                </div>
               </nav>
             </div>
 
