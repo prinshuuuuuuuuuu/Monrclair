@@ -637,6 +637,8 @@ export default function HomePage() {
 
       <div className="h-24 sm:h-32" />
     </div>
+  );
+}
 
 function CountdownBox({ value, unit }: { value: number; unit: string }) {
   return (
