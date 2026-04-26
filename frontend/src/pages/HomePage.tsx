@@ -481,44 +481,51 @@ export default function HomePage() {
       </section>
 
       {/* New Arrivals Slider */}
-      <section className="py-12 sm:py-32 overflow-hidden px-4 sm:px-6">
-        <div className="container">
-          <div className="flex justify-between items-end mb-8 sm:mb-16">
+      <section className="py-16 sm:py-32 overflow-hidden px-4 sm:px-6 bg-[#FCFCFB] relative">
+        <div className="absolute top-0 right-0 w-[30%] h-full bg-primary/[0.02] -skew-x-12 translate-x-1/2 pointer-events-none" />
+        
+        <div className="container relative z-10">
+          <div className="flex justify-between items-end mb-10 sm:mb-20">
             <div className="text-left">
-              <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold mb-2 block">
-                Seasonal Drops
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-heading leading-tight">New <span className="italic font-light">Arrivals</span></h2>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-8 h-px bg-primary/30" />
+                <span className="text-primary text-[10px] font-label tracking-[0.5em] uppercase font-bold">
+                  Just In
+                </span>
+              </div>
+              <h2 className="text-4xl sm:text-6xl font-heading leading-tight">
+                New <span className="italic font-light">Arrivals</span>
+              </h2>
             </div>
-            <div className="flex gap-2 sm:gap-3">
+            <div className="flex gap-2 sm:gap-4 pb-2">
               <button
                 onClick={scrollPrev}
-                className="p-2.5 sm:p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all active:scale-90"
                 aria-label="Previous slide"
               >
-                <ChevronLeft size={18} className="sm:w-[22px] sm:h-[22px]" />
+                <ChevronLeft size={18} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={scrollNext}
-                className="p-2.5 sm:p-4 rounded-full border border-border hover:border-primary hover:text-primary transition-all active:scale-90"
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all active:scale-90"
                 aria-label="Next slide"
               >
-                <ChevronRight size={18} className="sm:w-[22px] sm:h-[22px]" />
+                <ChevronRight size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
 
           <div className="embla" ref={emblaRef}>
-            <div className="embla__container flex gap-4 sm:gap-8">
+            <div className="embla__container flex gap-5 sm:gap-10">
               {newArrivals.map((product) => (
                 <div
                   key={product.id}
-                  className="embla__slide flex-[0_0_48%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0"
+                  className="embla__slide flex-[0_0_80%] sm:flex-[0_0_45%] lg:flex-[0_0_28%] min-w-0"
                 >
-                  <div className="relative group p-0.5 sm:p-1">
+                  <div className="relative group p-0.5">
                     <ProductCard product={product} />
-                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary text-primary-foreground text-[7px] sm:text-[8px] font-label font-bold tracking-[0.2em] uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-lg z-20 pointer-events-none">
-                      NEW
+                    <div className="absolute top-4 left-4 bg-primary text-white text-[7px] sm:text-[9px] font-label font-bold tracking-[0.3em] uppercase px-3 py-1.5 rounded-full shadow-xl z-20 pointer-events-none">
+                      New Arrival
                     </div>
                   </div>
                 </div>

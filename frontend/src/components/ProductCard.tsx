@@ -52,80 +52,82 @@ export default function ProductCard({ product, showAddToCart = true }: Props) {
   };
 
   return (
-    <article className="group relative flex flex-col bg-surface-container rounded-2xl border border-outline-variant/20 hover:border-outline-variant/50 hover:shadow-xl hover:shadow-black/5 overflow-hidden transition-all duration-300 animate-fade-up">
+    <article className="group relative flex flex-col bg-white rounded-3xl border border-[#F0F0F0] hover:border-primary/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-500 animate-fade-up">
       <Link
         to={`/product/${product.id}`}
-        className="relative aspect-[4/5] bg-surface-container-lowest overflow-hidden flex items-center justify-center cursor-pointer group/img"
+        className="relative aspect-square sm:aspect-[4/5] bg-[#F9F9F9] overflow-hidden flex items-center justify-center cursor-pointer group/img"
       >
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/[0.02]" />
         <img
           src={product.image}
           alt={product.name}
-          className="w-4/5 h-4/5 object-contain transition-transform duration-700 group-hover/img:scale-110"
+          className="w-[65%] h-[65%] object-contain transition-transform duration-1000 group-hover/img:scale-110 drop-shadow-2xl"
           onError={(e: any) => {
             e.target.src = "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800&q=80";
           }}
         />
+        
+        {/* Quick View Overlay (Desktop only) */}
+        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-center justify-center">
+           <span className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+             Explore Details
+           </span>
+        </div>
       </Link>
 
       <button
         onClick={handleWishlist}
         className={cn(
-          "absolute top-3 right-3 w-8 h-8 rounded-full z-10 flex items-center justify-center transition-all duration-200 border border-outline-variant/20 bg-surface/80 backdrop-blur-sm",
+          "absolute top-4 right-4 w-9 h-9 rounded-full z-10 flex items-center justify-center transition-all duration-300",
           isWished 
-            ? "text-primary fill-primary opacity-100" 
-            : "opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 hover:border-red-200"
+            ? "bg-primary text-white shadow-lg" 
+            : "bg-white/80 backdrop-blur-md text-foreground/40 border border-[#F0F0F0] hover:text-red-500 hover:border-red-100 hover:bg-red-50 opacity-0 group-hover:opacity-100"
         )}
       >
         <Heart
-          size={14}
+          size={16}
           fill={isWished ? "currentColor" : "none"}
         />
       </button>
-      <div className="flex flex-col flex-1 p-3 sm:p-4 gap-2 sm:gap-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-headline text-sm sm:text-lg font-light text-on-surface leading-snug line-clamp-2 flex-1 group-hover:text-primary transition-colors">
+
+      <div className="flex flex-col flex-1 p-4 sm:p-5 gap-3 sm:gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="font-label text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-bold text-primary">
+              {product.brand || 'Montclair'}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-primary/20" />
+            <span className="font-label text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+              {(product as any).category_name || 'Watch'}
+            </span>
+          </div>
+          <h3 className="font-heading text-sm sm:text-base font-medium text-foreground leading-tight line-clamp-1 group-hover:text-primary transition-colors">
             <Link to={`/product/${product.id}`}>
               {product.name}
             </Link>
           </h3>
-          
-          <div className="flex items-center gap-1 bg-primary/5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border border-primary/10 transition-colors group-hover:bg-primary group-hover:text-white group-hover:border-primary shrink-0">
-            <IndianRupee
-              size={12}
-              strokeWidth={3}
-              className="text-primary group-hover:text-white"
-            />
-            <span className="font-label text-xs sm:text-sm font-bold tracking-tight">
+        </div>
+
+        <div className="flex items-center justify-between mt-auto">
+          <div className="flex items-baseline gap-1">
+            <span className="text-[10px] font-bold text-primary">₹</span>
+            <span className="font-body text-base sm:text-lg font-semibold tracking-tight">
               {product.price.toLocaleString("en-IN")}
             </span>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="font-label text-[9px] uppercase tracking-widest text-[#B87333]">
-            {product.brand || 'Montclair'}
-          </span>
-          <div className="w-1 h-1 rounded-full bg-outline-variant/50" />
-          <Link 
-            to={`/collection?category=${(product as any).category_slug || (product as any).category}`}
-            className="font-label text-[9px] uppercase tracking-widest text-primary hover:underline"
-          >
-            {(product as any).category_name || 'Watch'}
-          </Link>
-          <div className="w-1 h-1 rounded-full bg-outline-variant/50" />
-          <span className="font-label text-[9px] uppercase tracking-widest text-outline">
-            {product.case_diameter}
-          </span>
-        </div>
 
-        <div className="flex-1" />
+          <div className="flex items-center gap-1.5 opacity-40">
+             <span className="text-[8px] font-bold uppercase tracking-widest">{product.case_diameter}</span>
+          </div>
+        </div>
 
         {showAddToCart && (
           <button
             onClick={handleAddToCart}
-            className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl font-label text-[10px] uppercase tracking-[0.18em] font-medium hover:bg-primary/90 active:scale-[0.98] transition-all duration-200"
+            className="w-full flex items-center justify-center gap-2 bg-foreground text-background py-3 rounded-xl font-label text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-primary hover:text-white transition-all duration-300 mt-2"
           >
-            <ShoppingBag size={13} />
-            Add to Bag
+            <ShoppingBag size={12} />
+            Acquire
           </button>
         )}
       </div>
