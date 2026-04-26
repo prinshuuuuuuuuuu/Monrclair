@@ -60,6 +60,54 @@ const getCouponUsage = async (req, res) => {
   }
 };
 
+const validateCoupon = async (req, res) => {
+  try {
+    const { code, amount } = req.body;
+    const coupon = await Coupon.findByCode(code);
+
+    if (!coupon) {
+      return res.status(404).json({ message: "Invalid coupon code" });
+    }
+
+    if (coupon.status !== "active") {
+      return res.status(400).json({ message: "Coupon is no longer active" });
+    }
+
+    const now = new Date();
+    if (coupon.expiry_date && new Date(coupon.expiry_date) < now) {
+      return res.status(400).json({ message: "Coupon has expired" });
+    }
+
+    if (amount < coupon.min_order_value) {
+      return res.status(400).json({ 
+        message: `Minimum order value for this coupon is ₹${coupon.min_order_value}` 
+      });
+    }
+
+    let discount = 0;
+    if (coupon.discount_type === "percentage") {
+      discount = (amount * coupon.discount_value) / 100;
+      if (coupon.max_discount_limit && discount > coupon.max_discount_limit) {
+        discount = coupon.max_discount_limit;
+      }
+    } else {
+      discount = coupon.discount_value;
+    }
+
+    res.json({
+      message: "Coupon applied successfully",
+      coupon: {
+        code: coupon.code,
+        discount_type: coupon.discount_type,
+        discount_value: coupon.discount_value,
+        discount_amount: Math.round(discount)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllCoupons,
   getCouponStats,
@@ -67,4 +115,5 @@ module.exports = {
   updateCoupon,
   deleteCoupon,
   getCouponUsage,
+  validateCoupon,
 };

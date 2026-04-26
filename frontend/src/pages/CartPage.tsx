@@ -14,14 +14,43 @@ import {
 import { useProducts } from "@/hooks/useProducts";
 import { useStore } from "@/store/useStore";
 import { useState, useRef, useEffect } from "react";
+import api from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity } = useStore();
   const [coupon, setCoupon] = useState("");
-  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponApplied, setCouponApplied] = useState<{
+    code: string;
+    discount_amount: number;
+  } | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { data: dbProducts = [], isLoading } = useProducts();
+  const { toast } = useToast();
+
+  const handleApplyCoupon = async () => {
+    if (!coupon) return;
+    try {
+      const response = await api.post("/store/validate-coupon", {
+        code: coupon,
+        amount: subtotal,
+      });
+      setCouponApplied(response.data.coupon);
+      toast({
+        title: "Coupon Applied",
+        description: response.data.message,
+      });
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "Invalid coupon code";
+      toast({
+        title: "Coupon Error",
+        description: msg,
+        variant: "destructive",
+      });
+      setCouponApplied(null);
+    }
+  };
 
   const cartItems = cart
     .map((ci) => {
@@ -35,7 +64,8 @@ export default function CartPage() {
     0,
   );
   const vat = Math.round(subtotal * 0.2);
-  const total = subtotal + vat;
+  const discount = couponApplied?.discount_amount || 0;
+  const total = subtotal + vat - discount;
   const hasScroll = cartItems.length > 3;
 
   useEffect(() => {
@@ -307,6 +337,15 @@ export default function CartPage() {
                         </span>
                       ),
                     },
+                    ...(couponApplied ? [{
+                      label: "Discount",
+                      node: (
+                        <span className="flex items-center gap-0.5 font-semibold text-sm text-green-600">
+                          - <IndianRupee size={11} strokeWidth={2.5} />
+                          {discount.toLocaleString()}.00
+                        </span>
+                      ),
+                    }] : []),
                   ].map(({ label, node }) => (
                     <div
                       key={label}
@@ -352,19 +391,27 @@ export default function CartPage() {
                       className="flex-1 min-w-0 bg-background border border-border rounded-xl px-3 py-2.5 text-xs sm:text-sm outline-none placeholder:text-muted-foreground focus:border-[#b87333]/50 focus:ring-1 focus:ring-[#b87333]/20 transition-all"
                     />
                     <button
-                      onClick={() => coupon && setCouponApplied(true)}
+                      onClick={handleApplyCoupon}
                       className="px-3 sm:px-4 py-2.5 bg-[#b87333]/12 hover:bg-[#b87333]/22 text-[#b87333] text-[9px] tracking-[0.12em] uppercase rounded-xl transition-colors font-semibold whitespace-nowrap"
                     >
                       Apply
                     </button>
                   </div>
                   {couponApplied && (
-                    <p className="text-[10px] text-[#b87333] flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-[#b87333]/15 inline-flex items-center justify-center text-[8px]">
-                        ✓
-                      </span>
-                      Coupon applied successfully
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] text-[#b87333] flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-[#b87333]/15 inline-flex items-center justify-center text-[8px]">
+                          ✓
+                        </span>
+                        Code {couponApplied.code} applied
+                      </p>
+                      <button 
+                        onClick={() => { setCouponApplied(null); setCoupon(""); }}
+                        className="text-[9px] text-destructive hover:underline font-bold uppercase tracking-widest"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   )}
                 </div>
                 <Link
